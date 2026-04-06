@@ -2,6 +2,7 @@
 RS Dragonwilds Save Editor - Flask Web App
 """
 
+import json
 import os
 from flask import Flask, render_template, request, jsonify
 from parser import (
@@ -14,6 +15,24 @@ app = Flask(__name__)
 SAVE_DIR = None
 characters: dict[str, CharacterSave] = {}
 worlds: dict[str, WorldSave] = {}
+
+# Static reference catalogs (imported from Ashenfall's Completionist Log XLSX
+# via scripts/import_catalog.py — community-sourced reference data)
+DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+catalog: dict = {"quests": [], "items": [], "meta": {}}
+
+
+def load_catalog():
+    """Load reference catalog JSONs into memory. Optional — file may not exist."""
+    global catalog
+    for key, fname in [("quests", "quests.json"), ("items", "items.json"), ("meta", "catalog_meta.json")]:
+        p = os.path.join(DATA_DIR, fname)
+        if os.path.exists(p):
+            try:
+                with open(p) as f:
+                    catalog[key] = json.load(f)
+            except Exception as e:
+                print(f"Failed to load catalog {fname}: {e}")
 
 
 def init_saves():
@@ -69,7 +88,14 @@ def index():
                            active_char=active_char,
                            worlds=world_infos,
                            save_dir=SAVE_DIR,
-                           xp_table=XP_TABLE)
+                           xp_table=XP_TABLE,
+                           catalog=catalog)
+
+
+@app.route("/api/catalog")
+def get_catalog():
+    """Return the full reference catalog (quests + items + meta)."""
+    return jsonify(catalog)
 
 
 @app.route("/api/character/<filename>")
@@ -325,7 +351,9 @@ if __name__ == "__main__":
     print("RS Dragonwilds Save Editor")
     print("=" * 40)
     init_saves()
+    load_catalog()
     print(f"\nLoaded {len(characters)} characters, {len(worlds)} worlds")
+    print(f"Catalog: {len(catalog['quests'])} quests, {len(catalog['items'])} items")
     print(f"Save directory: {SAVE_DIR}")
     print(f"\nStarting web server at http://localhost:5000")
     print("Press Ctrl+C to stop\n")

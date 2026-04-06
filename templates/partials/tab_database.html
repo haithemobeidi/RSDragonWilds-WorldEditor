@@ -1,0 +1,30 @@
+<div class="tab-content" id="tab-database">
+    <div class="card">
+        <div class="card-title">Reference Database</div>
+        <p style="color:var(--text-dim);font-size:12px;margin-bottom:12px">
+            Browse the in-game item and quest catalog. Source: <strong>Ashenfall's Completionist Log</strong>
+            by Accurious (RSDW community). Use this as a reference while editing your save —
+            cross-check item names, quest start locations, soul fragment costs, etc.
+        </p>
+
+        <div class="db-controls">
+            <button class="btn db-view-btn btn-primary" data-view="items" onclick="setDbView('items')">Items</button>
+            <button class="btn db-view-btn" data-view="quests" onclick="setDbView('quests')">Quests</button>
+            <input type="text" id="db-search" placeholder="Search by name, type, region, source..." oninput="applyDbFilter()">
+            <span class="db-counter" id="db-counter">loading...</span>
+        </div>
+
+        <div class="db-grid" id="db-grid">
+            <p style="color:var(--text-dim)">Loading catalog...</p>
+        </div>
+
+        {% if catalog and catalog.meta %}
+        <div class="db-attribution">
+            <strong>Source:</strong> {{ catalog.meta.source }}<br>
+            <strong>Imported:</strong> {{ catalog.meta.imported_at[:10] if catalog.meta.imported_at else '?' }}
+            &middot; {{ catalog.meta.quest_count }} quests &middot; {{ catalog.meta.item_count }} items<br>
+            <em>{{ catalog.meta.note }}</em>
+        </div>
+        {% endif %}
+    </div>
+</div>

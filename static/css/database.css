@@ -1,0 +1,103 @@
+/* Database tab — quest + item reference catalog */
+
+.db-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.db-controls input[type="text"] {
+    width: 240px;
+    text-align: left;
+}
+
+.db-controls select {
+    width: auto;
+    text-align: left;
+}
+
+.db-counter {
+    color: var(--text-dim);
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.db-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 8px;
+}
+
+.db-card {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px;
+    transition: border-color 0.15s;
+}
+
+.db-card:hover { border-color: var(--rs-gold); }
+.db-card.hidden { display: none; }
+
+.db-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+    gap: 8px;
+}
+
+.db-card-name {
+    font-weight: 600;
+    color: var(--rs-gold);
+    font-size: 14px;
+}
+
+.db-card-id {
+    font-family: monospace;
+    color: var(--text-dim);
+    font-size: 10px;
+}
+
+.db-card-meta {
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.5;
+}
+
+.db-card-meta strong { color: var(--text); font-weight: 500; }
+
+.db-tag {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-size: 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    margin-right: 4px;
+}
+
+.db-tag-weapon { color: #ff8b6a; border-color: #ff8b6a; }
+.db-tag-armor { color: #6ab8ff; border-color: #6ab8ff; }
+.db-tag-tool { color: #b8ff6a; border-color: #b8ff6a; }
+.db-tag-lore { color: #c89aff; border-color: #c89aff; }
+.db-tag-trinket { color: #ffd96a; border-color: #ffd96a; }
+.db-tag-buildings { color: #6affc8; border-color: #6affc8; }
+.db-tag-misc { color: var(--text-dim); }
+
+.db-tag-main { color: #ff8b6a; border-color: #ff8b6a; }
+.db-tag-secondary { color: #6ab8ff; border-color: #6ab8ff; }
+.db-tag-tutorial { color: #b8ff6a; border-color: #b8ff6a; }
+
+.db-attribution {
+    margin-top: 16px;
+    padding: 10px;
+    background: var(--bg-input);
+    border-radius: 6px;
+    font-size: 11px;
+    color: var(--text-dim);
+    border-left: 3px solid var(--rs-gold);
+}

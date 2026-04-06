@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tabs.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/database.css') }}">
 </head>
 <body>
 
@@ -35,6 +36,7 @@
         <div class="tab" onclick="switchTab('spells', this)">Spells</div>
         <div class="tab" onclick="switchTab('more', this)">More</div>
         <div class="tab" onclick="switchTab('world', this)">World Data</div>
+        <div class="tab" onclick="switchTab('database', this); initDatabaseTab();">Database</div>
     </div>
 
     {% include 'partials/tab_overview.html' %}
@@ -44,6 +46,7 @@
     {% include 'partials/tab_spells.html' %}
     {% include 'partials/tab_more.html' %}
     {% include 'partials/tab_world.html' %}
+    {% include 'partials/tab_database.html' %}
 </div>
 
 <div class="toast" id="toast"></div>
@@ -57,6 +60,7 @@
 <script src="{{ url_for('static', filename='js/core.js') }}"></script>
 <script src="{{ url_for('static', filename='js/character.js') }}"></script>
 <script src="{{ url_for('static', filename='js/world.js') }}"></script>
+<script src="{{ url_for('static', filename='js/database.js') }}"></script>
 
 </body>
 </html>
