@@ -234,6 +234,7 @@ def get_world(filename):
         "weather": ws.get_weather(),
         "stations": ws.get_stations(),
         "containers": ws.get_containers(),
+        "difficulty": ws.get_difficulty_settings(),
     })
 
 
@@ -278,6 +279,10 @@ def update_world(filename):
             elif action == "disable_all_raids":
                 count = ws.disable_all_raids()
                 results.append({"ok": True, "action": action, "count": count})
+
+            elif action == "difficulty_value":
+                ok = ws.update_difficulty_value(update["tag"], float(update["value"]))
+                results.append({"ok": ok, "action": action, "tag": update.get("tag")})
 
             else:
                 results.append({"ok": False, "error": f"Unknown action: {action}"})

@@ -10,6 +10,7 @@ Save data locations:
 import json
 import os
 import shutil
+import struct
 from datetime import datetime
 from dataclasses import dataclass, field
 from typing import Optional
@@ -61,6 +62,52 @@ class JsonSection:
     length: int
     data: dict | list
     category: str = "unknown"
+
+
+# Complete catalog of all 35 known custom difficulty tags (mined from game logs).
+# See DIFFICULTY_SETTINGS.md for details.
+KNOWN_DIFFICULTY_TAGS = [
+    # Combat - AI Damage/Health/Resistances per enemy category
+    "Difficulty.AI.Beast.Damage", "Difficulty.AI.Beast.Health", "Difficulty.AI.Beast.Resistances",
+    "Difficulty.AI.Boss.Damage", "Difficulty.AI.Boss.Health", "Difficulty.AI.Boss.Resistances",
+    "Difficulty.AI.Construct.Damage", "Difficulty.AI.Construct.Health", "Difficulty.AI.Construct.Resistances",
+    "Difficulty.AI.Critter.Damage", "Difficulty.AI.Critter.Health", "Difficulty.AI.Critter.Resistances",
+    "Difficulty.AI.Garou.Damage", "Difficulty.AI.Garou.Health", "Difficulty.AI.Garou.Resistances",
+    "Difficulty.AI.Goblin.Damage", "Difficulty.AI.Goblin.Health", "Difficulty.AI.Goblin.Resistances",
+    "Difficulty.AI.MiniBoss.Damage", "Difficulty.AI.MiniBoss.Health", "Difficulty.AI.MiniBoss.Resistances",
+    "Difficulty.AI.Skeleton.Damage", "Difficulty.AI.Skeleton.Health", "Difficulty.AI.Skeleton.Resistances",
+    "Difficulty.AI.Undead.Damage", "Difficulty.AI.Undead.Health", "Difficulty.AI.Undead.Resistances",
+    "Difficulty.AI.Zamorak.Damage", "Difficulty.AI.Zamorak.Health", "Difficulty.AI.Zamorak.Resistances",
+    "Difficulty.AI.DisableAggressiveAI",
+    # Environment
+    "Difficulty.Environment.FriendlyFire",
+    # Player
+    "Difficulty.Player.NoBuildingStability",
+    # Progression
+    "Difficulty.Progression.BuildingMaterialCostScale",
+    "Difficulty.Progression.CraftingCostScale",
+]
+
+# Friendly metadata for each tag
+DIFFICULTY_TAG_INFO = {
+    "Difficulty.AI.DisableAggressiveAI": ("Disable Aggressive AI", "bool", "1.0 = enemies don't attack you"),
+    "Difficulty.Environment.FriendlyFire": ("Friendly Fire", "bool", "1.0 = can damage allies"),
+    "Difficulty.Player.NoBuildingStability": ("No Building Stability", "bool", "1.0 = buildings don't need support"),
+    "Difficulty.Progression.BuildingMaterialCostScale": ("Building Material Cost", "scale", "0.5 = half cost, 2.0 = double"),
+    "Difficulty.Progression.CraftingCostScale": ("Crafting Cost", "scale", "0.5 = half cost, 2.0 = double"),
+}
+# Auto-generate metadata for AI category tags
+for tag in KNOWN_DIFFICULTY_TAGS:
+    if tag.startswith("Difficulty.AI.") and tag not in DIFFICULTY_TAG_INFO:
+        # e.g. "Difficulty.AI.Beast.Health" -> ("Beast Health", "scale", ...)
+        parts = tag.split(".")
+        if len(parts) == 4:
+            category, stat = parts[2], parts[3]
+            DIFFICULTY_TAG_INFO[tag] = (
+                f"{category} {stat}",
+                "scale",
+                "1.0 = normal, 0.5 = easier, 2.0 = harder",
+            )
 
 
 class CharacterSave:
@@ -474,6 +521,7 @@ class WorldSave:
         self.filepath = filepath
         self.raw_data = bytearray()
         self.json_sections: list[JsonSection] = []
+        self.difficulty_entries: list[dict] = []
         self.filename = os.path.basename(filepath)
 
     def load(self):
@@ -481,6 +529,7 @@ class WorldSave:
             self.raw_data = bytearray(f.read())
         self._find_json_sections()
         self._categorize_sections()
+        self._find_difficulty_entries()
 
     def _find_json_sections(self):
         self.json_sections = []
@@ -621,6 +670,106 @@ class WorldSave:
                         "allow_adds": d.get("AllowAdds", True),
                     })
         return containers
+
+    # ===== Custom Difficulty Settings =====
+
+    DIFFICULTY_HEADER_NEEDLE = b'\x08\x00\x00\x00TagName\x00\x0d\x00\x00\x00NameProperty\x00'
+
+    def _find_difficulty_entries(self):
+        """
+        Scan the binary for custom difficulty setting entries.
+        Each entry is structured as:
+            FString "TagName" (8 bytes prefixed)
+            FString "NameProperty" (13 bytes prefixed)
+            ~13 bytes of UE4 property metadata
+            FString <difficulty tag>
+            FString "None"
+            float32 <value>
+        """
+        self.difficulty_entries = []
+        data = self.raw_data
+        pos = 0
+        while True:
+            idx = data.find(self.DIFFICULTY_HEADER_NEEDLE, pos)
+            if idx == -1:
+                break
+            pos = idx + len(self.DIFFICULTY_HEADER_NEEDLE)
+
+            # Search for "Difficulty." within next 50 bytes
+            diff_idx = data.find(b'Difficulty.', pos, min(pos + 50, len(data)))
+            if diff_idx == -1:
+                continue
+            # Length prefix is 4 bytes before
+            try:
+                tag_len = struct.unpack('<i', data[diff_idx - 4:diff_idx])[0]
+                tag_bytes = data[diff_idx:diff_idx + tag_len - 1]  # exclude null
+                tag = tag_bytes.decode('utf-8')
+            except (struct.error, UnicodeDecodeError):
+                continue
+
+            # After tag (with null): expect 9-byte FString "None"
+            after_tag = diff_idx + tag_len
+            if data[after_tag:after_tag + 9] != b'\x05\x00\x00\x00None\x00':
+                continue
+
+            # Float follows
+            float_offset = after_tag + 9
+            if float_offset + 4 > len(data):
+                continue
+            try:
+                value = struct.unpack('<f', data[float_offset:float_offset + 4])[0]
+            except struct.error:
+                continue
+
+            self.difficulty_entries.append({
+                'tag': tag,
+                'value': value,
+                'value_offset': float_offset,
+                'tag_offset': diff_idx,
+                'header_offset': idx,
+            })
+
+    def get_difficulty_settings(self) -> dict:
+        """Return current difficulty settings + catalog of all known tags."""
+        # Build current entries with friendly names
+        current = []
+        for e in self.difficulty_entries:
+            name, dtype, hint = DIFFICULTY_TAG_INFO.get(e['tag'], (e['tag'], 'scale', ''))
+            current.append({
+                'tag': e['tag'],
+                'name': name,
+                'type': dtype,
+                'hint': hint,
+                'value': e['value'],
+                'value_offset': e['value_offset'],
+            })
+
+        # Get list of "missing" tags (not currently in save) for Phase 2 reference
+        present_tags = {e['tag'] for e in self.difficulty_entries}
+        missing = []
+        for tag in KNOWN_DIFFICULTY_TAGS:
+            if tag not in present_tags:
+                name, dtype, hint = DIFFICULTY_TAG_INFO.get(tag, (tag, 'scale', ''))
+                missing.append({'tag': tag, 'name': name, 'type': dtype, 'hint': hint})
+
+        return {
+            'current': current,
+            'missing': missing,
+            'total_known': len(KNOWN_DIFFICULTY_TAGS),
+        }
+
+    def update_difficulty_value(self, tag: str, new_value: float) -> bool:
+        """
+        Length-preserving update of an existing difficulty entry.
+        Returns True if updated, False if tag not found.
+        """
+        for e in self.difficulty_entries:
+            if e['tag'] == tag:
+                new_bytes = struct.pack('<f', float(new_value))
+                self.raw_data[e['value_offset']:e['value_offset'] + 4] = new_bytes
+                e['value'] = float(new_value)
+                return True
+        return False
 
     def get_weather(self) -> list[dict]:
         weather = []

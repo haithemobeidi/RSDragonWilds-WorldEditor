@@ -1376,6 +1376,57 @@
 
             let html = '';
 
+            // ===== DIFFICULTY SETTINGS =====
+            if (data.difficulty && data.difficulty.current) {
+                const fname = escapeHtml(filename);
+                const cur = data.difficulty.current;
+                const missing = data.difficulty.missing || [];
+                html += `<div class="card-title" style="margin-top:0">
+                    Custom Difficulty Settings (${cur.length} active / ${data.difficulty.total_known} total)
+                </div>`;
+                html += `<p style="color:var(--text-dim);font-size:12px;margin-bottom:8px">
+                    Edit existing settings below (length-preserving, safe). Adding new settings to a world that
+                    doesn't have them requires Phase 2 binary injection — not yet implemented.
+                </p>`;
+
+                if (cur.length === 0) {
+                    html += '<p style="color:var(--accent-red);font-size:12px">No active settings in this save.</p>';
+                } else {
+                    html += '<div class="grid grid-2">';
+                    for (const s of cur) {
+                        const tag = escapeHtml(s.tag);
+                        const name = escapeHtml(s.name);
+                        const hint = escapeHtml(s.hint);
+                        html += `<div class="event-row">
+                            <div class="event-name">${name}</div>
+                            <div style="font-size:10px;color:var(--text-dim);font-family:monospace;margin-bottom:6px">${tag}</div>
+                            <div class="trigger-row" style="align-items:center">
+                                <span style="font-size:11px">${hint}</span>
+                                <input type="number" value="${s.value}" step="0.1" min="0" max="100"
+                                    style="width:90px;font-size:12px"
+                                    onchange="updateDifficulty('${fname}', '${tag}', parseFloat(this.value))">
+                            </div>
+                        </div>`;
+                    }
+                    html += '</div>';
+                }
+
+                // Show missing tags as info
+                if (missing.length > 0) {
+                    html += `<details style="margin-top:8px">
+                        <summary style="cursor:pointer;color:var(--text-dim);font-size:12px">
+                            Show ${missing.length} unset tags (Phase 2 will allow injection)
+                        </summary>
+                        <div style="margin-top:8px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px">`;
+                    for (const m of missing) {
+                        html += `<div style="font-size:10px;color:var(--text-dim);font-family:monospace;padding:4px">${escapeHtml(m.name)}: ${escapeHtml(m.tag)}</div>`;
+                    }
+                    html += '</div></details>';
+                }
+
+                html += '<hr style="border:0;border-top:1px solid var(--border);margin:16px 0">';
+            }
+
             // ===== WEATHER =====
             if (data.weather && data.weather.length > 0) {
                 html += '<div class="card-title" style="margin-top:0">Weather (' + data.weather.length + ' regions)</div>';
@@ -1545,6 +1596,14 @@
             section_index: sectionIndex,
             slot: slot,
             field: field,
+            value: value
+        });
+    }
+
+    function updateDifficulty(filename, tag, value) {
+        postWorldUpdate(filename, {
+            action: 'difficulty_value',
+            tag: tag,
             value: value
         });
     }
