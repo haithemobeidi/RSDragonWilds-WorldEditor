@@ -216,6 +216,7 @@ class CharacterSave:
             "inventory": inventory_items,
             "loadout": loadout_items,
             "spells": d.get("Spellcasting", {}).get("SelectedSpells", []),
+            "spells_unlocked": d.get("Progress", {}).get("SpellsUnlocked", []),
             "progress": {
                 "recipes_unlocked": len(d.get("Progress", {}).get("RecipesUnlocked", [])),
                 "buildings_unlocked": len(d.get("Progress", {}).get("BuildingsUnlocked", [])),
@@ -362,10 +363,77 @@ class CharacterSave:
     def update_spell_slot(self, slot: int, spell_id: str):
         """Update a spell loadout slot."""
         spells = self.data.setdefault("Spellcasting", {}).setdefault("SelectedSpells", [])
-        # Pad if needed
         while len(spells) <= slot:
             spells.append("")
         spells[slot] = spell_id
+        return True
+
+    def clear_spell_slot(self, slot: int):
+        spells = self.data.get("Spellcasting", {}).get("SelectedSpells", [])
+        if 0 <= slot < len(spells):
+            spells[slot] = ""
+            return True
+        return False
+
+    # ----- Mounts -----
+
+    def add_mount(self, mount_id: str):
+        mount = self.data.setdefault("Character", {}).setdefault("Mount", {
+            "MountEquipped": "None", "MountsUnlockedList": []
+        })
+        if mount_id and mount_id not in mount.setdefault("MountsUnlockedList", []):
+            mount["MountsUnlockedList"].append(mount_id)
+            return True
+        return False
+
+    def remove_mount(self, mount_id: str):
+        mount = self.data.get("Character", {}).get("Mount", {})
+        unlocked = mount.get("MountsUnlockedList", [])
+        if mount_id in unlocked:
+            unlocked.remove(mount_id)
+            return True
+        return False
+
+    def equip_mount(self, mount_id: str):
+        mount = self.data.setdefault("Character", {}).setdefault("Mount", {
+            "MountEquipped": "None", "MountsUnlockedList": []
+        })
+        mount["MountEquipped"] = mount_id or "None"
+        return True
+
+    # ----- Quest Variables -----
+
+    def update_quest_bool(self, quest_id: str, var_name: str, value: bool):
+        quests = self.data.get("QuestProgress", {}).get("Quests", [])
+        for q in quests:
+            if q.get("QuestId") == quest_id:
+                for b in q.get("QuestBools", []):
+                    if b.get("QuestVariableName") == var_name:
+                        b["QuestVariableValue"] = bool(value)
+                        return True
+        return False
+
+    def update_quest_int(self, quest_id: str, var_name: str, value: int):
+        quests = self.data.get("QuestProgress", {}).get("Quests", [])
+        for q in quests:
+            if q.get("QuestId") == quest_id:
+                for i in q.get("QuestInts", []):
+                    if i.get("QuestVariableName") == var_name:
+                        i["QuestVariableValue"] = int(value)
+                        return True
+        return False
+
+    # ----- Fog of War -----
+
+    def reveal_full_map(self):
+        """Set fog bitmap to all 1s, revealing the entire map."""
+        fog = self.data.setdefault("RevealedFog", {})
+        fog["RevealedRegionsBitmap"] = 0xFFFFFFFF  # 32-bit max
+        return True
+
+    def hide_full_map(self):
+        fog = self.data.setdefault("RevealedFog", {})
+        fog["RevealedRegionsBitmap"] = 0
         return True
 
     # ----- Repair / Mass operations -----
@@ -388,6 +456,15 @@ class CharacterSave:
         for skill in skills:
             skill["Xp"] = max_xp
         return len(skills)
+
+    def fill_all_spell_slots(self, spell_id: str):
+        """Fill all 48 spell slots with the same spell."""
+        spells = self.data.setdefault("Spellcasting", {}).setdefault("SelectedSpells", [])
+        while len(spells) < 48:
+            spells.append("")
+        for i in range(min(48, len(spells))):
+            spells[i] = spell_id
+        return 48
 
 
 class WorldSave:

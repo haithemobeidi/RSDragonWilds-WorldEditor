@@ -461,6 +461,8 @@
         <div class="tab" onclick="switchTab('skills', this)">Skills</div>
         <div class="tab" onclick="switchTab('inventory', this)">Inventory</div>
         <div class="tab" onclick="switchTab('quests', this)">Quests</div>
+        <div class="tab" onclick="switchTab('spells', this)">Spells</div>
+        <div class="tab" onclick="switchTab('more', this)">More</div>
         <div class="tab" onclick="switchTab('world', this)">World Data</div>
     </div>
 
@@ -792,39 +794,180 @@
             </div>
             <div id="questsList">
             {% for quest in char.quests %}
-                <div class="quest-row" data-quest-id="{{ quest.id }}">
-                    <div>
-                        <div class="quest-id">{{ quest.id }}</div>
-                        <div style="font-size:13px;margin-top:2px">{{ quest.objective }}</div>
-                        {% if quest.bools %}
-                        <div style="font-size:11px;color:var(--text-dim);margin-top:4px">
-                            {% for b in quest.bools[:3] %}
-                            <span style="color:{% if b.QuestVariableValue %}var(--accent-green){% else %}var(--accent-red){% endif %}">
-                                {{ b.QuestVariableName }}{% if not loop.last %}, {% endif %}
-                            </span>
-                            {% endfor %}
-                            {% if quest.bools|length > 3 %}
-                            <span>+{{ quest.bools|length - 3 }} more</span>
-                            {% endif %}
+                <div class="quest-row" data-quest-id="{{ quest.id }}" style="display:block">
+                    <div style="display:grid;grid-template-columns:1fr 120px 100px;gap:12px;align-items:center">
+                        <div>
+                            <div class="quest-id">{{ quest.id }}</div>
+                            <div style="font-size:13px;margin-top:2px">{{ quest.objective }}</div>
                         </div>
-                        {% endif %}
+                        <div>
+                            <span class="badge {% if quest.state == 2 %}badge-completed{% elif quest.state == 1 %}badge-progress{% else %}badge-notstarted{% endif %}">
+                                {{ quest.state_name }}
+                            </span>
+                        </div>
+                        <div>
+                            <select onchange="queueQuestUpdate('{{ quest.id }}', this.value)" style="width:90px;font-size:12px">
+                                <option value="0" {% if quest.state == 0 %}selected{% endif %}>Not Started</option>
+                                <option value="1" {% if quest.state == 1 %}selected{% endif %}>In Progress</option>
+                                <option value="2" {% if quest.state == 2 %}selected{% endif %}>Completed</option>
+                            </select>
+                        </div>
                     </div>
-                    <div>
-                        <span class="badge {% if quest.state == 2 %}badge-completed{% elif quest.state == 1 %}badge-progress{% else %}badge-notstarted{% endif %}">
-                            {{ quest.state_name }}
-                        </span>
+                    {% if quest.bools or quest.ints %}
+                    <div style="margin-top:8px;padding:8px;background:rgba(0,0,0,0.2);border-radius:4px">
+                        <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px">QUEST VARIABLES</div>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:6px">
+                            {% for b in quest.bools %}
+                            <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
+                                <span style="font-family:monospace;color:var(--text-dim)">{{ b.QuestVariableName }}</span>
+                                <select onchange="queueQuestBool('{{ quest.id }}', '{{ b.QuestVariableName }}', this.value)"
+                                        style="width:60px;font-size:11px;padding:2px 4px">
+                                    <option value="true" {% if b.QuestVariableValue %}selected{% endif %}>true</option>
+                                    <option value="false" {% if not b.QuestVariableValue %}selected{% endif %}>false</option>
+                                </select>
+                            </div>
+                            {% endfor %}
+                            {% for i in quest.ints %}
+                            <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
+                                <span style="font-family:monospace;color:var(--text-dim)">{{ i.QuestVariableName }}</span>
+                                <input type="number" value="{{ i.QuestVariableValue }}"
+                                       onchange="queueQuestInt('{{ quest.id }}', '{{ i.QuestVariableName }}', this.value)"
+                                       style="width:80px;font-size:11px;padding:2px 4px">
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
-                    <div>
-                        <select onchange="queueQuestUpdate('{{ quest.id }}', this.value)" style="width:90px;font-size:12px">
-                            <option value="0" {% if quest.state == 0 %}selected{% endif %}>Not Started</option>
-                            <option value="1" {% if quest.state == 1 %}selected{% endif %}>In Progress</option>
-                            <option value="2" {% if quest.state == 2 %}selected{% endif %}>Completed</option>
-                        </select>
-                    </div>
+                    {% endif %}
                 </div>
             {% endfor %}
             </div>
         </div>
+        {% endif %}
+    </div>
+
+    <!-- SPELLS TAB -->
+    <div class="tab-content" id="tab-spells">
+        {% if characters %}
+        {% set char = active_char %}
+        <div class="card">
+            <div class="card-title">Spell Loadout ({{ char.spells|length }} slots)</div>
+            <p style="color:var(--text-dim);font-size:12px;margin-bottom:12px">
+                You have <strong style="color:var(--rs-gold)">{{ char.spells_unlocked|length }}</strong> spells unlocked.
+                Each loadout slot can hold any unlocked spell. Empty slots show no spell.
+            </p>
+
+            {% if char.spells_unlocked %}
+            <div style="margin-bottom:12px;display:flex;gap:8px;align-items:center">
+                <span style="font-size:13px;color:var(--text-dim)">Fill ALL slots with:</span>
+                <select id="fillAllSpellSelect" style="font-size:12px;width:280px">
+                    {% for sid in char.spells_unlocked %}
+                    <option value="{{ sid }}">{{ sid }}</option>
+                    {% endfor %}
+                </select>
+                <button class="btn" onclick="fillAllSpells()">Fill All 48</button>
+                <button class="btn btn-danger" onclick="clearAllSpells()">Clear All</button>
+            </div>
+            {% endif %}
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));gap:6px">
+                {% for spell_id in char.spells %}
+                <div class="stat-row">
+                    <span class="stat-label">Slot {{ loop.index0 }}</span>
+                    <select onchange="queueSpellSlot({{ loop.index0 }}, this.value)"
+                            style="width:130px;font-size:11px">
+                        <option value="" {% if not spell_id %}selected{% endif %}>(empty)</option>
+                        {% for sid in char.spells_unlocked %}
+                        <option value="{{ sid }}" {% if spell_id == sid %}selected{% endif %}>{{ sid[:14] }}...</option>
+                        {% endfor %}
+                        {% if spell_id and spell_id not in char.spells_unlocked %}
+                        <option value="{{ spell_id }}" selected>{{ spell_id[:14] }}... (unknown)</option>
+                        {% endif %}
+                    </select>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- MORE TAB -->
+    <div class="tab-content" id="tab-more">
+        {% if characters %}
+        {% set char = active_char %}
+
+        <div class="grid grid-2">
+            <div class="card">
+                <div class="card-title">Mounts</div>
+                <p style="color:var(--text-dim);font-size:12px;margin-bottom:12px">
+                    Currently equipped: <strong style="color:var(--rs-gold)">{{ char.character.mount_equipped }}</strong><br>
+                    Unlocked mounts: <strong>{{ char.character.mounts_unlocked|length }}</strong>
+                </p>
+
+                {% if char.character.mounts_unlocked %}
+                <div style="margin-bottom:12px">
+                    <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">UNLOCKED LIST</div>
+                    {% for m in char.character.mounts_unlocked %}
+                    <div class="stat-row" style="margin-bottom:4px">
+                        <span style="font-size:11px;font-family:monospace">{{ m }}</span>
+                        <div style="display:flex;gap:4px">
+                            <button class="btn" style="padding:2px 8px;font-size:10px"
+                                    onclick="equipMount('{{ m }}')">Equip</button>
+                            <button class="btn btn-danger" style="padding:2px 6px;font-size:10px"
+                                    onclick="removeMount('{{ m }}', this)">X</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p style="color:var(--text-dim);font-size:12px;font-style:italic;margin-bottom:12px">
+                    No mounts unlocked yet.
+                </p>
+                {% endif %}
+
+                <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:12px">
+                    <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px">ADD MOUNT BY ID</div>
+                    <div style="display:flex;gap:6px">
+                        <input type="text" id="newMountId" placeholder="mount GUID..."
+                               style="flex:1;width:auto;font-family:monospace;font-size:11px;text-align:left">
+                        <button class="btn" onclick="addMount()">Add</button>
+                    </div>
+                    <p style="font-size:10px;color:var(--text-dim);margin-top:6px">
+                        Mount IDs are base64-style strings like spell/item IDs. We don't have a known catalog yet —
+                        find them in game files or by other players' saves.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Map / Fog of War</div>
+                <p style="color:var(--text-dim);font-size:12px;margin-bottom:12px">
+                    The map is divided into regions tracked by a bitmap. Each bit = 1 region.
+                </p>
+                <div class="stat-row">
+                    <span class="stat-label">Revealed Bitmap</span>
+                    <span class="stat-value" style="font-family:monospace">{{ char.fog.revealed_bitmap }}</span>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:12px">
+                    <button class="btn btn-success" onclick="revealMap()">Reveal Full Map</button>
+                    <button class="btn btn-danger" onclick="hideMap()">Hide Full Map</button>
+                </div>
+
+                <div class="card-title" style="margin-top:24px;font-size:14px">Customization</div>
+                <p style="color:var(--text-dim);font-size:12px">
+                    Read-only display. Edit these in-game via the character creator.
+                </p>
+                {% set custom = char.character.customization %}
+                <div class="grid" style="gap:4px;margin-top:8px">
+                    {% for key, val in custom.items() %}
+                    <div class="stat-row" style="padding:6px 10px">
+                        <span class="stat-label" style="font-size:11px">{{ key }}</span>
+                        <span class="stat-value" style="font-size:11px">{{ val.rowName if val.rowName is defined else val }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
         {% endif %}
     </div>
 
@@ -1010,6 +1153,101 @@
         document.getElementById('stat-endurance').value = 100;
         applyUpdates();
         showToast('Full restore: vitals refilled, debuffs cleared');
+    }
+
+    // ----- Spell editing -----
+    function queueSpellSlot(slot, spellId) {
+        pendingUpdates.push({ action: 'spell_slot', slot: slot, spell_id: spellId });
+        applyUpdates();
+    }
+
+    function fillAllSpells() {
+        const spellId = document.getElementById('fillAllSpellSelect').value;
+        if (!spellId) return;
+        pendingUpdates.push({ action: 'fill_all_spell_slots', spell_id: spellId });
+        document.querySelectorAll('#tab-spells select').forEach(sel => {
+            if (sel.id !== 'fillAllSpellSelect') {
+                sel.value = spellId;
+            }
+        });
+        applyUpdates();
+        showToast('All 48 spell slots filled');
+    }
+
+    function clearAllSpells() {
+        if (!confirm('Clear all 48 spell slots?')) return;
+        document.querySelectorAll('#tab-spells select').forEach((sel, i) => {
+            if (sel.id !== 'fillAllSpellSelect') {
+                sel.value = '';
+                pendingUpdates.push({ action: 'spell_slot', slot: i - 0, spell_id: '' });
+            }
+        });
+        // Use slot index from each select position
+        let slotIdx = 0;
+        document.querySelectorAll('#tab-spells .stat-row select').forEach(sel => {
+            pendingUpdates.push({ action: 'spell_slot', slot: slotIdx++, spell_id: '' });
+            sel.value = '';
+        });
+        applyUpdates();
+        showToast('All spell slots cleared');
+    }
+
+    // ----- Mount editing -----
+    function addMount() {
+        const id = document.getElementById('newMountId').value.trim();
+        if (!id) return;
+        pendingUpdates.push({ action: 'add_mount', mount_id: id });
+        applyUpdates();
+        showToast('Mount added — save and reload to see it');
+        document.getElementById('newMountId').value = '';
+    }
+
+    function removeMount(id, btn) {
+        if (!confirm('Remove this mount?')) return;
+        pendingUpdates.push({ action: 'remove_mount', mount_id: id });
+        btn.closest('.stat-row').remove();
+        applyUpdates();
+    }
+
+    function equipMount(id) {
+        pendingUpdates.push({ action: 'equip_mount', mount_id: id });
+        applyUpdates();
+        showToast('Equipped: ' + id);
+    }
+
+    // ----- Quest variables -----
+    function queueQuestBool(questId, varName, value) {
+        pendingUpdates.push({
+            action: 'quest_bool',
+            quest_id: questId,
+            var_name: varName,
+            value: value === 'true'
+        });
+        applyUpdates();
+    }
+
+    function queueQuestInt(questId, varName, value) {
+        pendingUpdates.push({
+            action: 'quest_int',
+            quest_id: questId,
+            var_name: varName,
+            value: parseInt(value)
+        });
+        applyUpdates();
+    }
+
+    // ----- Map / Fog -----
+    function revealMap() {
+        pendingUpdates.push({ action: 'reveal_map' });
+        applyUpdates();
+        showToast('Full map revealed');
+    }
+
+    function hideMap() {
+        if (!confirm('Hide the entire map?')) return;
+        pendingUpdates.push({ action: 'hide_map' });
+        applyUpdates();
+        showToast('Map hidden');
     }
 
     function maxAllStacks() {

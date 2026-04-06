@@ -154,7 +154,6 @@ def update_character(filename):
                 cs.update_position(update["x"], update["y"], update["z"])
 
             elif action == "full_restore":
-                # Heal everything
                 cs.update_health(100)
                 cs.update_stamina(100)
                 cs.update_stat("Sustenance", 100)
@@ -164,6 +163,33 @@ def update_character(filename):
                 cs.clear_all_status_effects()
                 results.append({"ok": True, "action": action})
                 continue
+
+            elif action == "spell_slot":
+                cs.update_spell_slot(int(update["slot"]), update.get("spell_id", ""))
+
+            elif action == "fill_all_spell_slots":
+                cs.fill_all_spell_slots(update["spell_id"])
+
+            elif action == "add_mount":
+                cs.add_mount(update["mount_id"])
+
+            elif action == "remove_mount":
+                cs.remove_mount(update["mount_id"])
+
+            elif action == "equip_mount":
+                cs.equip_mount(update.get("mount_id", "None"))
+
+            elif action == "quest_bool":
+                cs.update_quest_bool(update["quest_id"], update["var_name"], update["value"])
+
+            elif action == "quest_int":
+                cs.update_quest_int(update["quest_id"], update["var_name"], update["value"])
+
+            elif action == "reveal_map":
+                cs.reveal_full_map()
+
+            elif action == "hide_map":
+                cs.hide_full_map()
 
             else:
                 results.append({"ok": False, "error": f"Unknown action: {action}"})
