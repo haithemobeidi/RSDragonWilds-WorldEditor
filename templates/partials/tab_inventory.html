@@ -1,0 +1,89 @@
+<div class="tab-content" id="tab-inventory">
+    {% if characters %}
+    {% set char = active_char %}
+    <div class="card">
+        <div class="card-title">Equipment (Loadout)</div>
+        <div class="inv-grid">
+            {% for item in char.loadout %}
+            <div class="inv-slot">
+                <div class="inv-slot-header">
+                    <span class="inv-slot-num">{{ item.slot_name }}</span>
+                    <span style="color:var(--text-dim);font-size:11px">Slot {{ item.slot }}</span>
+                </div>
+                {% if item.inv_ref is not none %}
+                <div style="font-size:11px;color:var(--text-dim);font-style:italic">
+                    References inventory slot {{ item.inv_ref }}
+                </div>
+                {% else %}
+                <div class="inv-slot-id">{{ item.item_data }}</div>
+                {% if item.durability is not none %}
+                <div class="inv-stat">
+                    <span style="color:var(--text-dim)">Durability</span>
+                    <input type="number" value="{{ item.durability }}" min="0" max="99999"
+                           style="width:80px;font-size:12px"
+                           onchange="queueDurabilityUpdate({{ item.slot }}, this.value, 'Loadout')">
+                </div>
+                {% endif %}
+                {% if item.vital_shield is not none %}
+                <div class="inv-stat">
+                    <span style="color:var(--text-dim)">Vital Shield</span>
+                    <span>{{ item.vital_shield }}</span>
+                </div>
+                {% endif %}
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Inventory ({{ char.inventory|length }} items)</div>
+        <div style="margin-bottom:12px;display:flex;gap:8px">
+            <button class="btn" onclick="repairAllItems()">Repair All Items</button>
+            <button class="btn" onclick="maxAllStacks()">Max All Stacks (999)</button>
+        </div>
+        <div class="inv-grid" id="inventoryGrid">
+            {% for item in char.inventory %}
+            <div class="inv-slot" data-slot="{{ item.slot }}">
+                <div class="inv-slot-header">
+                    <span class="inv-slot-num">
+                        Slot {{ item.slot }}
+                        {% if item.is_stackable %}
+                        <span style="color:var(--rs-cyan);font-size:10px">[STACK]</span>
+                        {% else %}
+                        <span style="color:var(--rs-gold);font-size:10px">[GEAR]</span>
+                        {% endif %}
+                    </span>
+                    <button class="btn btn-danger" style="padding:2px 6px;font-size:10px"
+                            onclick="deleteItem({{ item.slot }}, this)">X</button>
+                </div>
+                <div class="inv-slot-id">{{ item.item_data }}</div>
+                {% if item.is_stackable %}
+                <div class="inv-stat">
+                    <span style="color:var(--text-dim)">Count</span>
+                    <input type="number" value="{{ item.count }}" min="1" max="99999"
+                           style="width:80px;font-size:12px"
+                           onchange="queueCountUpdate({{ item.slot }}, this.value)">
+                </div>
+                {% else %}
+                {% if item.durability is not none %}
+                <div class="inv-stat">
+                    <span style="color:var(--text-dim)">Durability</span>
+                    <input type="number" value="{{ item.durability }}" min="0" max="99999"
+                           style="width:80px;font-size:12px"
+                           onchange="queueDurabilityUpdate({{ item.slot }}, this.value, 'Inventory')">
+                </div>
+                {% endif %}
+                {% endif %}
+                {% if item.vital_shield is not none and item.vital_shield > 0 %}
+                <div class="inv-stat">
+                    <span style="color:var(--text-dim)">Vital Shield</span>
+                    <span>{{ item.vital_shield }}</span>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>

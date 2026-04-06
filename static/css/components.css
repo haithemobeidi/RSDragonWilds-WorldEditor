@@ -1,0 +1,165 @@
+/* Reusable components — buttons, cards, inputs, stats, badges, toast */
+
+.btn {
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg-input);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.15s;
+}
+
+.btn:hover { background: var(--bg-hover); border-color: var(--text-dim); }
+.btn-primary { background: var(--rs-gold); color: #000; border-color: var(--rs-gold); font-weight: 600; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-danger { border-color: var(--accent-red); color: var(--accent-red); }
+.btn-danger:hover { background: rgba(231,76,60,0.15); }
+.btn-success { background: var(--accent-green); color: #fff; border-color: var(--accent-green); }
+.btn-success:hover { background: #45a049; }
+
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--rs-gold);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+.stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: var(--bg-input);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+
+.stat-label {
+    font-size: 13px;
+    color: var(--text-dim);
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.stat-value.gold { color: var(--rs-gold); }
+.stat-value.green { color: var(--accent-green); }
+.stat-value.blue { color: var(--accent-blue); }
+
+input[type="number"], input[type="text"], select {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    padding: 6px 10px;
+    font-size: 14px;
+    width: 100px;
+    text-align: right;
+}
+
+input[type="number"]:focus, input[type="text"]:focus, select:focus {
+    outline: none;
+    border-color: var(--rs-gold);
+}
+
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.badge-completed { background: rgba(76,175,80,0.2); color: var(--accent-green); }
+.badge-progress { background: rgba(52,152,219,0.2); color: var(--accent-blue); }
+.badge-notstarted { background: rgba(122,139,168,0.2); color: var(--text-dim); }
+
+/* Toast notification */
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--accent-green);
+    border-radius: 8px;
+    padding: 12px 20px;
+    color: var(--accent-green);
+    font-size: 14px;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s;
+    pointer-events: none;
+}
+
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.error { border-color: var(--accent-red); color: var(--accent-red); }
+
+/* Dirty indicator */
+.dirty-badge {
+    display: none;
+    background: var(--accent-red);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+.dirty-badge.show { display: inline-block; }
+
+/* Character selector cards */
+.char-selector {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.char-card {
+    flex: 1;
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.char-card:hover { border-color: var(--text-dim); }
+.char-card.active { border-color: var(--rs-gold); box-shadow: 0 0 20px rgba(245,166,35,0.15); }
+
+.char-card .name {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--rs-gold);
+    margin-bottom: 4px;
+}
+
+.char-card .info {
+    font-size: 12px;
+    color: var(--text-dim);
+}
+
+.char-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}

@@ -1,0 +1,196 @@
+<div class="tab-content active" id="tab-overview">
+    {% if characters %}
+    {% set char = active_char %}
+    <div class="char-header-row">
+        <h2 id="charTitle" style="color:var(--rs-gold)">{{ char.meta.char_name }}</h2>
+        <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn btn-success" onclick="fullRestore()">Full Restore</button>
+            <button class="btn" onclick="clearAllDebuffs()">Clear Debuffs</button>
+            <span style="color:var(--text-dim);font-size:12px">Version {{ char.meta.version }}</span>
+        </div>
+    </div>
+
+    <div class="grid grid-2">
+        <div class="card">
+            <div class="card-title">Vitals</div>
+            <div class="grid" style="gap:8px">
+                <div class="stat-row">
+                    <span class="stat-label">Health</span>
+                    <input type="number" id="stat-health" value="{{ char.character.health }}"
+                           min="0" max="999" onchange="queueUpdate('health', this.value)">
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Stamina</span>
+                    <input type="number" id="stat-stamina" value="{{ char.character.stamina }}"
+                           min="0" max="999" onchange="queueUpdate('stamina', this.value)">
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Sustenance</span>
+                    <input type="number" id="stat-sustenance" value="{{ char.character.sustenance }}"
+                           min="0" max="100" step="0.1" onchange="queueStatUpdate('Sustenance', this.value)">
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Hydration</span>
+                    <input type="number" id="stat-hydration" value="{{ char.character.hydration }}"
+                           min="0" max="100" step="0.1" onchange="queueStatUpdate('Hydration', this.value)">
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Toxicity</span>
+                    <input type="number" id="stat-toxicity" value="{{ char.character.toxicity }}"
+                           min="0" max="100" step="0.1" onchange="queueStatUpdate('Toxicity', this.value)">
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Endurance</span>
+                    <input type="number" id="stat-endurance" value="{{ char.character.endurance }}"
+                           min="0" max="999" step="0.1" onchange="queueStatUpdate('Endurance', this.value)">
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Hardcore Mode</span>
+                    <select id="stat-hardcore" onchange="queueHardcoreUpdate(this.value)">
+                        <option value="false" {% if not char.character.is_hardcore %}selected{% endif %}>Off</option>
+                        <option value="true" {% if char.character.is_hardcore %}selected{% endif %}>On</option>
+                    </select>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label" title="Discovered 04-06-2026: gates which world types this character can join">World Compat</span>
+                    <select id="stat-chartype" onchange="queueCharTypeUpdate(this.value)">
+                        <option value="0" {% if char.meta.char_type == 0 %}selected{% endif %}>Standard worlds only</option>
+                        <option value="3" {% if char.meta.char_type == 3 %}selected{% endif %}>Custom worlds only</option>
+                    </select>
+                </div>
+            </div>
+            <p style="font-size:11px;color:var(--text-dim);margin-top:8px">
+                <strong>World Compat</strong>: <code>0</code> = standard worlds (Gielinor default), <code>3</code> = custom worlds.
+                Mutually exclusive — there's no "both" value. To play your main char on a custom-difficulty world, set this to <code>3</code> AND convert the world to Custom in the World Data tab.
+            </p>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Character Info</div>
+            <div class="grid" style="gap:8px">
+                <div class="stat-row">
+                    <span class="stat-label">Name</span>
+                    <span class="stat-value gold">{{ char.meta.char_name }}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Playtime</span>
+                    <span class="stat-value">{{ char.character.playtime_hours }}h</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Save Count</span>
+                    <span class="stat-value">{{ char.meta.save_count }}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">GUID</span>
+                    <span class="stat-value" style="font-size:10px;font-family:monospace">{{ char.meta.char_guid[:16] }}...</span>
+                </div>
+            </div>
+
+            <div class="card-title" style="margin-top:16px">Progress</div>
+            <div class="progress-grid">
+                <div class="progress-item">
+                    <div class="progress-num" id="prog-recipes">{{ char.progress.recipes_unlocked }}</div>
+                    <div class="progress-label">Recipes</div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-num" id="prog-buildings">{{ char.progress.buildings_unlocked }}</div>
+                    <div class="progress-label">Buildings</div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-num" id="prog-spells">{{ char.progress.spells_unlocked }}</div>
+                    <div class="progress-label">Spells</div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-num" id="prog-items">{{ char.progress.items_picked_up }}</div>
+                    <div class="progress-label">Items Found</div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-num" id="prog-kills">{{ char.progress.killed_ais }}</div>
+                    <div class="progress-label">Enemies Killed</div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-num" id="prog-journal">{{ char.journal.unlocked }}</div>
+                    <div class="progress-label">Journal Entries</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-2">
+        <div class="card">
+            <div class="card-title">Status Effects</div>
+            <div class="grid" style="gap:6px">
+                {% for effect in char.status_effects %}
+                <div class="stat-row">
+                    <span class="stat-label">
+                        {% if effect.active %}
+                        <span style="color:var(--accent-red)">●</span>
+                        {% else %}
+                        <span style="color:var(--text-dim)">○</span>
+                        {% endif %}
+                        {{ effect.name }}
+                    </span>
+                    <div style="display:flex;align-items:center;gap:8px">
+                        <span class="stat-value" style="font-size:12px">{{ "%.1f"|format(effect.value) }}</span>
+                        {% if effect.active %}
+                        <button class="btn btn-danger" style="padding:2px 8px;font-size:11px"
+                                onclick="clearEffect('{{ effect.name }}', this)">Clear</button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Position / Teleport</div>
+            {% if not char.character.position.is_set %}
+            <p style="color:var(--text-dim);font-size:12px;margin-bottom:12px">
+                No position recorded yet. The game stores this when you respawn or fast-travel.
+                You can still set one manually.
+            </p>
+            {% endif %}
+            <div class="grid" style="gap:8px">
+                <div class="stat-row">
+                    <span class="stat-label">X</span>
+                    <input type="number" id="pos-x" value="{{ char.character.position.x }}" step="100"
+                           style="width:130px" onchange="queuePosition()">
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Y</span>
+                    <input type="number" id="pos-y" value="{{ char.character.position.y }}" step="100"
+                           style="width:130px" onchange="queuePosition()">
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Z</span>
+                    <input type="number" id="pos-z" value="{{ char.character.position.z }}" step="100"
+                           style="width:130px" onchange="queuePosition()">
+                </div>
+            </div>
+            <div style="margin-top:8px;font-size:11px;color:var(--text-dim);font-family:monospace">
+                {{ char.character.position.raw }}
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Skills Overview</div>
+        <div class="grid grid-2" style="gap:8px">
+            {% for skill in char.skills %}
+            <div class="stat-row">
+                <span class="stat-label">{{ skill.name }}</span>
+                <div style="display:flex;align-items:center;gap:12px">
+                    <span class="stat-value gold">Lvl {{ skill.level }}</span>
+                    <span class="stat-value" style="font-size:12px;color:var(--text-dim)">{{ skill.xp }} XP</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="card">
+        <div class="card-title">No Characters Found</div>
+        <p style="color:var(--text-dim)">No character save files were found in the save directory.</p>
+    </div>
+    {% endif %}
+</div>

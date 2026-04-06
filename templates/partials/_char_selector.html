@@ -1,0 +1,17 @@
+{% if characters %}
+<div class="char-selector" id="charSelector">
+    {% for char in characters %}
+    <div class="char-card {% if active_char and char._filename == active_char._filename %}active{% endif %}"
+         data-filename="{{ char._filename }}"
+         onclick="selectCharacter('{{ char._filename }}')">
+        <div class="name">{{ char.meta.char_name }}</div>
+        <div class="info">
+            {{ char.character.playtime_hours }}h played &middot;
+            {{ char.skills|length }} skills &middot;
+            {{ char.quests|length }} quests &middot;
+            Save #{{ char.meta.save_count }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
