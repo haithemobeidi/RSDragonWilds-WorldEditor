@@ -282,7 +282,23 @@ function disableAllRaids(filename) {
 async function convertWorldMode(filename, targetMode, idx) {
     const action = targetMode === 'custom' ? 'convert_to_custom' : 'revert_to_standard';
     const confirmMsg = targetMode === 'custom'
-        ? `Convert "${filename}" to a Custom World?\n\nThis flips two bytes (L_World+9 + PROP block) so the game treats it as a custom world. Required to use custom difficulty settings.\n\nAfter conversion you must:\n  1. Click Save World\n  2. Set your character's char_type to 3 (in Character Editor)\n  3. Launch the game and join with that character\n\nAuto-backup will be created. Proceed?`
+        ? `Convert "${filename}" to a Custom World?\n\n` +
+          `⚠️ KNOWN BUG — DO THIS FIRST IN-GAME BEFORE CONVERTING:\n` +
+          `  • Unlock and empty any LOCKED CHESTS you care about\n` +
+          `  • Pick up / remove any PROTECTION TOTEMS you've placed\n` +
+          `  • Note your PRIVACY SETTINGS (you may need to reset them)\n\n` +
+          `Conversion appears to break the world ↔ character ownership binding,\n` +
+          `so locked chests and protection totems may become unusable afterward\n` +
+          `(reported by community testers — fix is on the bug list).\n\n` +
+          `What this does:\n` +
+          `  • Flips two bytes (L_World+9 + PROP CustomDifficultySettings byte)\n` +
+          `  • Game treats world as Custom — exposes all difficulty categories\n` +
+          `  • Required to use custom difficulty settings\n\n` +
+          `After conversion:\n` +
+          `  1. Click Save World\n` +
+          `  2. Set your character's char_type to 3 (Character Editor)\n` +
+          `  3. Launch the game and join with that character\n\n` +
+          `Auto-backup will be created. Proceed?`
         : `Revert "${filename}" to Standard World?\n\nThis flips both bytes back to 0. Custom difficulty settings will no longer apply.\n\nProceed?`;
     if (!confirm(confirmMsg)) return;
 

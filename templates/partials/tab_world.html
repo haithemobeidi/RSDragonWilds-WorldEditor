@@ -52,6 +52,11 @@
                 <strong>Discovered 04-06-2026</strong> — flips two bytes (L_World+9 enum +
                 PROP CustomDifficultySettings byte). Persists across game saves.
             </p>
+            <p style="font-size:11px;color:#df7f7f;margin:6px 0 8px;padding:6px;background:rgba(223,127,127,0.08);border-left:3px solid #df7f7f;border-radius:3px">
+                <strong>⚠ Known issue:</strong> conversion may break <strong>locked chests</strong>,
+                <strong>protection totems</strong>, and <strong>privacy settings</strong> on the world.
+                Unlock chests and remove totems <em>before</em> converting. Tracked in <code>BUGS.md</code>.
+            </p>
             {% if winfo.world_mode == 'standard' %}
                 <button class="btn" style="background:#5a8a4a"
                         onclick="convertWorldMode('{{ winfo.filename }}', 'custom', {{ loop.index }})">
