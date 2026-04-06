@@ -3,20 +3,20 @@ RS Dragonwilds Save Editor - Flask Web App
 """
 
 import os
-import json
-from flask import Flask, render_template, request, jsonify, redirect, url_for
-from parser import CharacterSave, WorldSave, discover_saves, SKILL_NAMES, xp_to_level, level_to_xp, XP_TABLE
+from flask import Flask, render_template, request, jsonify
+from parser import (
+    CharacterSave, WorldSave, discover_saves,
+    SKILL_NAMES, XP_TABLE, xp_to_level, level_to_xp,
+)
 
 app = Flask(__name__)
 
-# Global state
 SAVE_DIR = None
 characters: dict[str, CharacterSave] = {}
 worlds: dict[str, WorldSave] = {}
 
 
 def init_saves():
-    """Discover and load all saves."""
     global SAVE_DIR
     saves = discover_saves()
     SAVE_DIR = saves.get("base_path", "")
@@ -51,7 +51,6 @@ def index():
         summary["_filename"] = fname
         char_summaries.append(summary)
 
-    # Pick the active character
     active_char = None
     for s in char_summaries:
         if s["_filename"] == selected:
@@ -70,7 +69,6 @@ def index():
                            active_char=active_char,
                            worlds=world_infos,
                            save_dir=SAVE_DIR,
-                           skill_names=SKILL_NAMES,
                            xp_table=XP_TABLE)
 
 
@@ -80,14 +78,6 @@ def get_character(filename):
     if not cs:
         return jsonify({"error": "Character not found"}), 404
     return jsonify(cs.get_summary())
-
-
-@app.route("/api/character/<filename>/raw")
-def get_character_raw(filename):
-    cs = characters.get(filename)
-    if not cs:
-        return jsonify({"error": "Character not found"}), 404
-    return jsonify(cs.data)
 
 
 @app.route("/api/character/<filename>/update", methods=["POST"])
@@ -104,42 +94,82 @@ def update_character(filename):
         try:
             if action == "skill_xp":
                 cs.update_skill_xp(update["skill_id"], update["xp"])
-                results.append({"ok": True, "action": action, "skill": update["skill_id"]})
+
+            elif action == "max_all_skills":
+                count = cs.max_all_skills()
+                results.append({"ok": True, "action": action, "count": count})
+                continue
 
             elif action == "health":
                 cs.update_health(update["value"])
-                results.append({"ok": True, "action": action})
 
             elif action == "stamina":
                 cs.update_stamina(update["value"])
-                results.append({"ok": True, "action": action})
 
             elif action == "stat":
                 cs.update_stat(update["stat"], update["value"])
-                results.append({"ok": True, "action": action, "stat": update["stat"]})
 
             elif action == "quest_state":
                 cs.update_quest_state(update["quest_id"], update["state"])
-                results.append({"ok": True, "action": action})
+
+            elif action == "complete_all_quests":
+                quests = cs.data.get("QuestProgress", {}).get("Quests", [])
+                for q in quests:
+                    q["QuestState"] = 2
+                results.append({"ok": True, "action": action, "count": len(quests)})
+                continue
 
             elif action == "item_durability":
-                cs.update_item_durability(update["slot"], update["durability"], update.get("source", "Inventory"))
-                results.append({"ok": True, "action": action})
+                ok = cs.update_item_durability(update["slot"], update["durability"], update.get("source", "Inventory"))
+                if not ok:
+                    results.append({"ok": False, "action": action, "error": "Item not found or not durable"})
+                    continue
 
-            elif action == "item_quantity":
-                cs.update_item_quantity(update["slot"], update["quantity"])
-                results.append({"ok": True, "action": action})
+            elif action == "item_count":
+                ok = cs.update_item_count(update["slot"], update["count"], update.get("source", "Inventory"))
+                if not ok:
+                    results.append({"ok": False, "action": action, "error": "Item not found or not stackable"})
+                    continue
 
             elif action == "delete_item":
                 cs.delete_inventory_item(update["slot"])
-                results.append({"ok": True, "action": action})
+
+            elif action == "repair_all":
+                count = cs.repair_all_items(update.get("durability", 9999))
+                results.append({"ok": True, "action": action, "count": count})
+                continue
 
             elif action == "hardcore":
                 cs.set_hardcore(update["enabled"])
+
+            elif action == "clear_status_effect":
+                cs.clear_status_effect(update["effect"])
+
+            elif action == "clear_all_status_effects":
+                cleared = cs.clear_all_status_effects()
+                results.append({"ok": True, "action": action, "cleared": cleared})
+                continue
+
+            elif action == "position":
+                cs.update_position(update["x"], update["y"], update["z"])
+
+            elif action == "full_restore":
+                # Heal everything
+                cs.update_health(100)
+                cs.update_stamina(100)
+                cs.update_stat("Sustenance", 100)
+                cs.update_stat("Hydration", 100)
+                cs.update_stat("Toxicity", 0)
+                cs.update_stat("Endurance", 100)
+                cs.clear_all_status_effects()
                 results.append({"ok": True, "action": action})
+                continue
 
             else:
                 results.append({"ok": False, "error": f"Unknown action: {action}"})
+                continue
+
+            results.append({"ok": True, "action": action})
 
         except Exception as e:
             results.append({"ok": False, "action": action, "error": str(e)})
@@ -175,17 +205,78 @@ def get_world(filename):
     return jsonify({
         "info": ws.get_header_info(),
         "events": ws.get_world_events(),
-        "stations": ws.get_stations()[:20],
-        "containers": ws.get_containers()[:20],
+        "weather": ws.get_weather(),
+        "stations": ws.get_stations(),
+        "containers": ws.get_containers(),
     })
 
 
-@app.route("/api/xp_table")
-def get_xp_table():
-    return jsonify({
-        "table": XP_TABLE,
-        "skill_names": SKILL_NAMES,
-    })
+@app.route("/api/world/<filename>/update", methods=["POST"])
+def update_world(filename):
+    ws = worlds.get(filename)
+    if not ws:
+        return jsonify({"error": "World not found"}), 404
+
+    updates = request.json
+    results = []
+
+    for update in updates:
+        action = update.get("action")
+        try:
+            if action == "container_item":
+                ok = ws.update_container_item(
+                    update["section_index"],
+                    update["slot"],
+                    update["field"],
+                    update["value"],
+                )
+                results.append({"ok": ok, "action": action})
+
+            elif action == "weather":
+                ok = ws.update_weather(
+                    update["weather_name"],
+                    update.get("type"),
+                    update.get("remaining_time"),
+                )
+                results.append({"ok": ok, "action": action})
+
+            elif action == "event_trigger":
+                ok = ws.update_event_trigger(
+                    update["event_name"],
+                    update["trigger_name"],
+                    active=update.get("active"),
+                    trigger_time=update.get("trigger_time"),
+                )
+                results.append({"ok": ok, "action": action})
+
+            elif action == "disable_all_raids":
+                count = ws.disable_all_raids()
+                results.append({"ok": True, "action": action, "count": count})
+
+            else:
+                results.append({"ok": False, "error": f"Unknown action: {action}"})
+
+        except Exception as e:
+            results.append({"ok": False, "action": action, "error": str(e)})
+
+    return jsonify({"results": results})
+
+
+@app.route("/api/world/<filename>/save", methods=["POST"])
+def save_world(filename):
+    ws = worlds.get(filename)
+    if not ws:
+        return jsonify({"error": "World not found"}), 404
+
+    try:
+        result = ws.save(backup=True)
+        return jsonify({
+            "ok": True,
+            "message": f"Saved {filename} (backup created)",
+            "warnings": result.get("warnings", []),
+        })
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
 
 
 if __name__ == "__main__":

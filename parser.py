@@ -124,38 +124,65 @@ class CharacterSave:
 
         inventory_items = []
         inv = d.get("Inventory", {})
-        for key in sorted(inv.keys(), key=lambda x: int(x) if x.isdigit() else 999):
+        for key in sorted(inv.keys(), key=lambda x: int(x) if x.isdigit() else 99999):
             if key.isdigit():
                 item = inv[key]
+                # Items are EITHER stackable (Count) OR durable (Durability)
+                is_stackable = "Count" in item
                 inventory_items.append({
                     "slot": int(key),
                     "guid": item.get("GUID", ""),
                     "item_data": item.get("ItemData", ""),
-                    "durability": item.get("Durability", 0),
-                    "vital_shield": item.get("VitalShield", 0),
-                    "quantity": item.get("Quantity", 1),
+                    "durability": item.get("Durability"),  # None for stackables
+                    "count": item.get("Count"),              # None for non-stackables
+                    "vital_shield": item.get("VitalShield"),
+                    "is_stackable": is_stackable,
                 })
 
         loadout_items = []
         loadout = d.get("Loadout", {})
         slot_names = {0: "Head", 1: "Body", 2: "Legs", 3: "Cape", 4: "Ring",
                       5: "Weapon", 6: "Shield", 7: "Ammo", 8: "Amulet"}
-        for key in sorted(loadout.keys(), key=lambda x: int(x) if x.isdigit() else 999):
+        for key in sorted(loadout.keys(), key=lambda x: int(x) if x.isdigit() else 99999):
             if key.isdigit():
                 item = loadout[key]
+                # Slots 5-8 reference inventory by index
+                inv_ref = item.get("PlayerInventoryItemIndex")
                 loadout_items.append({
                     "slot": int(key),
                     "slot_name": slot_names.get(int(key), f"Slot {key}"),
                     "guid": item.get("GUID", ""),
                     "item_data": item.get("ItemData", ""),
-                    "durability": item.get("Durability", 0),
-                    "vital_shield": item.get("VitalShield", 0),
+                    "durability": item.get("Durability"),
+                    "vital_shield": item.get("VitalShield"),
+                    "inv_ref": inv_ref,  # If set, item is in inventory at this index
                 })
 
-        sustenance = character.get("Sustenance", {})
-        hydration = character.get("Hydration", {})
-        toxicity = character.get("Toxicity", {})
-        endurance = character.get("Endurance", {})
+        sustenance = character.get("Sustenance", {}) if isinstance(character.get("Sustenance"), dict) else {}
+        hydration = character.get("Hydration", {}) if isinstance(character.get("Hydration"), dict) else {}
+        toxicity = character.get("Toxicity", {}) if isinstance(character.get("Toxicity"), dict) else {}
+        endurance = character.get("Endurance", {}) if isinstance(character.get("Endurance"), dict) else {}
+
+        # Status effects
+        status_effects = []
+        se_raw = character.get("StatusEffects", {})
+        for effect_name in ["Cold", "Poison", "Burning", "Bleeding", "Slow", "WellRested", "Cosiness", "Wither"]:
+            ef = se_raw.get(effect_name, {})
+            if isinstance(ef, dict):
+                active_list = ef.get("Active", [False])
+                is_active = any(active_list) if isinstance(active_list, list) else False
+                status_effects.append({
+                    "name": effect_name,
+                    "value": ef.get("Value", 0),
+                    "active": is_active,
+                })
+
+        # Position - parse "V(X=11924.46, Y=184569.45, Z=-3183.06)" format
+        pos_str = character.get("LastAccessibleLocation", {}).get("Position", "")
+        position = self._parse_position(pos_str)
+
+        # Mounts
+        mount = character.get("Mount", {})
 
         return {
             "file": self.filename,
@@ -172,13 +199,18 @@ class CharacterSave:
                 "playtime_hours": round(character.get("Playtime_wall", 0) / 3600, 1),
                 "health": character.get("Health", {}).get("CurrentValue", 0) if isinstance(character.get("Health"), dict) else 0,
                 "stamina": character.get("Stamina", {}).get("CurrentValue", 0) if isinstance(character.get("Stamina"), dict) else 0,
-                "sustenance": sustenance.get("CurrentValue", 0) if isinstance(sustenance, dict) else 0,
-                "hydration": hydration.get("CurrentValue", 0) if isinstance(hydration, dict) else 0,
-                "toxicity": toxicity.get("CurrentValue", 0) if isinstance(toxicity, dict) else 0,
-                "endurance": endurance.get("CurrentValue", 0) if isinstance(endurance, dict) else 0,
+                "sustenance": round(sustenance.get("SustenanceValue", 0), 2),
+                "hydration": round(hydration.get("HydrationValue", 0), 2),
+                "toxicity": round(toxicity.get("ToxicityValue", 0), 2),
+                "highest_toxicity": round(toxicity.get("HighestToxicityValue", 0), 2),
+                "endurance": round(endurance.get("EnduranceValue", 0), 2),
                 "is_hardcore": d.get("Hardcore", {}).get("IsHardcore", False),
                 "customization": character.get("Customization", {}).get("CustomizationData", {}),
+                "position": position,
+                "mount_equipped": mount.get("MountEquipped", "None"),
+                "mounts_unlocked": mount.get("MountsUnlockedList", []),
             },
+            "status_effects": status_effects,
             "skills": skills,
             "quests": quests,
             "inventory": inventory_items,
@@ -201,6 +233,27 @@ class CharacterSave:
             },
         }
 
+    @staticmethod
+    def _parse_position(pos_str: str) -> dict:
+        """Parse 'V(X=11924.46, Y=184569.45, Z=-3183.06)' into {x, y, z}."""
+        import re
+        if not pos_str or pos_str == "V(0)":
+            return {"x": 0.0, "y": 0.0, "z": 0.0, "raw": pos_str, "is_set": False}
+        match = re.search(r'X=(-?[\d.]+).*Y=(-?[\d.]+).*Z=(-?[\d.]+)', pos_str)
+        if match:
+            return {
+                "x": float(match.group(1)),
+                "y": float(match.group(2)),
+                "z": float(match.group(3)),
+                "raw": pos_str,
+                "is_set": True,
+            }
+        return {"x": 0.0, "y": 0.0, "z": 0.0, "raw": pos_str, "is_set": False}
+
+    @staticmethod
+    def _format_position(x: float, y: float, z: float) -> str:
+        return f"V(X={x:.6f}, Y={y:.6f}, Z={z:.6f})"
+
     def update_skill_xp(self, skill_id: str, new_xp: int):
         skills = self.data.get("Skills", {}).get("Skills", [])
         for skill in skills:
@@ -215,13 +268,32 @@ class CharacterSave:
     def update_stamina(self, value: int):
         self.data.setdefault("Character", {}).setdefault("Stamina", {})["CurrentValue"] = max(0, int(value))
 
+    # Maps friendly stat names to (container_key, value_key)
+    STAT_FIELD_MAP = {
+        "Sustenance": ("Sustenance", "SustenanceValue"),
+        "Hydration":  ("Hydration",  "HydrationValue"),
+        "Toxicity":   ("Toxicity",   "ToxicityValue"),
+        "Endurance":  ("Endurance",  "EnduranceValue"),
+    }
+
     def update_stat(self, stat_name: str, value):
-        """Update a character stat like Sustenance, Hydration, Toxicity, Endurance."""
+        """Update Sustenance, Hydration, Toxicity, or Endurance."""
         char = self.data.setdefault("Character", {})
-        if isinstance(char.get(stat_name), dict):
-            char[stat_name]["CurrentValue"] = value
+        if stat_name in self.STAT_FIELD_MAP:
+            container_key, value_key = self.STAT_FIELD_MAP[stat_name]
+            container = char.setdefault(container_key, {})
+            container[value_key] = float(value)
+            # Reset decay buffer when restoring
+            if "DecayBuffer" in (container_key + "DecayBuffer"):
+                buf_key = container_key + "DecayBuffer"
+                if buf_key in container:
+                    container[buf_key] = 0
         else:
-            char[stat_name] = {"CurrentValue": value}
+            # Generic fallback
+            if isinstance(char.get(stat_name), dict):
+                char[stat_name]["CurrentValue"] = value
+            else:
+                char[stat_name] = {"CurrentValue": value}
 
     def update_quest_state(self, quest_id: str, new_state: int):
         quests = self.data.get("QuestProgress", {}).get("Quests", [])
@@ -234,16 +306,17 @@ class CharacterSave:
     def update_item_durability(self, slot: int, durability: int, source: str = "Inventory"):
         container = self.data.get(source, {})
         key = str(slot)
-        if key in container:
+        if key in container and "Durability" in container[key]:
             container[key]["Durability"] = max(0, int(durability))
             return True
         return False
 
-    def update_item_quantity(self, slot: int, quantity: int):
-        inv = self.data.get("Inventory", {})
+    def update_item_count(self, slot: int, count: int, source: str = "Inventory"):
+        """Update stack count (Count field) for stackable items."""
+        container = self.data.get(source, {})
         key = str(slot)
-        if key in inv:
-            inv[key]["Quantity"] = max(1, int(quantity))
+        if key in container and "Count" in container[key]:
+            container[key]["Count"] = max(1, int(count))
             return True
         return False
 
@@ -257,6 +330,64 @@ class CharacterSave:
 
     def set_hardcore(self, enabled: bool):
         self.data.setdefault("Hardcore", {})["IsHardcore"] = enabled
+
+    # ----- Status Effects -----
+
+    def clear_status_effect(self, effect_name: str):
+        """Clear a status effect (set Value=0, Active=[false])."""
+        effects = self.data.get("Character", {}).get("StatusEffects", {})
+        if effect_name in effects and isinstance(effects[effect_name], dict):
+            effects[effect_name]["Value"] = 0
+            effects[effect_name]["Active"] = [False]
+            return True
+        return False
+
+    def clear_all_status_effects(self):
+        """Clear all negative status effects."""
+        cleared = []
+        for name in ["Cold", "Poison", "Burning", "Bleeding", "Slow", "Wither"]:
+            if self.clear_status_effect(name):
+                cleared.append(name)
+        return cleared
+
+    # ----- Position / Teleport -----
+
+    def update_position(self, x: float, y: float, z: float):
+        """Update player's last accessible location (teleport on next load)."""
+        char = self.data.setdefault("Character", {})
+        char.setdefault("LastAccessibleLocation", {})["Position"] = self._format_position(x, y, z)
+
+    # ----- Spell Loadout -----
+
+    def update_spell_slot(self, slot: int, spell_id: str):
+        """Update a spell loadout slot."""
+        spells = self.data.setdefault("Spellcasting", {}).setdefault("SelectedSpells", [])
+        # Pad if needed
+        while len(spells) <= slot:
+            spells.append("")
+        spells[slot] = spell_id
+        return True
+
+    # ----- Repair / Mass operations -----
+
+    def repair_all_items(self, durability: int = 9999):
+        """Set all items in inventory and loadout to max durability."""
+        count = 0
+        for container_name in ["Inventory", "Loadout"]:
+            container = self.data.get(container_name, {})
+            for k, item in container.items():
+                if k.isdigit() and isinstance(item, dict) and "Durability" in item:
+                    item["Durability"] = durability
+                    count += 1
+        return count
+
+    def max_all_skills(self):
+        """Max all skills to top of XP table."""
+        max_xp = XP_TABLE[-1]
+        skills = self.data.get("Skills", {}).get("Skills", [])
+        for skill in skills:
+            skill["Xp"] = max_xp
+        return len(skills)
 
 
 class WorldSave:
@@ -303,8 +434,12 @@ class WorldSave:
 
             if "Definitions" in keys:
                 defs = d.get("Definitions", [])
-                if isinstance(defs, list) and defs and isinstance(defs[0], dict) and "EventName" in defs[0]:
-                    section.category = "world_events"
+                if isinstance(defs, list) and defs and isinstance(defs[0], dict):
+                    first = defs[0]
+                    if "EventName" in first:
+                        section.category = "world_events"
+                    elif "WeatherName" in first:
+                        section.category = "weather"
             elif "EventName" in keys and "EventData" in keys:
                 section.category = "world_event"
             elif "Resources" in keys or "Fuel" in keys or "Output" in keys:
@@ -382,22 +517,111 @@ class WorldSave:
                 })
         return stations
 
-    def get_containers(self) -> list[dict]:
+    def get_containers(self, include_empty: bool = False) -> list[dict]:
         containers = []
-        for section in self.json_sections:
+        for idx, section in enumerate(self.json_sections):
             if section.category == "container":
                 d = section.data
-                items = {}
+                items = []
                 for k, v in d.items():
-                    if k.isdigit():
-                        items[k] = v
-                containers.append({
-                    "offset": hex(section.offset),
-                    "items": items,
-                    "max_slots": d.get("MaxSlotIndex", -1),
-                    "allow_adds": d.get("AllowAdds", True),
-                })
+                    if k.isdigit() and isinstance(v, dict):
+                        items.append({
+                            "slot": int(k),
+                            "guid": v.get("GUID", ""),
+                            "item_data": v.get("ItemData", ""),
+                            "count": v.get("Count"),
+                            "durability": v.get("Durability"),
+                            "vital_shield": v.get("VitalShield"),
+                            "is_stackable": "Count" in v,
+                        })
+                if items or include_empty:
+                    containers.append({
+                        "section_index": idx,
+                        "offset": hex(section.offset),
+                        "items": sorted(items, key=lambda x: x["slot"]),
+                        "item_count": len(items),
+                        "max_slots": d.get("MaxSlotIndex", -1),
+                        "allow_adds": d.get("AllowAdds", True),
+                    })
         return containers
+
+    def get_weather(self) -> list[dict]:
+        weather = []
+        for section in self.json_sections:
+            if section.category == "weather":
+                for w in section.data.get("Definitions", []):
+                    wd = w.get("WeatherData", {})
+                    weather.append({
+                        "name": w.get("WeatherName", ""),
+                        "type": wd.get("TYPE", ""),
+                        "day_count": wd.get("DAY_COUNT", 0),
+                        "remaining_time": wd.get("REMAINING_TIME", 0),
+                        "alt_profile": wd.get("ALT_PROFILE", False),
+                    })
+        return weather
+
+    # ----- Edit methods -----
+
+    def update_container_item(self, section_index: int, slot: int, field: str, value):
+        """Edit an item in a world container (chest)."""
+        if section_index >= len(self.json_sections):
+            return False
+        section = self.json_sections[section_index]
+        d = section.data
+        key = str(slot)
+        if key in d and isinstance(d[key], dict):
+            if field in ("Count", "Durability", "VitalShield"):
+                d[key][field] = max(0, int(value))
+                return True
+        return False
+
+    def update_weather(self, weather_name: str, weather_type: str = None, remaining_time: float = None):
+        """Update weather for a region. weather_type like 'EWeatherType::Sunny'."""
+        for section in self.json_sections:
+            if section.category == "weather":
+                for w in section.data.get("Definitions", []):
+                    if w.get("WeatherName") == weather_name:
+                        wd = w.setdefault("WeatherData", {})
+                        if weather_type is not None:
+                            if not weather_type.startswith("EWeatherType::"):
+                                weather_type = f"EWeatherType::{weather_type}"
+                            wd["TYPE"] = weather_type
+                        if remaining_time is not None:
+                            wd["REMAINING_TIME"] = float(remaining_time)
+                        return True
+        return False
+
+    def update_event_trigger(self, event_name: str, trigger_name: str, active: bool = None, trigger_time: str = None):
+        """Toggle a world event trigger or update its time."""
+        for section in self.json_sections:
+            if section.category == "world_events":
+                for ev in section.data.get("Definitions", []):
+                    if ev.get("EventName") == event_name:
+                        for t in ev.get("EventData", {}).get("Triggers", []):
+                            if t.get("TriggerName") == trigger_name:
+                                td = t.setdefault("TriggerData", {})
+                                if active is not None:
+                                    td["CurrentValue"] = bool(active)
+                                if trigger_time is not None:
+                                    td["TriggerTime"] = trigger_time
+                                return True
+        return False
+
+    def disable_all_raids(self):
+        """Disable all raid/ambush events by setting their cooldowns far in the future."""
+        count = 0
+        for section in self.json_sections:
+            if section.category == "world_events":
+                for ev in section.data.get("Definitions", []):
+                    name = ev.get("EventName", "")
+                    if "raid" in name.lower() or "ambush" in name.lower():
+                        for t in ev.get("EventData", {}).get("Triggers", []):
+                            if t.get("TriggerName", "").lower() in ("cooldown", "delay_at_start"):
+                                td = t.setdefault("TriggerData", {})
+                                td["CurrentValue"] = True
+                                td["TriggerTime"] = "+999.00:00:00.000"
+                        count += 1
+        return count
 
     def save(self, output_path: Optional[str] = None, backup: bool = True):
         if output_path is None:
@@ -413,14 +637,42 @@ class WorldSave:
         modified_data = bytearray(self.raw_data)
         sections_to_write = sorted(self.json_sections, key=lambda s: s.offset, reverse=True)
 
+        warnings = []
         for section in sections_to_write:
             new_json = json.dumps(section.data, indent="\t", ensure_ascii=False).encode("utf-8")
+            old_length = section.length
             old_start = section.offset
             old_end = section.offset + section.length
+
+            if len(new_json) == old_length:
+                pass  # perfect fit
+            elif len(new_json) < old_length:
+                # Pad inside the JSON: insert spaces just before the final closing brace/bracket
+                # The last char is `}` or `]`. JSON allows whitespace before it.
+                pad_count = old_length - len(new_json)
+                last = new_json[-1:]
+                new_json = new_json[:-1] + (b" " * pad_count) + last
+            else:
+                # New JSON is larger. Try compacting (no indent) first
+                compact = json.dumps(section.data, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+                if len(compact) <= old_length:
+                    pad_count = old_length - len(compact)
+                    new_json = compact[:-1] + (b" " * pad_count) + compact[-1:]
+                else:
+                    warnings.append(
+                        f"Section at 0x{old_start:x}: even compact JSON ({len(compact)}b) > original "
+                        f"({old_length}b). Skipped — edit too large for in-place rewrite."
+                    )
+                    continue
+
+            assert len(new_json) == old_length, \
+                f"Length mismatch: {len(new_json)} != {old_length}"
             modified_data[old_start:old_end] = new_json
 
         with open(output_path, "wb") as f:
             f.write(modified_data)
+
+        return {"path": output_path, "warnings": warnings}
 
 
 def discover_saves(base_path: Optional[str] = None) -> dict:
