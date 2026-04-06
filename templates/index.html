@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RS Dragonwilds Save Editor</title>
+    <style>
+        :root {
+            --bg-dark: #0a0e17;
+            --bg-card: #131926;
+            --bg-input: #1a2235;
+            --bg-hover: #1e2a40;
+            --border: #2a3650;
+            --text: #e0e6f0;
+            --text-dim: #7a8ba8;
+            --accent: #f5a623;
+            --accent-hover: #ffb84d;
+            --accent-green: #4caf50;
+            --accent-red: #e74c3c;
+            --accent-blue: #3498db;
+            --accent-purple: #9b59b6;
+            --rs-gold: #f5a623;
+            --rs-cyan: #00bcd4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-bottom: 2px solid var(--rs-gold);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            color: var(--rs-gold);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .header .subtitle {
+            color: var(--text-dim);
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .header-actions { display: flex; gap: 8px; }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg-input);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.15s;
+        }
+
+        .btn:hover { background: var(--bg-hover); border-color: var(--text-dim); }
+        .btn-primary { background: var(--rs-gold); color: #000; border-color: var(--rs-gold); font-weight: 600; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-danger { border-color: var(--accent-red); color: var(--accent-red); }
+        .btn-danger:hover { background: rgba(231,76,60,0.15); }
+        .btn-success { background: var(--accent-green); color: #fff; border-color: var(--accent-green); }
+        .btn-success:hover { background: #45a049; }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            background: transparent;
+            color: var(--text-dim);
+            font-size: 14px;
+            transition: all 0.15s;
+            margin-bottom: -2px;
+        }
+
+        .tab:hover { color: var(--text); background: var(--bg-card); }
+        .tab.active {
+            color: var(--rs-gold);
+            background: var(--bg-card);
+            border-color: var(--border);
+            border-bottom: 2px solid var(--bg-card);
+            font-weight: 600;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--rs-gold);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .grid { display: grid; gap: 16px; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+        @media (max-width: 900px) {
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+        }
+
+        .stat-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background: var(--bg-input);
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .stat-value.gold { color: var(--rs-gold); }
+        .stat-value.green { color: var(--accent-green); }
+        .stat-value.blue { color: var(--accent-blue); }
+
+        input[type="number"], input[type="text"], select {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text);
+            padding: 6px 10px;
+            font-size: 14px;
+            width: 100px;
+            text-align: right;
+        }
+
+        input[type="number"]:focus, input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: var(--rs-gold);
+        }
+
+        /* Skills table */
+        .skill-row {
+            display: grid;
+            grid-template-columns: 140px 80px 1fr 120px 60px;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--bg-input);
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            margin-bottom: 6px;
+        }
+
+        .skill-name { font-weight: 600; font-size: 14px; }
+        .skill-level {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--rs-gold);
+            text-align: center;
+        }
+
+        .xp-bar-container {
+            background: #0d1117;
+            border-radius: 4px;
+            height: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .xp-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #2d6a30, #4caf50);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .xp-bar-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 11px;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+            white-space: nowrap;
+        }
+
+        /* Quest list */
+        .quest-row {
+            display: grid;
+            grid-template-columns: 1fr 120px 100px;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--bg-input);
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            margin-bottom: 6px;
+        }
+
+        .quest-id { font-size: 12px; color: var(--text-dim); font-family: monospace; }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-completed { background: rgba(76,175,80,0.2); color: var(--accent-green); }
+        .badge-progress { background: rgba(52,152,219,0.2); color: var(--accent-blue); }
+        .badge-notstarted { background: rgba(122,139,168,0.2); color: var(--text-dim); }
+
+        /* Inventory */
+        .inv-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 8px;
+        }
+
+        .inv-slot {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 12px;
+        }
+
+        .inv-slot-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .inv-slot-num {
+            font-weight: 700;
+            color: var(--rs-gold);
+        }
+
+        .inv-slot-id {
+            font-family: monospace;
+            color: var(--text-dim);
+            font-size: 10px;
+            word-break: break-all;
+        }
+
+        .inv-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 0;
+            font-size: 12px;
+        }
+
+        /* World events */
+        .event-row {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 8px;
+        }
+
+        .event-name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: var(--rs-cyan);
+        }
+
+        .trigger-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            padding: 3px 8px;
+            color: var(--text-dim);
+        }
+
+        .trigger-active { color: var(--accent-green); }
+        .trigger-inactive { color: var(--accent-red); }
+
+        /* Character selector */
+        .char-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .char-card {
+            flex: 1;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .char-card:hover { border-color: var(--text-dim); }
+        .char-card.active { border-color: var(--rs-gold); box-shadow: 0 0 20px rgba(245,166,35,0.15); }
+
+        .char-card .name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--rs-gold);
+            margin-bottom: 4px;
+        }
+
+        .char-card .info {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--accent-green);
+            border-radius: 8px;
+            padding: 12px 20px;
+            color: var(--accent-green);
+            font-size: 14px;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            pointer-events: none;
+        }
+
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.error { border-color: var(--accent-red); color: var(--accent-red); }
+
+        /* Dirty indicator */
+        .dirty-badge {
+            display: none;
+            background: var(--accent-red);
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .dirty-badge.show { display: inline-block; }
+
+        /* Progress section */
+        .progress-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .progress-item {
+            background: var(--bg-input);
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .progress-num {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--rs-gold);
+        }
+
+        .progress-label {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        .char-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div>
+        <h1>RS Dragonwilds Save Editor</h1>
+        <div class="subtitle">{{ save_dir }}</div>
+    </div>
+    <div class="header-actions">
+        <button class="btn" onclick="reloadSaves()">Reload Files</button>
+        <button class="btn btn-primary" id="saveBtn" onclick="saveChanges()" style="display:none">
+            Save to Disk
+            <span class="dirty-badge" id="dirtyBadge">unsaved</span>
+        </button>
+    </div>
+</div>
+
+<div class="container">
+    {% if characters %}
+    <div class="char-selector" id="charSelector">
+        {% for char in characters %}
+        <div class="char-card {% if active_char and char._filename == active_char._filename %}active{% endif %}"
+             data-filename="{{ char._filename }}"
+             onclick="selectCharacter('{{ char._filename }}')">
+            <div class="name">{{ char.meta.char_name }}</div>
+            <div class="info">
+                {{ char.character.playtime_hours }}h played &middot;
+                {{ char.skills|length }} skills &middot;
+                {{ char.quests|length }} quests &middot;
+                Save #{{ char.meta.save_count }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('overview', this)">Overview</div>
+        <div class="tab" onclick="switchTab('skills', this)">Skills</div>
+        <div class="tab" onclick="switchTab('inventory', this)">Inventory</div>
+        <div class="tab" onclick="switchTab('quests', this)">Quests</div>
+        <div class="tab" onclick="switchTab('world', this)">World Data</div>
+    </div>
+
+    <!-- OVERVIEW TAB -->
+    <div class="tab-content active" id="tab-overview">
+        {% if characters %}
+        {% set char = active_char %}
+        <div class="char-header-row">
+            <h2 id="charTitle" style="color:var(--rs-gold)">{{ char.meta.char_name }}</h2>
+            <div style="display:flex;gap:8px;align-items:center">
+                <span style="color:var(--text-dim);font-size:12px">Version {{ char.meta.version }}</span>
+            </div>
+        </div>
+
+        <div class="grid grid-2">
+            <div class="card">
+                <div class="card-title">Vitals</div>
+                <div class="grid" style="gap:8px">
+                    <div class="stat-row">
+                        <span class="stat-label">Health</span>
+                        <input type="number" id="stat-health" value="{{ char.character.health }}"
+                               min="0" max="999" onchange="queueUpdate('health', this.value)">
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Stamina</span>
+                        <input type="number" id="stat-stamina" value="{{ char.character.stamina }}"
+                               min="0" max="999" onchange="queueUpdate('stamina', this.value)">
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Sustenance</span>
+                        <input type="number" id="stat-sustenance" value="{{ char.character.sustenance }}"
+                               min="0" max="100" step="0.1" onchange="queueStatUpdate('Sustenance', this.value)">
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Hydration</span>
+                        <input type="number" id="stat-hydration" value="{{ char.character.hydration }}"
+                               min="0" max="100" step="0.1" onchange="queueStatUpdate('Hydration', this.value)">
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Toxicity</span>
+                        <input type="number" id="stat-toxicity" value="{{ char.character.toxicity }}"
+                               min="0" max="100" step="0.1" onchange="queueStatUpdate('Toxicity', this.value)">
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Endurance</span>
+                        <input type="number" id="stat-endurance" value="{{ char.character.endurance }}"
+                               min="0" max="999" step="0.1" onchange="queueStatUpdate('Endurance', this.value)">
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Hardcore Mode</span>
+                        <select id="stat-hardcore" onchange="queueHardcoreUpdate(this.value)">
+                            <option value="false" {% if not char.character.is_hardcore %}selected{% endif %}>Off</option>
+                            <option value="true" {% if char.character.is_hardcore %}selected{% endif %}>On</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Character Info</div>
+                <div class="grid" style="gap:8px">
+                    <div class="stat-row">
+                        <span class="stat-label">Name</span>
+                        <span class="stat-value gold">{{ char.meta.char_name }}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Playtime</span>
+                        <span class="stat-value">{{ char.character.playtime_hours }}h</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Save Count</span>
+                        <span class="stat-value">{{ char.meta.save_count }}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">GUID</span>
+                        <span class="stat-value" style="font-size:10px;font-family:monospace">{{ char.meta.char_guid[:16] }}...</span>
+                    </div>
+                </div>
+
+                <div class="card-title" style="margin-top:16px">Progress</div>
+                <div class="progress-grid">
+                    <div class="progress-item">
+                        <div class="progress-num" id="prog-recipes">{{ char.progress.recipes_unlocked }}</div>
+                        <div class="progress-label">Recipes</div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-num" id="prog-buildings">{{ char.progress.buildings_unlocked }}</div>
+                        <div class="progress-label">Buildings</div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-num" id="prog-spells">{{ char.progress.spells_unlocked }}</div>
+                        <div class="progress-label">Spells</div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-num" id="prog-items">{{ char.progress.items_picked_up }}</div>
+                        <div class="progress-label">Items Found</div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-num" id="prog-kills">{{ char.progress.killed_ais }}</div>
+                        <div class="progress-label">Enemies Killed</div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-num" id="prog-journal">{{ char.journal.unlocked }}</div>
+                        <div class="progress-label">Journal Entries</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick skill overview -->
+        <div class="card">
+            <div class="card-title">Skills Overview</div>
+            <div class="grid grid-2" style="gap:8px">
+                {% for skill in char.skills %}
+                <div class="stat-row">
+                    <span class="stat-label">{{ skill.name }}</span>
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <span class="stat-value gold">Lvl {{ skill.level }}</span>
+                        <span class="stat-value" style="font-size:12px;color:var(--text-dim)">{{ skill.xp }} XP</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <div class="card">
+            <div class="card-title">No Characters Found</div>
+            <p style="color:var(--text-dim)">No character save files were found in the save directory.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- SKILLS TAB -->
+    <div class="tab-content" id="tab-skills">
+        {% if characters %}
+        {% set char = active_char %}
+        <div class="card">
+            <div class="card-title">Skills Editor</div>
+            <div class="skill-row" style="background:transparent;border:none;font-weight:600;color:var(--text-dim);font-size:12px">
+                <span>SKILL</span>
+                <span style="text-align:center">LEVEL</span>
+                <span>PROGRESS</span>
+                <span style="text-align:right">XP</span>
+                <span></span>
+            </div>
+            <div id="skillsList">
+            {% for skill in char.skills %}
+                <div class="skill-row" data-skill-id="{{ skill.id }}">
+                    <span class="skill-name">{{ skill.name }}</span>
+                    <span class="skill-level" data-field="level">{{ skill.level }}</span>
+                    <div class="xp-bar-container">
+                        <div class="xp-bar" data-field="bar" style="width: {{ skill.xp_pct }}%"></div>
+                        <span class="xp-bar-text" data-field="bar-text">{{ skill.xp }} / {{ skill.xp_next }}</span>
+                    </div>
+                    <input type="number" data-field="xp" value="{{ skill.xp }}" min="0" max="200000000"
+                           onchange="queueSkillUpdate('{{ skill.id }}', this.value, this)">
+                    <button class="btn" style="padding:4px 8px;font-size:11px" onclick="maxSkill('{{ skill.id }}', this)">MAX</button>
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- INVENTORY TAB -->
+    <div class="tab-content" id="tab-inventory">
+        {% if characters %}
+        {% set char = active_char %}
+        <div class="card">
+            <div class="card-title">Equipment (Loadout)</div>
+            <div class="inv-grid">
+                {% for item in char.loadout %}
+                <div class="inv-slot">
+                    <div class="inv-slot-header">
+                        <span class="inv-slot-num">{{ item.slot_name }}</span>
+                        <span style="color:var(--text-dim);font-size:11px">Slot {{ item.slot }}</span>
+                    </div>
+                    <div class="inv-slot-id">{{ item.item_data }}</div>
+                    <div class="inv-stat">
+                        <span style="color:var(--text-dim)">Durability</span>
+                        <input type="number" value="{{ item.durability }}" min="0" max="99999"
+                               style="width:70px;font-size:12px"
+                               onchange="queueDurabilityUpdate({{ item.slot }}, this.value, 'Loadout')">
+                    </div>
+                    <div class="inv-stat">
+                        <span style="color:var(--text-dim)">Vital Shield</span>
+                        <span>{{ item.vital_shield }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Inventory ({{ char.inventory|length }} items)</div>
+            <div style="margin-bottom:12px">
+                <button class="btn" onclick="repairAllItems()">Repair All Items</button>
+            </div>
+            <div class="inv-grid" id="inventoryGrid">
+                {% for item in char.inventory %}
+                <div class="inv-slot" data-slot="{{ item.slot }}">
+                    <div class="inv-slot-header">
+                        <span class="inv-slot-num">Slot {{ item.slot }}</span>
+                        <button class="btn btn-danger" style="padding:2px 6px;font-size:10px"
+                                onclick="deleteItem({{ item.slot }}, this)">X</button>
+                    </div>
+                    <div class="inv-slot-id">{{ item.item_data }}</div>
+                    <div class="inv-stat">
+                        <span style="color:var(--text-dim)">Durability</span>
+                        <input type="number" value="{{ item.durability }}" min="0" max="99999"
+                               style="width:70px;font-size:12px"
+                               onchange="queueDurabilityUpdate({{ item.slot }}, this.value, 'Inventory')">
+                    </div>
+                    {% if item.quantity > 1 %}
+                    <div class="inv-stat">
+                        <span style="color:var(--text-dim)">Quantity</span>
+                        <input type="number" value="{{ item.quantity }}" min="1" max="99999"
+                               style="width:70px;font-size:12px"
+                               onchange="queueQuantityUpdate({{ item.slot }}, this.value)">
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- QUESTS TAB -->
+    <div class="tab-content" id="tab-quests">
+        {% if characters %}
+        {% set char = active_char %}
+        <div class="card">
+            <div class="card-title">Quest Progress ({{ char.quests|length }} quests)</div>
+            <div style="margin-bottom:12px;display:flex;gap:8px">
+                <button class="btn" onclick="completeAllQuests()">Complete All Quests</button>
+            </div>
+            <div class="quest-row" style="background:transparent;border:none;font-weight:600;color:var(--text-dim);font-size:12px">
+                <span>QUEST ID / OBJECTIVE</span>
+                <span>STATUS</span>
+                <span>ACTION</span>
+            </div>
+            <div id="questsList">
+            {% for quest in char.quests %}
+                <div class="quest-row" data-quest-id="{{ quest.id }}">
+                    <div>
+                        <div class="quest-id">{{ quest.id }}</div>
+                        <div style="font-size:13px;margin-top:2px">{{ quest.objective }}</div>
+                        {% if quest.bools %}
+                        <div style="font-size:11px;color:var(--text-dim);margin-top:4px">
+                            {% for b in quest.bools[:3] %}
+                            <span style="color:{% if b.QuestVariableValue %}var(--accent-green){% else %}var(--accent-red){% endif %}">
+                                {{ b.QuestVariableName }}{% if not loop.last %}, {% endif %}
+                            </span>
+                            {% endfor %}
+                            {% if quest.bools|length > 3 %}
+                            <span>+{{ quest.bools|length - 3 }} more</span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <span class="badge {% if quest.state == 2 %}badge-completed{% elif quest.state == 1 %}badge-progress{% else %}badge-notstarted{% endif %}">
+                            {{ quest.state_name }}
+                        </span>
+                    </div>
+                    <div>
+                        <select onchange="queueQuestUpdate('{{ quest.id }}', this.value)" style="width:90px;font-size:12px">
+                            <option value="0" {% if quest.state == 0 %}selected{% endif %}>Not Started</option>
+                            <option value="1" {% if quest.state == 1 %}selected{% endif %}>In Progress</option>
+                            <option value="2" {% if quest.state == 2 %}selected{% endif %}>Completed</option>
+                        </select>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- WORLD TAB -->
+    <div class="tab-content" id="tab-world">
+        {% for winfo in worlds %}
+        <div class="card">
+            <div class="card-title">{{ winfo.world_name or winfo.filename }} ({{ winfo.filesize_mb }} MB)</div>
+            <div class="grid grid-3" style="gap:8px">
+                <div class="stat-row">
+                    <span class="stat-label">File</span>
+                    <span class="stat-value" style="font-size:12px">{{ winfo.filename }}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Last Saved</span>
+                    <span class="stat-value" style="font-size:12px">{{ winfo.save_timestamp or 'Unknown' }}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Data Sections</span>
+                    <span class="stat-value">{{ winfo.json_sections }}</span>
+                </div>
+            </div>
+            <div style="margin-top:12px">
+                <button class="btn" onclick="loadWorldDetails('{{ winfo.filename }}', this)">Load World Details</button>
+            </div>
+            <div id="world-details-{{ loop.index }}" style="margin-top:12px"></div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    let currentFile = '{{ active_char._filename if active_char else "" }}';
+    let pendingUpdates = [];
+    let isDirty = false;
+
+    const XP_TABLE = {{ xp_table | tojson }};
+
+    function switchTab(tabId, el) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('tab-' + tabId).classList.add('active');
+    }
+
+    function selectCharacter(filename) {
+        window.location.href = '/?char=' + encodeURIComponent(filename);
+    }
+
+    function markDirty() {
+        isDirty = true;
+        document.getElementById('saveBtn').style.display = '';
+        document.getElementById('dirtyBadge').classList.add('show');
+    }
+
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.className = 'toast show' + (isError ? ' error' : '');
+        setTimeout(() => { toast.className = 'toast'; }, 3000);
+    }
+
+    function xpToLevel(xp) {
+        for (let i = XP_TABLE.length - 1; i >= 0; i--) {
+            if (xp >= XP_TABLE[i]) return i;
+        }
+        return 1;
+    }
+
+    // Queue update actions
+    function queueUpdate(action, value) {
+        pendingUpdates.push({ action: action, value: parseFloat(value) });
+        applyUpdates();
+    }
+
+    function queueStatUpdate(stat, value) {
+        pendingUpdates.push({ action: 'stat', stat: stat, value: parseFloat(value) });
+        applyUpdates();
+    }
+
+    function queueSkillUpdate(skillId, xp, inputEl) {
+        xp = parseInt(xp);
+        pendingUpdates.push({ action: 'skill_xp', skill_id: skillId, xp: xp });
+
+        // Update UI
+        const row = inputEl.closest('.skill-row');
+        const level = xpToLevel(xp);
+        row.querySelector('[data-field="level"]').textContent = level;
+
+        const nextXp = level + 1 < XP_TABLE.length ? XP_TABLE[level + 1] : XP_TABLE[XP_TABLE.length - 1];
+        const currXp = level < XP_TABLE.length ? XP_TABLE[level] : 0;
+        const pct = Math.min(100, ((xp - currXp) / Math.max(1, nextXp - currXp)) * 100);
+        row.querySelector('[data-field="bar"]').style.width = pct + '%';
+        row.querySelector('[data-field="bar-text"]').textContent = xp + ' / ' + (level + 1 < XP_TABLE.length ? nextXp : 'MAX');
+
+        applyUpdates();
+    }
+
+    function maxSkill(skillId, btnEl) {
+        const row = btnEl.closest('.skill-row');
+        const maxXp = XP_TABLE[XP_TABLE.length - 1];
+        row.querySelector('[data-field="xp"]').value = maxXp;
+        queueSkillUpdate(skillId, maxXp, row.querySelector('[data-field="xp"]'));
+    }
+
+    function queueQuestUpdate(questId, state) {
+        pendingUpdates.push({ action: 'quest_state', quest_id: questId, state: parseInt(state) });
+        applyUpdates();
+    }
+
+    function queueDurabilityUpdate(slot, durability, source) {
+        pendingUpdates.push({ action: 'item_durability', slot: slot, durability: parseInt(durability), source: source });
+        applyUpdates();
+    }
+
+    function queueQuantityUpdate(slot, quantity) {
+        pendingUpdates.push({ action: 'item_quantity', slot: slot, quantity: parseInt(quantity) });
+        applyUpdates();
+    }
+
+    function queueHardcoreUpdate(value) {
+        pendingUpdates.push({ action: 'hardcore', enabled: value === 'true' });
+        applyUpdates();
+    }
+
+    function deleteItem(slot, btnEl) {
+        if (!confirm('Delete this item from inventory?')) return;
+        pendingUpdates.push({ action: 'delete_item', slot: slot });
+        btnEl.closest('.inv-slot').remove();
+        applyUpdates();
+    }
+
+    function repairAllItems() {
+        document.querySelectorAll('#inventoryGrid input[type="number"]').forEach(input => {
+            input.value = 9999;
+            const slot = input.closest('.inv-slot').dataset.slot;
+            pendingUpdates.push({ action: 'item_durability', slot: parseInt(slot), durability: 9999, source: 'Inventory' });
+        });
+        applyUpdates();
+        showToast('All items set to max durability');
+    }
+
+    function completeAllQuests() {
+        if (!confirm('Set all quests to Completed?')) return;
+        document.querySelectorAll('#questsList .quest-row').forEach(row => {
+            const questId = row.dataset.questId;
+            if (questId) {
+                pendingUpdates.push({ action: 'quest_state', quest_id: questId, state: 2 });
+                const select = row.querySelector('select');
+                if (select) select.value = '2';
+                const badge = row.querySelector('.badge');
+                if (badge) {
+                    badge.className = 'badge badge-completed';
+                    badge.textContent = 'Completed';
+                }
+            }
+        });
+        applyUpdates();
+        showToast('All quests set to completed');
+    }
+
+    async function applyUpdates() {
+        if (pendingUpdates.length === 0) return;
+
+        const updates = [...pendingUpdates];
+        pendingUpdates = [];
+
+        try {
+            const resp = await fetch(`/api/character/${currentFile}/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updates)
+            });
+            const data = await resp.json();
+
+            const failed = data.results.filter(r => !r.ok);
+            if (failed.length > 0) {
+                showToast(`${failed.length} update(s) failed`, true);
+            }
+
+            markDirty();
+        } catch (e) {
+            showToast('Update failed: ' + e.message, true);
+        }
+    }
+
+    async function saveChanges() {
+        try {
+            const resp = await fetch(`/api/character/${currentFile}/save`, {
+                method: 'POST'
+            });
+            const data = await resp.json();
+
+            if (data.ok) {
+                isDirty = false;
+                document.getElementById('dirtyBadge').classList.remove('show');
+                showToast('Saved successfully! Backup created.');
+            } else {
+                showToast('Save failed: ' + data.error, true);
+            }
+        } catch (e) {
+            showToast('Save failed: ' + e.message, true);
+        }
+    }
+
+    async function reloadSaves() {
+        try {
+            const resp = await fetch('/api/reload', { method: 'POST' });
+            const data = await resp.json();
+            showToast(`Reloaded: ${data.characters} characters, ${data.worlds} worlds`);
+            setTimeout(() => window.location.reload(), 1000);
+        } catch (e) {
+            showToast('Reload failed: ' + e.message, true);
+        }
+    }
+
+    async function loadWorldDetails(filename, btn) {
+        btn.textContent = 'Loading...';
+        btn.disabled = true;
+
+        try {
+            const resp = await fetch(`/api/world/${filename}`);
+            const data = await resp.json();
+            const container = btn.parentElement.nextElementSibling;
+
+            let html = '';
+
+            // Events
+            if (data.events && data.events.length > 0) {
+                html += '<div class="card-title">World Events (' + data.events.length + ')</div>';
+                for (const ev of data.events) {
+                    html += '<div class="event-row">';
+                    html += '<div class="event-name">' + ev.name + '</div>';
+                    for (const t of ev.triggers) {
+                        const cls = t.active ? 'trigger-active' : 'trigger-inactive';
+                        html += `<div class="trigger-row">
+                            <span>${t.name}</span>
+                            <span class="${cls}">${t.active ? 'Active' : 'Inactive'} &middot; ${t.time}</span>
+                        </div>`;
+                    }
+                    html += '</div>';
+                }
+            }
+
+            // Stations
+            if (data.stations && data.stations.length > 0) {
+                html += '<div class="card-title" style="margin-top:16px">Crafting Stations (' + data.stations.length + ')</div>';
+                for (const s of data.stations.slice(0, 10)) {
+                    html += '<div class="stat-row" style="margin-bottom:4px">';
+                    html += `<span class="stat-label">${s.offset}</span>`;
+                    html += `<span>Fuel: ${s.fuel_time.toFixed(1)}s | Recipe: ${s.recipe_time.toFixed(1)}s${s.running ? ' | RUNNING' : ''}</span>`;
+                    html += '</div>';
+                }
+            }
+
+            container.innerHTML = html || '<p style="color:var(--text-dim)">No editable world data found.</p>';
+        } catch (e) {
+            showToast('Failed to load world: ' + e.message, true);
+        }
+
+        btn.textContent = 'Refresh';
+        btn.disabled = false;
+    }
+</script>
+
+</body>
+</html>
