@@ -2,11 +2,54 @@
 
 This document captures everything we learned about the **Custom Difficulty Settings** system in RuneScape: Dragonwilds.
 
+## ⚠️ CRITICAL UPDATE (04-06-2026 evening session)
+
+**The named TagName/NameProperty entries in the `WorldSaveSettings` block are NOT what the game reads at runtime.** There is a **secondary copy** stored as a tagless float array immediately after the `L_World\0` string near the top of the file. **The game reads from the secondary copy.** Editing only the named entries has no in-game effect (this is why Phase 1 of the editor failed).
+
+### Secondary copy structure (verified working in Middle Eearth)
+
+```
+[L_World\0]                  ← 8 bytes
+[1 byte padding (0x00)]
+[uint32 count]               ← number of difficulty entries (LE)
+[uint32 version]             ← always 1 so far
+[float32 value[0]]           ← LE
+[float32 value[1]]
+...
+[float32 value[count-1]]
+[8-byte hash/GUID]           ← marks end of difficulty block
+```
+
+**Order of values matches** the order of named TagName entries in the `WorldSaveSettings` block. Use the named entries (which are still parseable) as the **tag → array index** map.
+
+### Worlds without custom difficulty (e.g. Gielinor)
+
+For worlds created BEFORE the custom difficulty feature shipped, `count = 0` and there are no float values, but the structure exists with `version = 1` and 4 bytes of zero padding before the hash. Adding values to these worlds requires **inserting bytes** which shifts downstream offsets — risky on large saves.
+
+### Verification done this session
+- Edited Middle Eearth's secondary copy floats from 0.5/0.5 → 0.1/0.1 (BuildingMaterialCostScale and CraftingCostScale)
+- Game launched, world settings UI showed 0.1
+- In-game crafting actually used reduced material cost (1 material per item, vs normal recipes)
+- Confirmed both **UI display** AND **gameplay logic** read from the secondary copy
+
+### Concrete offsets (Middle Eearth.sav reference)
+- `L_World\0` at `0x026d`
+- count at `0x0276` = 3
+- version at `0x027a` = 1
+- float[0] (NoBuildingStability) at `0x027e`
+- float[1] (BuildingMaterialCostScale) at `0x0282`
+- float[2] (CraftingCostScale) at `0x0286`
+- next data starts at `0x028a`
+
+(Offsets vary per file — always re-find via `L_World\0` byte search.)
+
+---
+
 ## TL;DR
 
 - The game has **35 customizable difficulty tags** that can be set when creating a world.
-- The UI **only allows setting these at world creation**, not after — but the values are stored in the save file and can be edited externally.
-- Settings are stored in the `WorldSaveSettings` block of the world `.sav` file as `(GameplayTag, FloatValue)` pairs inside the `CustomDifficultySettings` array.
+- The UI **only allows setting these at world creation**, not after — but the values can be edited externally via the **secondary copy** described above.
+- Settings are stored in TWO places: the named `(GameplayTag, FloatValue)` entries inside `CustomDifficultySettings` array (which the game **doesn't read** for runtime), AND the tagless secondary float array after `L_World\0` (which the game **does read**).
 - **No gather/yield/loot multipliers exist** in the custom settings — those are baked into the game's `.pak` files.
 - **Workarounds for "more materials"**: lower `CraftingCostScale` and `BuildingMaterialCostScale` (you need less to craft), or lower enemy `Health` (faster kills = more drops/hour).
 
