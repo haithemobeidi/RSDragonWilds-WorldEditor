@@ -191,6 +191,9 @@ def update_character(filename):
             elif action == "hide_map":
                 cs.hide_full_map()
 
+            elif action == "char_type":
+                cs.set_char_type(int(update["value"]))
+
             else:
                 results.append({"ok": False, "error": f"Unknown action: {action}"})
                 continue
@@ -283,6 +286,14 @@ def update_world(filename):
             elif action == "difficulty_value":
                 ok = ws.update_difficulty_value(update["tag"], float(update["value"]))
                 results.append({"ok": ok, "action": action, "tag": update.get("tag")})
+
+            elif action == "convert_to_custom":
+                ok = ws.convert_to_custom()
+                results.append({"ok": ok, "action": action, "new_mode": ws.get_world_mode()})
+
+            elif action == "revert_to_standard":
+                ok = ws.revert_to_standard()
+                results.append({"ok": ok, "action": action, "new_mode": ws.get_world_mode()})
 
             else:
                 results.append({"ok": False, "error": f"Unknown action: {action}"})

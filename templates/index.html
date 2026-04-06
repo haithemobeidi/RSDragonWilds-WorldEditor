@@ -520,7 +520,18 @@
                             <option value="true" {% if char.character.is_hardcore %}selected{% endif %}>On</option>
                         </select>
                     </div>
+                    <div class="stat-row">
+                        <span class="stat-label" title="Discovered 04-06-2026: gates which world types this character can join">World Compat</span>
+                        <select id="stat-chartype" onchange="queueCharTypeUpdate(this.value)">
+                            <option value="0" {% if char.meta.char_type == 0 %}selected{% endif %}>Standard worlds only</option>
+                            <option value="3" {% if char.meta.char_type == 3 %}selected{% endif %}>Custom worlds only</option>
+                        </select>
+                    </div>
                 </div>
+                <p style="font-size:11px;color:var(--text-dim);margin-top:8px">
+                    <strong>World Compat</strong>: <code>0</code> = standard worlds (Gielinor default), <code>3</code> = custom worlds.
+                    Mutually exclusive — there's no "both" value. To play your main char on a custom-difficulty world, set this to <code>3</code> AND convert the world to Custom in the World Data tab.
+                </p>
             </div>
 
             <div class="card">
@@ -1006,9 +1017,39 @@
                     <span class="stat-value" style="font-size:11px">{{ winfo.save_timestamp or 'Unknown' }}</span>
                 </div>
                 <div class="stat-row">
-                    <span class="stat-label">JSON Sections</span>
-                    <span class="stat-value">{{ winfo.json_sections }}</span>
+                    <span class="stat-label">World Mode</span>
+                    <span class="stat-value">
+                        {% if winfo.world_mode == 'custom' %}
+                            <span style="color:#7fdf7f;font-weight:bold">Custom</span>
+                        {% elif winfo.world_mode == 'standard' %}
+                            <span style="color:#dfdf7f">Standard</span>
+                        {% else %}
+                            <span style="color:#df7f7f">{{ winfo.world_mode }}</span>
+                        {% endif %}
+                    </span>
                 </div>
+            </div>
+            <div style="margin-top:8px;padding:10px;background:#1a1a1a;border-radius:6px">
+                <strong style="color:var(--rs-gold);font-size:13px">World Mode Conversion</strong>
+                <p style="font-size:12px;color:var(--text-dim);margin:6px 0 8px">
+                    Convert this world's classification. Custom worlds expose all 5 difficulty
+                    categories in-game and require <code>char_type=3</code> characters to join.
+                    <strong>Discovered 04-06-2026</strong> — flips two bytes (L_World+9 enum +
+                    PROP CustomDifficultySettings byte). Persists across game saves.
+                </p>
+                {% if winfo.world_mode == 'standard' %}
+                    <button class="btn" style="background:#5a8a4a"
+                            onclick="convertWorldMode('{{ winfo.filename }}', 'custom', {{ loop.index }})">
+                        Convert to Custom World
+                    </button>
+                {% elif winfo.world_mode == 'custom' %}
+                    <button class="btn" style="background:#8a5a4a"
+                            onclick="convertWorldMode('{{ winfo.filename }}', 'standard', {{ loop.index }})">
+                        Revert to Standard World
+                    </button>
+                {% else %}
+                    <button class="btn" disabled>Mixed/unknown state — manual fix needed</button>
+                {% endif %}
             </div>
             <div id="world-details-{{ loop.index }}" style="margin-top:16px"></div>
         </div>
@@ -1105,6 +1146,11 @@
     function queueCountUpdate(slot, count) {
         pendingUpdates.push({ action: 'item_count', slot: slot, count: parseInt(count) });
         applyUpdates();
+    }
+
+    function queueCharTypeUpdate(value) {
+        pendingUpdates.push({ action: 'char_type', value: parseInt(value) });
+        markDirty();
     }
 
     function queueHardcoreUpdate(value) {
@@ -1628,6 +1674,33 @@
                 if (btn) loadWorldDetails(filename, btn);
             }
         });
+    }
+
+    async function convertWorldMode(filename, targetMode, idx) {
+        const action = targetMode === 'custom' ? 'convert_to_custom' : 'revert_to_standard';
+        const confirmMsg = targetMode === 'custom'
+            ? `Convert "${filename}" to a Custom World?\n\nThis flips two bytes (L_World+9 + PROP block) so the game treats it as a custom world. Required to use custom difficulty settings.\n\nAfter conversion you must:\n  1. Click Save World\n  2. Set your character's char_type to 3 (in Character Editor)\n  3. Launch the game and join with that character\n\nAuto-backup will be created. Proceed?`
+            : `Revert "${filename}" to Standard World?\n\nThis flips both bytes back to 0. Custom difficulty settings will no longer apply.\n\nProceed?`;
+        if (!confirm(confirmMsg)) return;
+
+        try {
+            const resp = await fetch(`/api/world/${filename}/update`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify([{action: action}])
+            });
+            const data = await resp.json();
+            if (data.results && data.results[0] && data.results[0].ok) {
+                markWorldDirty(filename);
+                showToast(`World mode changed to: ${data.results[0].new_mode}. Click Save World to write to disk.`);
+                // Update label inline
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showToast('Conversion failed: ' + JSON.stringify(data.results), true);
+            }
+        } catch (e) {
+            showToast('Error: ' + e.message, true);
+        }
     }
 
     function disableAllRaids(filename) {

@@ -18,17 +18,25 @@
 
 ## Current Status
 
-**Last session:** 2026-04-06 (evening)
-**Build status:** ✅ Working
-**Major discoveries this session:**
-1. **Difficulty "secondary copy"** — game reads from raw float array at `L_World+10` (offset varies per file), NOT from the named TagName/NameProperty entries we were editing. Editing only the named entries had no effect; editing the secondary copy DOES affect both UI and gameplay (verified in Middle Eearth).
-2. **`char_type` field unlocks custom worlds** — `meta_data.char_type` in character JSON gates custom-world access. `0` = standard-only, `3` = custom-compatible. Changing Serious_Beans from 0→3 allowed it to join Middle Eearth (the custom world) successfully — skills, inventory, everything intact.
+**Last session:** 2026-04-06 (full marathon)
+**Build status:** ✅ Working — including new World Mode Conversion feature in the GUI
 
-**Open questions / risks:**
-- ⚠️ **Does `char_type=3` retain access to standard worlds (Gielinor)?** UNTESTED. User suspects it does NOT. Possible values: 0=standard-only, 3=custom-only, OR a bitmask where `1`=standard, `2`=custom, `3`=both. Needs investigation.
-- World state transfer (house, chests, exploration) from Gielinor → custom world is the next big goal
-- `parser.py` `_find_difficulty_entries()` and `update_difficulty_value()` edit the WRONG location — they edit the named entries which the game ignores. Needs to be rewritten to target the L_World+10 secondary copy.
-- `templates/index.html` is monolithic (~1500 lines) — refactor still pending
+**Major discoveries (in chronological order):**
+
+1. **Difficulty "secondary copy"** — game reads runtime difficulty values from a tagless float array at `L_World+10`, NOT from named TagName/NameProperty entries.
+2. **`char_type` field gates custom-world access** — `meta_data.char_type` in character JSON. `0` = standard-only, `3` = custom-only. **Mutually exclusive** (verified — there is no "both" value).
+3. **L_World+9 enum byte** controls visible difficulty preset — `0`=Standard, `1`=Hard, `3`=Custom. **But this byte alone is just a UI cache** — the game's serializer overwrites it on save unless it matches the persistent storage.
+4. **THE PERSISTENT World Mode flag** — first byte of the `CustomDifficultySettings` PROP field inside the WorldSaveSettings PROP block. `0x00`=Standard, `0x03`=Custom. **Both bytes (L_World+9 AND PROP byte) must be set together** for the game to recognize and persist a custom-world classification.
+5. **Verified end-to-end:** Successfully converted Gielinor (a standard world that predated custom difficulty) to a Custom World. Played main character (Serious_Beans, char_type=3) on it with full custom difficulty applied. Conversion persists across game saves and restarts.
+
+**Now exposed in the GUI:**
+- World Mode display + "Convert to Custom" / "Revert to Standard" button per world
+- Character "World Compat" (char_type) dropdown — Standard / Custom
+
+**Open items:**
+- `parser.py` `_find_difficulty_entries()` and `update_difficulty_value()` still edit the named entries (not the secondary copy). Need rewrite to target the L_World+17 floats.
+- `templates/index.html` is monolithic (~1700 lines now) — refactor still pending
+- Drop rate / loot multiplier modding (user request) — would require .pak modding, not save editing
 
 ## File Locations Reference
 
@@ -122,9 +130,11 @@ python -c "from parser import discover_saves, CharacterSave; saves = discover_sa
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Verify `char_type=3` keeps standard-world access | **CRITICAL — untested** | If broken, need to find correct value (maybe `1`?) |
+| Verify `char_type=3` keeps standard-world access | ✅ Resolved — it does NOT (mutually exclusive with 0) |
+| Find persistent custom-mode flag for old worlds | ✅ Resolved — first byte of CustomDifficultySettings PROP field |
+| Convert Gielinor to custom (use main char on custom Gielinor) | ✅ Done — verified working end-to-end |
+| Add `char_type` editor to Flask UI | ✅ Done (this session) |
+| Add World Mode conversion to Flask UI | ✅ Done (this session) |
 | Update `parser.py` difficulty methods to target secondary copy | High | Currently edits wrong location — has no in-game effect |
-| Transfer Gielinor world state → custom world (storage boxes priority) | **Next session main goal** | User wants at least storage chests transferred. Could potentially deserialize NOBJ entries. |
-| Add `char_type` editor to Flask UI | Medium | Trivial JSON edit, big QoL win |
-| Refactor monolithic `index.html` | Pending | ~1500 lines |
-| `.pak` modding for true gather yields | Out of scope | Separate project |
+| Refactor monolithic `index.html` | Pending | ~1700 lines |
+| Loot/drop multiplier (trainer-style) | Future | Requires .pak modding; not save editing |

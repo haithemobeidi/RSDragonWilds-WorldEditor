@@ -118,33 +118,73 @@ shutil.copy(target_file, f'research_backups/{name}_BEFORE_{action}_{ts}_B')
 
 ---
 
-## ⚡ Recipe: "Play Gielinor as Custom with main character"
+## ⚡ Recipe: "Convert standard world to custom (PERMANENT)"
 
-⚠️ **PERSISTENCE BUG (open issue):** The game's auto-save **resets the Gielinor enum byte to 0 every time**. The play session works because the game reads the file at load time, but the byte gets overwritten when the game saves. **You must re-flip the enum BEFORE every play session.**
+✅ **Solved 04-06-2026.** Two bytes must be set together for the game to recognize and persist a custom-world classification:
 
-**Pre-play (each session):**
+### The two bytes
 
-1. Make sure game is closed
-2. Run: `python scripts/flip_gielinor_custom.py`
-3. Immediately launch the game
-4. Pick Serious_Beans (must already be `char_type=3`)
-5. Join Gielinor → play normally
-6. Quit when done — game will reset enum to 0 (this is fine, it'll be re-flipped next session)
+| Byte | Location | From | To | Notes |
+|------|----------|------|-----|-------|
+| **A** | `L_World + 9` (uint32 LE) | `0x00 00 00 00` (Standard) | `0x03 00 00 00` (Custom) | Display/UI cache byte |
+| **B** | First byte of `CustomDifficultySettings` PROP field | `0x00` | `0x03` | **Persistent storage** in WorldSaveSettings PROP block |
 
-**One-time setup (already done):**
-- `Serious_Beans.json` `meta_data.char_type` = 3 (custom-only access)
+**Critical finding:** Setting only ONE byte doesn't work — the game's load logic checks both. Setting BOTH makes the conversion **persist permanently across game saves and restarts**.
 
-**To revert character to standard worlds (if needed):**
+### How to find byte B (PROP field offset)
+
+The CustomDifficultySettings field is index 8 in the WorldSaveSettings PROP block. Locate via:
+
 ```python
-import json
-sb = json.load(open('.../Serious_Beans.json'))
-sb['meta_data']['char_type'] = 0
-json.dump(sb, open('.../Serious_Beans.json','w'), indent='\t')
+import struct
+data = open(sav_path, 'rb').read()
+prop_p = data.find(b'PROP')
+count = struct.unpack('<I', data[prop_p+8:prop_p+12])[0]  # = 13
+data_start = prop_p + 12 + count * 4
+offsets = struct.unpack(f'<{count}I', data[prop_p+12 : prop_p+12 + count*4])
+cds_pos = data_start + offsets[8]  # ← byte to flip is HERE
 ```
 
-**To revert Gielinor manually:**
-```bash
-python scripts/flip_gielinor_custom.py --revert
+### Full conversion script
+
+```python
+import struct
+sav_path = '.../Gielinor.sav'
+data = bytearray(open(sav_path, 'rb').read())
+
+# Byte A: L_World+9 enum
+lw = data.find(b'L_World\x00')
+data[lw+9 : lw+13] = struct.pack('<I', 3)
+
+# Byte B: CustomDifficultySettings PROP field first byte
+prop_p = data.find(b'PROP')
+count = struct.unpack('<I', data[prop_p+8:prop_p+12])[0]
+data_start = prop_p + 12 + count * 4
+offsets = struct.unpack(f'<{count}I', data[prop_p+12 : prop_p+12 + count*4])
+cds_pos = data_start + offsets[8]
+data[cds_pos] = 0x03
+
+open(sav_path, 'wb').write(bytes(data))
 ```
 
-**Open question for next session:** Find the truly persistent custom-mode flag (somewhere other than `L_World+9`) so we don't have to re-flip every session.
+### To play Gielinor as custom with main character
+
+**One-time setup (already done for Serious_Beans):**
+1. Set `Serious_Beans.json` `meta_data.char_type` = 3
+2. Convert Gielinor.sav using the script above (both bytes)
+
+After both: launch game, pick Serious_Beans, join Gielinor → permanent custom mode.
+
+**To revert:**
+- Set `char_type` back to `0` (regains standard world access)
+- Set BOTH bytes back to `0` in the world file (regains standard classification)
+
+### Note on the L_World+9 byte alone
+
+If you flip ONLY the L_World+9 enum (without the PROP byte), the game will:
+- Show the world as Custom in the menu temporarily
+- Let you join and the in-game settings UI will show Custom categories
+- But gameplay will still use Standard difficulty values
+- And the byte will be overwritten back to 0 on the next save
+
+The PROP block byte is the source of truth. Always flip both.

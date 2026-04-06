@@ -7,14 +7,15 @@ A file-by-file map of the RS Dragonwilds Save Editor project. Read this with the
 | File | Purpose |
 |------|---------|
 | `CLAUDE.md` | Project overview, tech stack, file locations, dev guidelines, current status |
+| `README.md` | End-user-facing setup guide and feature list (one-click run.bat instructions) |
+| `QUICK_REFERENCE.md` | Cheat sheet for save flags (char_type, world mode bytes, conversion recipes) |
 | `SESSION_PROTOCOLS.md` | Mandatory start/work/end session protocols |
 | `SAVE_FORMAT.md` | Reverse-engineered save file format reference (character JSON + world binary) |
-| `DIFFICULTY_SETTINGS.md` | Reverse-engineered notes on the custom difficulty system, all 35 known tags, binary layout |
+| `DIFFICULTY_SETTINGS.md` | Reverse-engineered notes on the custom difficulty system, all 35 known tags, binary layout, secondary copy structure |
 | `CODEBASE_INDEX.md` | This file |
-| `TODO_TOMORROW.md` | Carryover work for the next session (when present — may be deleted after the work is done) |
 | `requirements.txt` | Python deps: just `flask>=3.0` |
 | `run.sh` / `run.bat` | Launch helpers (creates venv if missing, starts Flask server) |
-| `.gitignore` | Excludes `venv/`, `__pycache__/`, `editor_backups/` |
+| `.gitignore` | Excludes `venv/`, `__pycache__/`, `editor_backups/`, `research_backups/` |
 
 ## Python source
 
@@ -33,22 +34,26 @@ The data layer. All save file reading and writing logic lives here.
 **`class CharacterSave`** — Plain JSON character files (`SaveCharacters/*.json`).
 - `load()` — read the JSON file
 - `save(backup=True)` — write back, creates timestamped backup in `editor_backups/`
-- `get_summary()` — flatten all data for the UI (skills, quests, inventory, status effects, position parsed from `V(X=..., Y=..., Z=...)` string format, etc.)
-- Editing methods: `update_skill_xp`, `max_all_skills`, `update_health`, `update_stamina`, `update_stat` (handles Sustenance/Hydration/Toxicity/Endurance with their **non-CurrentValue** field names — see `STAT_FIELD_MAP`), `update_quest_state`, `update_quest_bool`, `update_quest_int`, `update_item_durability`, `update_item_count` (uses `Count` not `Quantity`), `delete_inventory_item`, `set_hardcore`, `clear_status_effect`, `clear_all_status_effects`, `update_position`, `update_spell_slot`, `clear_spell_slot`, `fill_all_spell_slots`, `add_mount`, `remove_mount`, `equip_mount`, `reveal_full_map`, `hide_full_map`, `repair_all_items`, `_parse_position`, `_format_position`
+- `get_summary()` — flatten all data for the UI (skills, quests, inventory, status effects, position parsed from `V(X=..., Y=..., Z=...)` string format, etc.). Includes `meta.char_type`.
+- Editing methods: `update_skill_xp`, `max_all_skills`, `update_health`, `update_stamina`, `update_stat` (handles Sustenance/Hydration/Toxicity/Endurance with their **non-CurrentValue** field names — see `STAT_FIELD_MAP`), `update_quest_state`, `update_quest_bool`, `update_quest_int`, `update_item_durability`, `update_item_count` (uses `Count` not `Quantity`), `delete_inventory_item`, `set_hardcore`, `clear_status_effect`, `clear_all_status_effects`, `update_position`, `update_spell_slot`, `clear_spell_slot`, `fill_all_spell_slots`, `add_mount`, `remove_mount`, `equip_mount`, `reveal_full_map`, `hide_full_map`, `repair_all_items`, `set_char_type` (controls custom-world access — 0=standard, 3=custom)
 
 **`class WorldSave`** — Binary `.sav` files (Dominion engine wrapping UE4 GVAS).
 - `load()` — read raw bytes, scan for JSON sections, categorize them, parse difficulty entries
 - `_find_json_sections()` — byte-scans for `{` followed by valid JSON, parses 168+ embedded blobs
 - `_categorize_sections()` — tags each as `world_events`, `weather`, `station`, `container`, `slot_data`
-- `_find_difficulty_entries()` — scans for the byte signature `\x08\x00\x00\x00TagName\x00\x0d\x00\x00\x00NameProperty\x00`, then walks the UE4 NameProperty structure to find each `(GameplayTag, float32)` pair. Records `tag`, `value`, `value_offset` for each.
-- `get_header_info()` — file metadata (name, size, timestamp, world name, section count)
+- `_find_difficulty_entries()` — ⚠️ Currently targets the WRONG location (named TagName/NameProperty entries which the game doesn't read). Needs rewrite to target the L_World+17 secondary copy floats.
+- `_find_mode_byte_offsets()` — Returns (l_world+9 offset, CustomDifficultySettings PROP byte offset) for world mode bytes
+- `get_world_mode()` — Returns 'standard', 'custom', or 'mixed/unknown' based on both mode bytes
+- `convert_to_custom()` — Sets both mode bytes to 3/0x03 (one-shot conversion). Caller must call `save()` afterward.
+- `revert_to_standard()` — Sets both mode bytes back to 0/0x00.
+- `get_header_info()` — file metadata (name, size, timestamp, world name, section count, **world_mode**)
 - `get_world_events()` — parsed event triggers from `world_events` JSON section
 - `get_weather()` — weather definitions per region from the `weather` JSON section
 - `get_stations()` — crafting station inventories
 - `get_containers(include_empty=False)` — world chests with editable items
 - `get_difficulty_settings()` — current entries (with friendly names + hints) and missing tags
-- Editing methods: `update_container_item`, `update_weather`, `update_event_trigger`, `disable_all_raids`, `update_difficulty_value` (length-preserving 4-byte float swap)
-- `save(backup=True)` — writes `raw_data` back to disk; for each JSON section, replaces in place with **length-preserving** JSON (pads with whitespace inside the JSON, falls back to compact format if grown). Binary edits (difficulty values) live directly in `raw_data` and survive automatically because they're outside any JSON section.
+- Editing methods: `update_container_item`, `update_weather`, `update_event_trigger`, `disable_all_raids`, `update_difficulty_value` (still broken — wrong location), `convert_to_custom`, `revert_to_standard`
+- `save(backup=True)` — writes `raw_data` back to disk; for each JSON section, replaces in place with **length-preserving** JSON. Binary edits (mode bytes, difficulty floats) live directly in `raw_data` and survive automatically.
 
 **`discover_saves()`** — Module-level function that finds all character JSONs and world `.sav` files in the default game save directory.
 

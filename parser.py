@@ -504,6 +504,18 @@ class CharacterSave:
             skill["Xp"] = max_xp
         return len(skills)
 
+    def set_char_type(self, char_type: int):
+        """
+        Set the character type flag controlling which world types they can join.
+        Discovered 04-06-2026:
+          0 = Standard worlds only (Gielinor, default new worlds)
+          3 = Custom worlds only (Middle Eearth, custom-difficulty worlds)
+        Mutually exclusive — no "both" value found.
+        """
+        if "meta_data" not in self.data:
+            self.data["meta_data"] = {}
+        self.data["meta_data"]["char_type"] = int(char_type)
+
     def fill_all_spell_slots(self, spell_id: str):
         """Fill all 48 spell slots with the same spell."""
         spells = self.data.setdefault("Spellcasting", {}).setdefault("SelectedSpells", [])
@@ -575,6 +587,87 @@ class WorldSave:
             elif "MaxSlotIndex" in keys:
                 section.category = "slot_data"
 
+    # ===== World Mode (Standard / Custom) =====
+    # Discovered 04-06-2026: Two bytes determine world mode classification.
+    # Both must be set together for the game to recognize and PERSIST a custom-world.
+    # Byte A: L_World+9 uint32 enum (display/UI cache)
+    # Byte B: First byte of CustomDifficultySettings PROP field (persistent storage)
+
+    def _find_mode_byte_offsets(self) -> tuple[int, int]:
+        """Returns (l_world_enum_offset, prop_cds_byte_offset) or (-1, -1) if not found."""
+        data = self.raw_data
+        lw = data.find(b'L_World\x00')
+        if lw == -1:
+            return (-1, -1)
+
+        prop_p = data.find(b'PROP')
+        if prop_p == -1:
+            return (-1, -1)
+
+        try:
+            count = struct.unpack('<I', bytes(data[prop_p+8:prop_p+12]))[0]
+            if count == 0 or count > 100:
+                return (-1, -1)
+            offsets = struct.unpack(
+                f'<{count}I', bytes(data[prop_p+12 : prop_p+12 + count*4])
+            )
+            data_start = prop_p + 12 + count * 4
+            # CustomDifficultySettings is field index 8 in WorldSaveSettings
+            if 8 >= len(offsets):
+                return (-1, -1)
+            cds_pos = data_start + offsets[8]
+            return (lw + 9, cds_pos)
+        except (struct.error, IndexError):
+            return (-1, -1)
+
+    def get_world_mode(self) -> str:
+        """Returns 'standard', 'custom', or 'unknown'."""
+        lw_offset, prop_offset = self._find_mode_byte_offsets()
+        if lw_offset == -1 or prop_offset == -1:
+            return "unknown"
+
+        try:
+            lw_enum = struct.unpack(
+                '<I', bytes(self.raw_data[lw_offset:lw_offset+4])
+            )[0]
+            prop_byte = self.raw_data[prop_offset]
+        except (struct.error, IndexError):
+            return "unknown"
+
+        # Both must be 3 for definitive Custom; both 0 for definitive Standard
+        if lw_enum == 3 and prop_byte == 0x03:
+            return "custom"
+        if lw_enum == 0 and prop_byte == 0x00:
+            return "standard"
+        # Mixed state (e.g., one byte was flipped without the other)
+        return f"mixed (lw={lw_enum}, prop=0x{prop_byte:02x})"
+
+    def convert_to_custom(self) -> bool:
+        """
+        Convert this world from Standard to Custom by setting both mode bytes.
+        Returns True on success. Caller should then call save().
+        """
+        lw_offset, prop_offset = self._find_mode_byte_offsets()
+        if lw_offset == -1 or prop_offset == -1:
+            return False
+        # Byte A: L_World+9 enum → 3
+        self.raw_data[lw_offset:lw_offset+4] = struct.pack('<I', 3)
+        # Byte B: PROP CustomDifficultySettings first byte → 0x03
+        self.raw_data[prop_offset] = 0x03
+        return True
+
+    def revert_to_standard(self) -> bool:
+        """
+        Revert this world from Custom back to Standard. Inverse of convert_to_custom().
+        Returns True on success.
+        """
+        lw_offset, prop_offset = self._find_mode_byte_offsets()
+        if lw_offset == -1 or prop_offset == -1:
+            return False
+        self.raw_data[lw_offset:lw_offset+4] = struct.pack('<I', 0)
+        self.raw_data[prop_offset] = 0x00
+        return True
+
     def get_header_info(self) -> dict:
         data = self.raw_data
         info = {
@@ -585,6 +678,7 @@ class WorldSave:
             "json_sections": len(self.json_sections),
             "world_name": "",
             "save_timestamp": "",
+            "world_mode": self.get_world_mode(),
         }
 
         # Extract timestamp
