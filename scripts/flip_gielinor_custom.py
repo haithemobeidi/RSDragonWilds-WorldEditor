@@ -21,12 +21,26 @@ import struct
 import sys
 from datetime import datetime
 
-GIELINOR_PATH = os.path.expanduser(
-    "~/AppData/Local/RSDragonwilds/Saved/SaveGames/Gielinor.sav"
-)
-# WSL path conversion
-if not os.path.exists(GIELINOR_PATH):
-    GIELINOR_PATH = "~/AppData/Local/RSDragonwilds/Saved/SaveGames/Gielinor.sav"
+def find_gielinor_path():
+    """Auto-detect Gielinor.sav location across Windows / WSL."""
+    candidates = [
+        os.path.expandvars(r"%LOCALAPPDATA%\RSDragonwilds\Saved\SaveGames\Gielinor.sav"),
+        os.path.expanduser("~/AppData/Local/RSDragonwilds/Saved/SaveGames/Gielinor.sav"),
+    ]
+    if os.path.isdir("/mnt/c/Users"):
+        try:
+            for user in os.listdir("/mnt/c/Users"):
+                candidates.append(
+                    f"/mnt/c/Users/{user}/AppData/Local/RSDragonwilds/Saved/SaveGames/Gielinor.sav"
+                )
+        except OSError:
+            pass
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    return None
+
+GIELINOR_PATH = find_gielinor_path()
 
 BACKUP_DIR = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),

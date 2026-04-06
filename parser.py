@@ -996,18 +996,39 @@ class WorldSave:
 
 
 def discover_saves(base_path: Optional[str] = None) -> dict:
-    """Find all save files in the default or given location."""
+    """Find all save files in the default or given location.
+
+    Auto-detects the game's save directory across platforms:
+    - Windows: %LOCALAPPDATA%\\RSDragonwilds\\Saved
+    - WSL: /mnt/c/Users/<your-windows-user>/AppData/Local/RSDragonwilds/Saved
+    - Override via the RSDW_SAVE_DIR environment variable.
+    """
     if base_path is None:
-        # Try common locations
-        candidates = [
-            os.path.expandvars(r"%LOCALAPPDATA%\RSDragonwilds\Saved"),
-            os.path.expanduser("~/AppData/Local/RSDragonwilds/Saved"),
-            "~/AppData/Local/RSDragonwilds/Saved",
-        ]
-        for c in candidates:
-            if os.path.isdir(c):
-                base_path = c
-                break
+        # Highest priority: explicit env var override
+        env_override = os.environ.get("RSDW_SAVE_DIR")
+        if env_override and os.path.isdir(env_override):
+            base_path = env_override
+        else:
+            # Try common platform locations
+            candidates = [
+                # Windows native
+                os.path.expandvars(r"%LOCALAPPDATA%\RSDragonwilds\Saved"),
+                # User home (rare layout)
+                os.path.expanduser("~/AppData/Local/RSDragonwilds/Saved"),
+            ]
+            # WSL: scan /mnt/c/Users/* for any user with RSDragonwilds installed
+            if os.path.isdir("/mnt/c/Users"):
+                try:
+                    for user in os.listdir("/mnt/c/Users"):
+                        wsl_candidate = f"/mnt/c/Users/{user}/AppData/Local/RSDragonwilds/Saved"
+                        if os.path.isdir(wsl_candidate):
+                            candidates.append(wsl_candidate)
+                except OSError:
+                    pass
+            for c in candidates:
+                if os.path.isdir(c):
+                    base_path = c
+                    break
 
     if not base_path or not os.path.isdir(base_path):
         return {"error": "Save directory not found", "characters": [], "worlds": []}
