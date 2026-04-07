@@ -51,6 +51,9 @@ function renderItemCard(item) {
     const source = item.source_type || '';
     const sourceName = item.source_name || '';
     const cost = item.soul_fragments_cost ? ` · <strong>${item.soul_fragments_cost} fragments</strong>` : '';
+    const icon = item.icon
+        ? `<img class="db-card-icon" src="${escapeHtml(item.icon)}" alt="${name}" loading="lazy">`
+        : `<div class="db-card-icon db-card-icon-placeholder">?</div>`;
 
     const typeClass = `db-tag-${type.toLowerCase()}`;
     const tags = `
@@ -58,15 +61,18 @@ function renderItemCard(item) {
         ${subtype ? `<span class="db-tag">${escapeHtml(subtype)}</span>` : ''}
     `;
 
-    return `<div class="db-card" data-search="${escapeHtml((name + ' ' + type + ' ' + subtype + ' ' + region + ' ' + sourceName).toLowerCase())}">
-        <div class="db-card-header">
-            <span class="db-card-name">${name}</span>
-            <span class="db-card-id">${id}</span>
+    return `<div class="db-card db-card-with-icon" data-search="${escapeHtml((name + ' ' + type + ' ' + subtype + ' ' + region + ' ' + sourceName).toLowerCase())}">
+        ${icon}
+        <div class="db-card-body">
+            <div class="db-card-header">
+                <span class="db-card-name">${name}</span>
+                <span class="db-card-id">${id}</span>
+            </div>
+            <div style="margin-bottom:6px">${tags}</div>
+            ${vestige}
+            ${region ? `<div class="db-card-meta"><strong>Region:</strong> ${escapeHtml(region)}${subregion ? ' · ' + escapeHtml(subregion) : ''}</div>` : ''}
+            ${source ? `<div class="db-card-meta"><strong>Source:</strong> ${escapeHtml(source)}${sourceName ? ' — ' + escapeHtml(sourceName) : ''}${cost}</div>` : ''}
         </div>
-        <div style="margin-bottom:6px">${tags}</div>
-        ${vestige}
-        ${region ? `<div class="db-card-meta"><strong>Region:</strong> ${escapeHtml(region)}${subregion ? ' · ' + escapeHtml(subregion) : ''}</div>` : ''}
-        ${source ? `<div class="db-card-meta"><strong>Source:</strong> ${escapeHtml(source)}${sourceName ? ' — ' + escapeHtml(sourceName) : ''}${cost}</div>` : ''}
     </div>`;
 }
 

@@ -26,8 +26,8 @@
 
 .db-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 10px;
 }
 
 .db-card {
@@ -36,6 +36,37 @@
     border-radius: 6px;
     padding: 12px;
     transition: border-color 0.15s;
+}
+
+.db-card-with-icon {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.db-card-icon {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    image-rendering: auto;
+}
+
+.db-card-icon-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.db-card-body {
+    flex: 1;
+    min-width: 0;
 }
 
 .db-card:hover { border-color: var(--rs-gold); }

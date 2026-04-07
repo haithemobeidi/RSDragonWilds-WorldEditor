@@ -1,0 +1,1267 @@
+{
+  "L001": {
+    "status": "ok",
+    "queried_name": "Wooden Sword",
+    "wiki_title": "Wooden Training Sword",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Wooden_Training_Sword.png?561ef",
+    "local_path": "/static/images/items/L001.png"
+  },
+  "L002": {
+    "status": "ok",
+    "queried_name": "Goblin \"Swingslash\"",
+    "wiki_title": "Goblin \"Swingslash\"",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Goblin_%22Swingslash%22.png?240ee",
+    "local_path": "/static/images/items/L002.png"
+  },
+  "L003": {
+    "status": "ok",
+    "queried_name": "Leggins of Lightness",
+    "wiki_title": "Leggings Of Lightness",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Leggings_Of_Lightness.png?9b2da",
+    "local_path": "/static/images/items/L003.png"
+  },
+  "L004": {
+    "status": "ok",
+    "queried_name": "Adventurer's Longbow",
+    "wiki_title": "Adventurer's Longbow",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Adventurer%27s_Longbow.png?64f4d",
+    "local_path": "/static/images/items/L004.png"
+  },
+  "L005": {
+    "status": "ok",
+    "queried_name": "Bag of Noggin.",
+    "wiki_title": "Bag of Noggin'",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Bag_of_Noggin%27.png?a1adf",
+    "local_path": "/static/images/items/L005.png"
+  },
+  "L006": {
+    "status": "ok",
+    "queried_name": "Skullsplitter",
+    "wiki_title": "Skullsplitter",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Skullsplitter.png?240ee",
+    "local_path": "/static/images/items/L006.png"
+  },
+  "L007": {
+    "status": "ok",
+    "queried_name": "Grieving Moon Staff.",
+    "wiki_title": "Grieving Moon Staff",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Grieving_Moon_Staff.png?240ee",
+    "local_path": "/static/images/items/L007.png"
+  },
+  "L008": {
+    "status": "ok",
+    "queried_name": "Chieftain's Blade",
+    "wiki_title": "Chieftain's Blade",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Chieftain%27s_Blade.png?561ef",
+    "local_path": "/static/images/items/L008.png"
+  },
+  "L009": {
+    "status": "ok",
+    "queried_name": "Thane's Authority",
+    "wiki_title": "Thane's Authority",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Thane%27s_Authority.png?240ee",
+    "local_path": "/static/images/items/L009.png"
+  },
+  "L010": {
+    "status": "ok",
+    "queried_name": "Hunter's Stagbow",
+    "wiki_title": "Hunter Stagbow",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Hunter_Stagbow.png?64f4d",
+    "local_path": "/static/images/items/L010.png"
+  },
+  "L011": {
+    "status": "ok",
+    "queried_name": "Draconic Staff",
+    "wiki_title": "Draconic Staff",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Draconic_Staff.png?240ee",
+    "local_path": "/static/images/items/L011.png"
+  },
+  "L012": {
+    "status": "not_found",
+    "queried_name": "Bluerite Crossbow"
+  },
+  "L013": {
+    "status": "ok",
+    "queried_name": "Necromancer's Robe Bottom",
+    "wiki_title": "Necromancer's Robe Bottom",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Necromancer%27s_Robe_Bottom.png?8f047",
+    "local_path": "/static/images/items/L013.png"
+  },
+  "L014": {
+    "status": "ok",
+    "queried_name": "Shadowscale Hood",
+    "wiki_title": "Shadowscale Hood",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Shadowscale_Hood.png?7986f",
+    "local_path": "/static/images/items/L014.png"
+  },
+  "L015": {
+    "status": "ok",
+    "queried_name": "White Full Helm",
+    "wiki_title": "White Full Helm",
+    "image_url": "https://dragonwilds.runescape.wiki/images/White_Full_Helm.png?0273b",
+    "local_path": "/static/images/items/L015.png"
+  },
+  "L016": {
+    "status": "ok",
+    "queried_name": "White Platelegs",
+    "wiki_title": "White Platelegs",
+    "image_url": "https://dragonwilds.runescape.wiki/images/White_Platelegs.png?302e3",
+    "local_path": "/static/images/items/L016.png"
+  },
+  "L017": {
+    "status": "ok",
+    "queried_name": "Necromancer's Crown",
+    "wiki_title": "Necromancer's Crown",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Necromancer%27s_Crown.png?8dab5",
+    "local_path": "/static/images/items/L017.png"
+  },
+  "L018": {
+    "status": "ok",
+    "queried_name": "White Platebody",
+    "wiki_title": "White Platebody",
+    "image_url": "https://dragonwilds.runescape.wiki/images/White_Platebody.png?76cff",
+    "local_path": "/static/images/items/L018.png"
+  },
+  "L019": {
+    "status": "ok",
+    "queried_name": "Necromancer's Robe Top",
+    "wiki_title": "Necromancer's Robe Top",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Necromancer%27s_Robe_Top.png?40ad2",
+    "local_path": "/static/images/items/L019.png"
+  },
+  "L020": {
+    "status": "ok",
+    "queried_name": "Imaru's Talon",
+    "wiki_title": "Imaru's Talon",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Imaru%27s_Talon.png?13310",
+    "local_path": "/static/images/items/L020.png"
+  },
+  "L021": {
+    "status": "ok",
+    "queried_name": "Shadow Sword",
+    "wiki_title": "Shadow Sword",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Shadow_Sword.png?3a122",
+    "local_path": "/static/images/items/L021.png"
+  },
+  "L022": {
+    "status": "ok",
+    "queried_name": "Ranger Hat",
+    "wiki_title": "Ranger Hat",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Ranger_Hat.png?07a9f",
+    "local_path": "/static/images/items/L022.png"
+  },
+  "L023": {
+    "status": "ok",
+    "queried_name": "Ranger Tunic",
+    "wiki_title": "Ranger Tunic",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Ranger_Tunic.png?69c19",
+    "local_path": "/static/images/items/L023.png"
+  },
+  "L024": {
+    "status": "ok",
+    "queried_name": "Fallen Hoplite's Aspis",
+    "wiki_title": "Fallen Hoplite's Aspis",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Fallen_Hoplite%27s_Aspis.png?5bc29",
+    "local_path": "/static/images/items/L024.png"
+  },
+  "L025": {
+    "status": "ok",
+    "queried_name": "Ranger Tights",
+    "wiki_title": "Ranger Tights",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Ranger_Tights.png?d945e",
+    "local_path": "/static/images/items/L025.png"
+  },
+  "L026": {
+    "status": "ok",
+    "queried_name": "Ring of Recoil",
+    "wiki_title": "Ring of Recoil",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Ring_of_Recoil.png?a9fd4",
+    "local_path": "/static/images/items/L026.png"
+  },
+  "L027": {
+    "status": "ok",
+    "queried_name": "Amulet of Accuracy",
+    "wiki_title": "Amulet of Accuracy",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Amulet_of_Accuracy.png?a87fc",
+    "local_path": "/static/images/items/L027.png"
+  },
+  "L028": {
+    "status": "ok",
+    "queried_name": "Ring of Pursuit",
+    "wiki_title": "Ring of Pursuit",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Ring_of_Pursuit.png?55b45",
+    "local_path": "/static/images/items/L028.png"
+  },
+  "L029": {
+    "status": "ok",
+    "queried_name": "Amulet of Defence",
+    "wiki_title": "Amulet of Defence",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Amulet_of_Defence.png?10832",
+    "local_path": "/static/images/items/L029.png"
+  },
+  "L030": {
+    "status": "ok",
+    "queried_name": "Black Adventurer's Cape.",
+    "wiki_title": "Black Adventurer's Cape",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Black_Adventurer%27s_Cape.png?05bac",
+    "local_path": "/static/images/items/L030.png"
+  },
+  "L031": {
+    "status": "ok",
+    "queried_name": "Blue Adventurer's Cape.",
+    "wiki_title": "Blue Adventurer's Cape",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Blue_Adventurer%27s_Cape.png?94558",
+    "local_path": "/static/images/items/L031.png"
+  },
+  "L032": {
+    "status": "ok",
+    "queried_name": "Green Adventurer's Cape.",
+    "wiki_title": "Green Adventurer's Cape",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Green_Adventurer%27s_Cape.png?03c93",
+    "local_path": "/static/images/items/L032.png"
+  },
+  "L033": {
+    "status": "ok",
+    "queried_name": "Orange Adventurer's Cape.",
+    "wiki_title": "Orange Adventurer's Cape",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Orange_Adventurer%27s_Cape.png?05bac",
+    "local_path": "/static/images/items/L033.png"
+  },
+  "L034": {
+    "status": "ok",
+    "queried_name": "Pink Adventurer's Cape.",
+    "wiki_title": "Pink Adventurer's Cape",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Pink_Adventurer%27s_Cape.png?05bac",
+    "local_path": "/static/images/items/L034.png"
+  },
+  "L035": {
+    "status": "ok",
+    "queried_name": "Purple Adventurer's Cape.",
+    "wiki_title": "Purple Adventurer's Cape",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Purple_Adventurer%27s_Cape.png?e72aa",
+    "local_path": "/static/images/items/L035.png"
+  },
+  "L036": {
+    "status": "ok",
+    "queried_name": "Red Adventurer's Cape.",
+    "wiki_title": "Red Adventurer's Cape",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Red_Adventurer%27s_Cape.png?05bac",
+    "local_path": "/static/images/items/L036.png"
+  },
+  "L037": {
+    "status": "ok",
+    "queried_name": "White Adventurer's Cape.",
+    "wiki_title": "White Adventurer's Cape",
+    "image_url": "https://dragonwilds.runescape.wiki/images/White_Adventurer%27s_Cape.png?05bac",
+    "local_path": "/static/images/items/L037.png"
+  },
+  "L038": {
+    "status": "ok",
+    "queried_name": "Yellow Adventurer's Cape.",
+    "wiki_title": "Yellow Adventurer's Cape",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Yellow_Adventurer%27s_Cape.png?e5ecc",
+    "local_path": "/static/images/items/L038.png"
+  },
+  "L039": {
+    "status": "ok",
+    "queried_name": "Ring of Life",
+    "wiki_title": "Ring of Life",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Ring_of_Life.png?c801e",
+    "local_path": "/static/images/items/L039.png"
+  },
+  "L040": {
+    "status": "ok",
+    "queried_name": "Amulet of Magic",
+    "wiki_title": "Amulet of Magic",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Amulet_of_Magic.png?b6348",
+    "local_path": "/static/images/items/L040.png"
+  },
+  "L041": {
+    "status": "ok",
+    "queried_name": "Shadowscale Cape",
+    "wiki_title": "Shadowscale Cape",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Shadowscale_Cape.png?f0009",
+    "local_path": "/static/images/items/L041.png"
+  },
+  "L042": {
+    "status": "ok",
+    "queried_name": "Amulet of Strength",
+    "wiki_title": "Amulet of Strength",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Amulet_of_Strength.png?4232f",
+    "local_path": "/static/images/items/L042.png"
+  },
+  "L043": {
+    "status": "not_found",
+    "queried_name": "Undead Speade"
+  },
+  "L044": {
+    "status": "ok",
+    "queried_name": "Wild Archer Cowl",
+    "wiki_title": "Wild Archer Cowl",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Wild_Archer_Cowl.png?d1f99",
+    "local_path": "/static/images/items/L044.png"
+  },
+  "L045": {
+    "status": "ok",
+    "queried_name": "Wild Archer Body",
+    "wiki_title": "Wild Archer Body",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Wild_Archer_Body.png?aeaba",
+    "local_path": "/static/images/items/L045.png"
+  },
+  "L046": {
+    "status": "ok",
+    "queried_name": "Wild Archer Chaps",
+    "wiki_title": "Wild Archer Chaps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Wild_Archer_Chaps.png?d1f99",
+    "local_path": "/static/images/items/L046.png"
+  },
+  "L047": {
+    "status": "ok",
+    "queried_name": "Paladin's Helm",
+    "wiki_title": "Paladin's Helm",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Paladin%27s_Helm.png?06e8f",
+    "local_path": "/static/images/items/L047.png"
+  },
+  "L048": {
+    "status": "ok",
+    "queried_name": "Paladin's Platebody",
+    "wiki_title": "Paladin's Platebody",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Paladin%27s_Platebody.png?0b97c",
+    "local_path": "/static/images/items/L048.png"
+  },
+  "L049": {
+    "status": "ok",
+    "queried_name": "Paladin's Platelegs",
+    "wiki_title": "Paladin Platelegs",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Paladin_Platelegs.png?0b97c",
+    "local_path": "/static/images/items/L049.png"
+  },
+  "L050": {
+    "status": "ok",
+    "queried_name": "Dragonkin Mage Hood",
+    "wiki_title": "Dragonkin Mage Hood",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Dragonkin_Mage_Hood.png?5b65c",
+    "local_path": "/static/images/items/L050.png"
+  },
+  "L051": {
+    "status": "ok",
+    "queried_name": "Dragonkin Mage Robes",
+    "wiki_title": "Dragonkin Mage Robes",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Dragonkin_Mage_Robes.png?5b65c",
+    "local_path": "/static/images/items/L051.png"
+  },
+  "L052": {
+    "status": "ok",
+    "queried_name": "Dragonkin Mage Legs",
+    "wiki_title": "Dragonkin Mage Robe Legs",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Dragonkin_Mage_Robe_Legs.png?5b65c",
+    "local_path": "/static/images/items/L052.png"
+  },
+  "L053": {
+    "status": "ok",
+    "queried_name": "Fallen Hoplite's Helm",
+    "wiki_title": "Fallen Hoplite's Helm",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Fallen_Hoplite%27s_Helm.png?ba07d",
+    "local_path": "/static/images/items/L053.png"
+  },
+  "L054": {
+    "status": "ok",
+    "queried_name": "Fallen Hoplite's Chest",
+    "wiki_title": "Fallen Hoplite's Chest",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Fallen_Hoplite%27s_Chest.png?fb0d1",
+    "local_path": "/static/images/items/L054.png"
+  },
+  "L055": {
+    "status": "ok",
+    "queried_name": "Fallen Hoplite's Tassets",
+    "wiki_title": "Fallen Hoplite's Tassets",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Fallen_Hoplite%27s_Tassets.png?a85d2",
+    "local_path": "/static/images/items/L055.png"
+  },
+  "L056": {
+    "status": "ok",
+    "queried_name": "Spectral Book",
+    "wiki_title": "Spectral Book",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Spectral_Book.png?a0f4d",
+    "local_path": "/static/images/items/L056.png"
+  },
+  "L057": {
+    "status": "ok",
+    "queried_name": "Shroud of Noggin",
+    "wiki_title": "Shroud of Noggin",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Shroud_of_Noggin.png?59792",
+    "local_path": "/static/images/items/L057.png"
+  },
+  "L058": {
+    "status": "not_found",
+    "queried_name": "Salve Almulet"
+  },
+  "L059": {
+    "status": "ok",
+    "queried_name": "Blue Standing Torch",
+    "wiki_title": "Blue Standing Torch",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Blue_Standing_Torch.png?5eb3b",
+    "local_path": "/static/images/items/L059.png"
+  },
+  "L060": {
+    "status": "ok",
+    "queried_name": "Blue Wall-mounted Torch",
+    "wiki_title": "Blue Wall-mounted Torch",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Blue_Wall-mounted_Torch.png?5eb3b",
+    "local_path": "/static/images/items/L060.png"
+  },
+  "L061": {
+    "status": "ok",
+    "queried_name": "Green Standing Torch",
+    "wiki_title": "Green Standing Torch",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Green_Standing_Torch.png?23679",
+    "local_path": "/static/images/items/L061.png"
+  },
+  "L062": {
+    "status": "ok",
+    "queried_name": "Green Wall-mounted Torch",
+    "wiki_title": "Green Wall-mounted Torch",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Green_Wall-mounted_Torch.png?23679",
+    "local_path": "/static/images/items/L062.png"
+  },
+  "L063": {
+    "status": "ok",
+    "queried_name": "Red Standing Torch",
+    "wiki_title": "Red Standing Torch",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Red_Standing_Torch.png?1700c",
+    "local_path": "/static/images/items/L063.png"
+  },
+  "L064": {
+    "status": "ok",
+    "queried_name": "Red Wall-mounted Torch",
+    "wiki_title": "Red Wall-mounted Torch",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Red_Wall-mounted_Torch.png?1700c",
+    "local_path": "/static/images/items/L064.png"
+  },
+  "L065": {
+    "status": "ok",
+    "queried_name": "Purple Standing Torch",
+    "wiki_title": "Purple Standing Torch",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Purple_Standing_Torch.png?1700c",
+    "local_path": "/static/images/items/L065.png"
+  },
+  "L066": {
+    "status": "ok",
+    "queried_name": "Purple Wall-mounted Torch",
+    "wiki_title": "Purple Wall-mounted Torch",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Purple_Wall-mounted_Torch.png?1700c",
+    "local_path": "/static/images/items/L066.png"
+  },
+  "L067": {
+    "status": "ok",
+    "queried_name": "Potted Redberry Bush ",
+    "wiki_title": "Potted Redberry Bush",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Potted_Redberry_Bush.png?1700c",
+    "local_path": "/static/images/items/L067.png"
+  },
+  "L068": {
+    "status": "ok",
+    "queried_name": "Potted Dwellberry Bush",
+    "wiki_title": "Potted Dwellberry Bush",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Potted_Dwellberry_Bush.png?4b0ad",
+    "local_path": "/static/images/items/L068.png"
+  },
+  "L069": {
+    "status": "ok",
+    "queried_name": "Bowl of Peaches",
+    "wiki_title": "Bowl of Peaches",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Bowl_of_Peaches.png?5eb3b",
+    "local_path": "/static/images/items/L069.png"
+  },
+  "L070": {
+    "status": "ok",
+    "queried_name": "Bowl of Onions",
+    "wiki_title": "Bowl of Onions",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Bowl_of_Onions.png?5eb3b",
+    "local_path": "/static/images/items/L070.png"
+  },
+  "L071": {
+    "status": "ok",
+    "queried_name": "Potted Onion",
+    "wiki_title": "Potted Onion",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Potted_Onion.png?4b0ad",
+    "local_path": "/static/images/items/L071.png"
+  },
+  "L072": {
+    "status": "ok",
+    "queried_name": "Stack of Bowls",
+    "wiki_title": "Stack of Bowls",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Stack_of_Bowls.png?527f0",
+    "local_path": "/static/images/items/L072.png"
+  },
+  "L073": {
+    "status": "ok",
+    "queried_name": "Dragonkin Gargoyle 01",
+    "wiki_title": "Dragonkin Gargoyle 01",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Dragonkin_Gargoyle_01.png?d3fb6",
+    "local_path": "/static/images/items/L073.png"
+  },
+  "L074": {
+    "status": "ok",
+    "queried_name": "Dragonkin Gargoyle 02",
+    "wiki_title": "Dragonkin Gargoyle 02",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Dragonkin_Gargoyle_02.png?d3fb6",
+    "local_path": "/static/images/items/L074.png"
+  },
+  "L075": {
+    "status": "ok",
+    "queried_name": "Dragonkin Gargoyle 03",
+    "wiki_title": "Dragonkin Gargoyle 03",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Dragonkin_Gargoyle_03.png?d3fb6",
+    "local_path": "/static/images/items/L075.png"
+  },
+  "L076": {
+    "status": "ok",
+    "queried_name": "Dragonkin Obelisk 01",
+    "wiki_title": "Dragonkin Obelisk 01",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Dragonkin_Obelisk_01_%28placed%29.png?46a83",
+    "local_path": "/static/images/items/L076.png"
+  },
+  "L077": {
+    "status": "ok",
+    "queried_name": "Dragonkin Obelisk 02",
+    "wiki_title": "Dragonkin Obelisk 02",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Dragonkin_Obelisk_02_%28placed%29.png?48529",
+    "local_path": "/static/images/items/L077.png"
+  },
+  "L078": {
+    "status": "ok",
+    "queried_name": "Dragonkin Obelisk 03",
+    "wiki_title": "Dragonkin Obelisk 03",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Dragonkin_Obelisk_03_%28placed%29.png?48529",
+    "local_path": "/static/images/items/L078.png"
+  },
+  "L079": {
+    "status": "ok",
+    "queried_name": "Dragonkin Statue 01",
+    "wiki_title": "Dragonkin Statue 01",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Dragonkin_Statue_01_%28placed%29.png?48529",
+    "local_path": "/static/images/items/L079.png"
+  },
+  "L080": {
+    "status": "ok",
+    "queried_name": "Dragonkin Statue 02",
+    "wiki_title": "Dragonkin Statue 02",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Dragonkin_Statue_02_%28placed%29.png?48529",
+    "local_path": "/static/images/items/L080.png"
+  },
+  "L081": {
+    "status": "ok",
+    "queried_name": "Garou Wall Banner",
+    "wiki_title": "Garou Wall Banner",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Garou_Wall_Banner.png?23679",
+    "local_path": "/static/images/items/L081.png"
+  },
+  "L082": {
+    "status": "ok",
+    "queried_name": "Garou Drum",
+    "wiki_title": "Garou Drum",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Garou_Drum.png?711c6",
+    "local_path": "/static/images/items/L082.png"
+  },
+  "L083": {
+    "status": "ok",
+    "queried_name": "Garou Hanging Ornament 01",
+    "wiki_title": "Garou Hanging Ornament 01",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Garou_Hanging_Ornament_01.png?711c6",
+    "local_path": "/static/images/items/L083.png"
+  },
+  "L084": {
+    "status": "ok",
+    "queried_name": "Garou Hanging Ornament 02",
+    "wiki_title": "Garou Hanging Ornament 02",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Garou_Hanging_Ornament_02.png?711c6",
+    "local_path": "/static/images/items/L084.png"
+  },
+  "L085": {
+    "status": "ok",
+    "queried_name": "Garou Hanging Ornament 03",
+    "wiki_title": "Garou Hanging Ornament 03",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Garou_Hanging_Ornament_03.png?711c6",
+    "local_path": "/static/images/items/L085.png"
+  },
+  "L086": {
+    "status": "ok",
+    "queried_name": "Garou Hanging Ornament 04",
+    "wiki_title": "Garou Hanging Ornament 04",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Garou_Hanging_Ornament_04.png?711c6",
+    "local_path": "/static/images/items/L086.png"
+  },
+  "L087": {
+    "status": "ok",
+    "queried_name": "Garou Wall Pelt",
+    "wiki_title": "Garou Wall Pelt",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Garou_Wall_Pelt.png?23679",
+    "local_path": "/static/images/items/L087.png"
+  },
+  "L088": {
+    "status": "ok",
+    "queried_name": "Garou Stool",
+    "wiki_title": "Garou Stool",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Garou_Stool.png?711c6",
+    "local_path": "/static/images/items/L088.png"
+  },
+  "L089": {
+    "status": "ok",
+    "queried_name": "Garou Trophy 01",
+    "wiki_title": "Garou Trophy 01",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Garou_Trophy_01.png?711c6",
+    "local_path": "/static/images/items/L089.png"
+  },
+  "L090": {
+    "status": "ok",
+    "queried_name": "Garou Trophy 02",
+    "wiki_title": "Garou Trophy 02",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Garou_Trophy_02.png?711c6",
+    "local_path": "/static/images/items/L090.png"
+  },
+  "L091": {
+    "status": "ok",
+    "queried_name": "Garou Trophy 03",
+    "wiki_title": "Garou Trophy 03",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Garou_Trophy_03.png?711c6",
+    "local_path": "/static/images/items/L091.png"
+  },
+  "L092": {
+    "status": "ok",
+    "queried_name": "Garou Trophy 04",
+    "wiki_title": "Garou Trophy 04",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Garou_Trophy_04.png?711c6",
+    "local_path": "/static/images/items/L092.png"
+  },
+  "L093": {
+    "status": "ok",
+    "queried_name": "Garou Tusks 01",
+    "wiki_title": "Garou Tusks 01",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Garou_Tusks_01.png?711c6",
+    "local_path": "/static/images/items/L093.png"
+  },
+  "L094": {
+    "status": "ok",
+    "queried_name": "Garou Tusks 02",
+    "wiki_title": "Garou Tusks 02",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Garou_Tusks_02.png?711c6",
+    "local_path": "/static/images/items/L094.png"
+  },
+  "L095": {
+    "status": "ok",
+    "queried_name": "Garou Tusks 03",
+    "wiki_title": "Garou Tusks 03",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Garou_Tusks_03.png?711c6",
+    "local_path": "/static/images/items/L095.png"
+  },
+  "L096": {
+    "status": "ok",
+    "queried_name": "Salve Crystal",
+    "wiki_title": "Salve Crystal",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Salve_Crystal.png?19a8e",
+    "local_path": "/static/images/items/L096.png"
+  },
+  "L097": {
+    "status": "ok",
+    "queried_name": "Headstone 01",
+    "wiki_title": "Headstone 01",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Headstone_01.png?32366",
+    "local_path": "/static/images/items/L097.png"
+  },
+  "L098": {
+    "status": "ok",
+    "queried_name": "Headstone 02",
+    "wiki_title": "Headstone 02",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Headstone_02.png?9512d",
+    "local_path": "/static/images/items/L098.png"
+  },
+  "L099": {
+    "status": "ok",
+    "queried_name": "Grave 01",
+    "wiki_title": "Grave 01",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Grave_01.png?47203",
+    "local_path": "/static/images/items/L099.png"
+  },
+  "L100": {
+    "status": "ok",
+    "queried_name": "Grave 02",
+    "wiki_title": "Grave 02",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Grave_02.png?11ba5",
+    "local_path": "/static/images/items/L100.png"
+  },
+  "L101": {
+    "status": "ok",
+    "queried_name": "Grave 03",
+    "wiki_title": "Grave 03",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Grave_03.png?28763",
+    "local_path": "/static/images/items/L101.png"
+  },
+  "L102": {
+    "status": "ok",
+    "queried_name": "Grave 04",
+    "wiki_title": "Grave 04",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Grave_04.png?3ad53",
+    "local_path": "/static/images/items/L102.png"
+  },
+  "L103": {
+    "status": "ok",
+    "queried_name": "Dragonbane cape",
+    "wiki_title": "Dragonbane Cape",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Dragonbane_Cape.png?5b65c",
+    "local_path": "/static/images/items/L103.png"
+  },
+  "L104": {
+    "status": "ok",
+    "queried_name": "Abyssal Whip",
+    "wiki_title": "Abyssal Whip",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Abyssal_Whip.png?789d1",
+    "local_path": "/static/images/items/L104.png"
+  },
+  "L105": {
+    "status": "ok",
+    "queried_name": "Bloodlight Cape",
+    "wiki_title": "Bloodblight Swamp",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Bloodblight_Swamp.png?84005",
+    "local_path": "/static/images/items/L105.png"
+  },
+  "L106": {
+    "status": "ok",
+    "queried_name": "Whispering Cape",
+    "wiki_title": "Whispering Cape",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Whispering_Cape.png?aeaba",
+    "local_path": "/static/images/items/L106.png"
+  },
+  "L107": {
+    "status": "ok",
+    "queried_name": "Fractured Cape",
+    "wiki_title": "Fractured Cape",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Fractured_Cape.png?5b65c",
+    "local_path": "/static/images/items/L107.png"
+  },
+  "L108": {
+    "status": "ok",
+    "queried_name": "Bramblemead Cape",
+    "wiki_title": "Bramblemead Cape",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Bramblemead_Cape.png?a1adf",
+    "local_path": "/static/images/items/L108.png"
+  },
+  "L109": {
+    "status": "ok",
+    "queried_name": "Fellhollow Cape",
+    "wiki_title": "Fellhollow Cape",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Fellhollow_Cape.png?2d1f8",
+    "local_path": "/static/images/items/L109.png"
+  },
+  "L110": {
+    "status": "ok",
+    "queried_name": "Stormtouched Cape",
+    "wiki_title": "Stormtouched Cape",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Stormtouched_Cape.png?aeaba",
+    "local_path": "/static/images/items/L110.png"
+  },
+  "L111": {
+    "status": "ok",
+    "queried_name": "Necromancer's Staff",
+    "wiki_title": "Necromancer's Staff",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Necromancer%27s_Staff.png?92c69",
+    "local_path": "/static/images/items/L111.png"
+  },
+  "L112": {
+    "status": "ok",
+    "queried_name": "Skill Tome Artisan (Laying)",
+    "wiki_title": "Ranged",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Ranged.png?75136",
+    "local_path": "/static/images/items/L112.png"
+  },
+  "L113": {
+    "status": "ok",
+    "queried_name": "Skill Tome Artisan (Standing)",
+    "wiki_title": "Leather",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Leather.png?d4d9c",
+    "local_path": "/static/images/items/L113.png"
+  },
+  "L114": {
+    "status": "ok",
+    "queried_name": "Skill Tome Construction (Laying)",
+    "wiki_title": "Ranged",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Ranged.png?75136",
+    "local_path": "/static/images/items/L114.png"
+  },
+  "L115": {
+    "status": "ok",
+    "queried_name": "Skill Tome Construction (Standing)",
+    "wiki_title": "Leather",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Leather.png?d4d9c",
+    "local_path": "/static/images/items/L115.png"
+  },
+  "L116": {
+    "status": "ok",
+    "queried_name": "Skill Tome Cooking (Laying)",
+    "wiki_title": "Ranged",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Ranged.png?75136",
+    "local_path": "/static/images/items/L116.png"
+  },
+  "L117": {
+    "status": "ok",
+    "queried_name": "Skill Tome Cooking (Standing)",
+    "wiki_title": "Ash Logs",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Ash_Logs.png?fd9a7",
+    "local_path": "/static/images/items/L117.png"
+  },
+  "L118": {
+    "status": "not_found",
+    "queried_name": "Skill Tome Ranged *(Laying)"
+  },
+  "L119": {
+    "status": "ok",
+    "queried_name": "Skill Tome Ranged* (Standing)",
+    "wiki_title": "Skill Tome - Ranged",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Skill_Tome_-_Ranged.png?98d75",
+    "local_path": "/static/images/items/L119.png"
+  },
+  "L120": {
+    "status": "ok",
+    "queried_name": "Skill Tome Runecrafting (Laying)",
+    "wiki_title": "Ranged",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Ranged.png?75136",
+    "local_path": "/static/images/items/L120.png"
+  },
+  "L121": {
+    "status": "ok",
+    "queried_name": "Skill Tome Runecrafting (Standing)",
+    "wiki_title": "Leather",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Leather.png?d4d9c",
+    "local_path": "/static/images/items/L121.png"
+  },
+  "L122": {
+    "status": "ok",
+    "queried_name": "Skill Tome Woodcutting (Laying)",
+    "wiki_title": "Ranged",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Ranged.png?75136",
+    "local_path": "/static/images/items/L122.png"
+  },
+  "L123": {
+    "status": "ok",
+    "queried_name": "Skill Tome Woodcutting (Standing)",
+    "wiki_title": "Leather",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Leather.png?d4d9c",
+    "local_path": "/static/images/items/L123.png"
+  },
+  "L124": {
+    "status": "ok",
+    "queried_name": "Skill Tome Attack (Laying)",
+    "wiki_title": "Ranged",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Ranged.png?75136",
+    "local_path": "/static/images/items/L124.png"
+  },
+  "L125": {
+    "status": "ok",
+    "queried_name": "Skill Tome Attack (Standing)",
+    "wiki_title": "Leather",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Leather.png?d4d9c",
+    "local_path": "/static/images/items/L125.png"
+  },
+  "L126": {
+    "status": "ok",
+    "queried_name": "Dragonbone Dagger",
+    "wiki_title": "Dragonbone Dagger",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Dragonbone_Dagger.png?9ec22",
+    "local_path": "/static/images/items/L126.png"
+  },
+  "L127": {
+    "status": "ok",
+    "queried_name": "Wolfbane Dagger",
+    "wiki_title": "Wolfbane Dagger",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Wolfbane_Dagger.png?a4e31",
+    "local_path": "/static/images/items/L127.png"
+  },
+  "L128": {
+    "status": "ok",
+    "queried_name": "Undead Ranger's Bow",
+    "wiki_title": "Undead Ranger's Bow",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Undead_Ranger%27s_Bow.png?e4563",
+    "local_path": "/static/images/items/L128.png"
+  },
+  "L129": {
+    "status": "ok",
+    "queried_name": "Wild Scout's Shortbow",
+    "wiki_title": "Wild Scout's Shortbow",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Wild_Scout%27s_Shortbow.png?64f4d",
+    "local_path": "/static/images/items/L129.png"
+  },
+  "L130": {
+    "status": "not_found",
+    "queried_name": "Grimy Parchment"
+  },
+  "L131": {
+    "status": "not_found",
+    "queried_name": "Grubby Note"
+  },
+  "L132": {
+    "status": "not_found",
+    "queried_name": "Muddy Scrawl"
+  },
+  "L133": {
+    "status": "not_found",
+    "queried_name": "Pungent Scribble"
+  },
+  "L134": {
+    "status": "not_found",
+    "queried_name": "Weathered Diary"
+  },
+  "L135": {
+    "status": "not_found",
+    "queried_name": "Ancient Journal Page"
+  },
+  "L136": {
+    "status": "not_found",
+    "queried_name": "Druid's Memoirs"
+  },
+  "L137": {
+    "status": "not_found",
+    "queried_name": "Forgotten Diary"
+  },
+  "L138": {
+    "status": "not_found",
+    "queried_name": "Preserved Diary"
+  },
+  "L139": {
+    "status": "not_found",
+    "queried_name": "Soot-Stained Diary"
+  },
+  "L140": {
+    "status": "not_found",
+    "queried_name": "Elder's Storybook Page"
+  },
+  "L141": {
+    "status": "ok",
+    "queried_name": "Garou Writings",
+    "wiki_title": "Garou Writings",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Garou_Writings_Lore_Scrap.png?fce08",
+    "local_path": "/static/images/items/L141.png"
+  },
+  "L142": {
+    "status": "not_found",
+    "queried_name": "Leathery Parchment"
+  },
+  "L143": {
+    "status": "not_found",
+    "queried_name": "Scorched Journal"
+  },
+  "L144": {
+    "status": "not_found",
+    "queried_name": "Torn Journal Page"
+  },
+  "L145": {
+    "status": "not_found",
+    "queried_name": "Dragonkin Diary Page"
+  },
+  "L146": {
+    "status": "not_found",
+    "queried_name": "Dragonkin Journal Page"
+  },
+  "L147": {
+    "status": "not_found",
+    "queried_name": "Dragonkin Notebook Page"
+  },
+  "L148": {
+    "status": "not_found",
+    "queried_name": "Infused Journal"
+  },
+  "L149": {
+    "status": "not_found",
+    "queried_name": "Bloodstained Page"
+  },
+  "L150": {
+    "status": "not_found",
+    "queried_name": "Leaf-Scented Page"
+  },
+  "L151": {
+    "status": "not_found",
+    "queried_name": "Duke's Diary"
+  },
+  "L152": {
+    "status": "not_found",
+    "queried_name": "Servant's Secret Diary"
+  },
+  "L153": {
+    "status": "not_found",
+    "queried_name": "Cathan's Journal [Castle]"
+  },
+  "L154": {
+    "status": "not_found",
+    "queried_name": "Cathan's Journal [Ghornfell]"
+  },
+  "L155": {
+    "status": "not_found",
+    "queried_name": "Cathan's Note"
+  },
+  "L156": {
+    "status": "not_found",
+    "queried_name": "Ritual Of Purification"
+  },
+  "L157": {
+    "status": "not_found",
+    "queried_name": "Vault Hunter's Journal"
+  },
+  "L158": {
+    "status": "not_found",
+    "queried_name": "Mould-Covered Diary"
+  },
+  "L159": {
+    "status": "ok",
+    "queried_name": "Withered Journal",
+    "wiki_title": "Withered Journal",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Withered_Journal.png?d3e85",
+    "local_path": "/static/images/items/L159.png"
+  },
+  "L160": {
+    "status": "ok",
+    "queried_name": "Soot Stained Journal",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L160.png"
+  },
+  "L161": {
+    "status": "ok",
+    "queried_name": "Red-Stained Diary",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L161.png"
+  },
+  "L162": {
+    "status": "ok",
+    "queried_name": "Priestly Journal",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L162.png"
+  },
+  "L163": {
+    "status": "ok",
+    "queried_name": "Farmer Fred's Journal",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L163.png"
+  },
+  "L164": {
+    "status": "ok",
+    "queried_name": "Ulgo's Diary",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L164.png"
+  },
+  "L165": {
+    "status": "ok",
+    "queried_name": "Captain Rainer's Journal",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L165.png"
+  },
+  "L167": {
+    "status": "ok",
+    "queried_name": "Lazily-Penned Diary",
+    "wiki_title": "Emberwood",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Emberwood.png?ad982",
+    "local_path": "/static/images/items/L167.png"
+  },
+  "L168": {
+    "status": "ok",
+    "queried_name": "Dragon-Embossed Journal",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L168.png"
+  },
+  "L169": {
+    "status": "ok",
+    "queried_name": "Battered Diary",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L169.png"
+  },
+  "L170": {
+    "status": "ok",
+    "queried_name": "Weathered Diary (Fellhollow)",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L170.png"
+  },
+  "L171": {
+    "status": "ok",
+    "queried_name": "Withered Diary",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L171.png"
+  },
+  "L172": {
+    "status": "ok",
+    "queried_name": "Rot-Covered Journal",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L172.png"
+  },
+  "L173": {
+    "status": "ok",
+    "queried_name": "Laboratory Note",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L173.png"
+  },
+  "L174": {
+    "status": "ok",
+    "queried_name": "Experiment Log",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L174.png"
+  },
+  "L175": {
+    "status": "ok",
+    "queried_name": "The Tale of the Ghost Wolves",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L175.png"
+  },
+  "L176": {
+    "status": "ok",
+    "queried_name": "Lacrussa's Writings",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L176.png"
+  },
+  "L177": {
+    "status": "ok",
+    "queried_name": "Lacrussa's Journal",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L177.png"
+  },
+  "L178": {
+    "status": "ok",
+    "queried_name": "Lacrussa's Notes",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L178.png"
+  },
+  "L179": {
+    "status": "ok",
+    "queried_name": "Lacrussa's Ravings",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L179.png"
+  },
+  "L180": {
+    "status": "not_found",
+    "queried_name": "Lacrussa's Diary"
+  },
+  "L181": {
+    "status": "ok",
+    "queried_name": "Lacrussa's Memoir",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L181.png"
+  },
+  "L182": {
+    "status": "ok",
+    "queried_name": "Ravanna's First Journal",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L182.png"
+  },
+  "L183": {
+    "status": "ok",
+    "queried_name": "Ravanna's Second Journal",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L183.png"
+  },
+  "L184": {
+    "status": "ok",
+    "queried_name": "Ravanna's Third Journal",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L184.png"
+  },
+  "L185": {
+    "status": "ok",
+    "queried_name": "Ravanna's Fourth Journal",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L185.png"
+  },
+  "L186": {
+    "status": "ok",
+    "queried_name": "Ravanna's Fifth Journal",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L186.png"
+  },
+  "L187": {
+    "status": "ok",
+    "queried_name": "Ravanna's Sixth Journal",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L187.png"
+  },
+  "L188": {
+    "status": "ok",
+    "queried_name": "Ravanna's Seventh Journal",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L188.png"
+  },
+  "L189": {
+    "status": "not_found",
+    "queried_name": "Priest's Journal"
+  },
+  "L190": {
+    "status": "not_found",
+    "queried_name": "Dust-Covered Diary"
+  },
+  "L191": {
+    "status": "not_found",
+    "queried_name": "Tear-Stained Journal"
+  },
+  "L192": {
+    "status": "not_found",
+    "queried_name": "Bloodstained Journal"
+  },
+  "L193": {
+    "status": "ok",
+    "queried_name": "Weathered Journal",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L193.png"
+  },
+  "L194": {
+    "status": "ok",
+    "queried_name": "Winston Henning's Diary",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L194.png"
+  },
+  "L195": {
+    "status": "ok",
+    "queried_name": "Eleanor Scathe's Diary",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L195.png"
+  },
+  "L196": {
+    "status": "ok",
+    "queried_name": " Samuel Malcifer's Journal",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L196.png"
+  },
+  "L197": {
+    "status": "ok",
+    "queried_name": "Nolan Scathe's Journal",
+    "wiki_title": "Lore Scraps",
+    "image_url": "https://dragonwilds.runescape.wiki/images/Lore_Icon.png?7f07e",
+    "local_path": "/static/images/items/L197.png"
+  },
+  "L198": {
+    "status": "not_found",
+    "queried_name": "Scrawled Diary Page"
+  }
+}

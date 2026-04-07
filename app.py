@@ -34,6 +34,19 @@ def load_catalog():
             except Exception as e:
                 print(f"Failed to load catalog {fname}: {e}")
 
+    # Merge icon paths into items (from data/icon_map.json)
+    icon_map_path = os.path.join(DATA_DIR, "icon_map.json")
+    if os.path.exists(icon_map_path):
+        try:
+            with open(icon_map_path) as f:
+                icon_map = json.load(f)
+            for item in catalog.get("items", []):
+                entry = icon_map.get(item.get("id", ""))
+                if entry and entry.get("status") == "ok":
+                    item["icon"] = entry.get("local_path")
+        except Exception as e:
+            print(f"Failed to merge icon map: {e}")
+
 
 def init_saves():
     global SAVE_DIR

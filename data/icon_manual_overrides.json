@@ -1,0 +1,4 @@
+{
+  "_comment": "Manual overrides for items where the XLSX name doesn't match the wiki name (typos, pluralization, capitalization). Maps item_id -> wiki_title_to_use. Re-run scripts/fetch_icons.py --force after editing this file to fetch the corrected icons.",
+  "L003": "Leggings Of Lightness"
+}
