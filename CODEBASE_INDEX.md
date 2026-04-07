@@ -53,6 +53,8 @@ The data layer. All save file reading and writing logic lives here.
 - `get_stations()` — crafting station inventories
 - `get_containers(include_empty=False)` — world chests with editable items
 - `get_difficulty_settings()` — current entries (with friendly names + hints) and missing tags
+- `KNOWN_STRUCTURES` — class table for placed-actor detection. Currently has Personal Chest only (589 B, first4 `17 00 00 00`, class-ref `01 0a 02 ... 03 00 00 00 18 00 00 00 19 00 00 00 1a 00 00 00`). Add new entries here as more building types are reverse-engineered.
+- `get_placed_structures()` — walks every `SPWN` chunk in `raw_data`, matches against `KNOWN_STRUCTURES`, returns list with `spwn_offset`, `body_length`, `class_name`, `display_name`, `instance_guid_hex`, `position` (vec3 from 6 doubles at offset 0x14), `transform_extra` (last 3 doubles), and `raw_record_hex`. Verified accurate on the A/B/C test corpus (0/1/2 chests with byte-identical positions across saves of same world).
 - Editing methods: `update_container_item`, `update_weather`, `update_event_trigger`, `disable_all_raids`, `update_difficulty_value` (still broken — wrong location), `convert_to_custom`, `revert_to_standard`
 - `save(backup=True)` — writes `raw_data` back to disk; for each JSON section, replaces in place with **length-preserving** JSON. Binary edits (mode bytes, difficulty floats) live directly in `raw_data` and survive automatically.
 
@@ -182,6 +184,25 @@ Standalone utilities not part of the Flask app.
 | `flip_gielinor_custom.py` | One-shot CLI to convert Gielinor.sav between Standard and Custom mode. Has `--revert` flag. Auto-detects file location. Built-in backups per standing rule. |
 | `import_catalog.py` | Reads the Ashenfall Completionist Log XLSX and writes `data/quests.json` + `data/items.json` + `data/catalog_meta.json`. Re-run when the source XLSX is updated. |
 | `fetch_icons.py` | Scrapes item icons from the RS Dragonwilds wiki via MediaWiki API. Direct `pageimages` lookup → search fallback → manual override support. Polite rate limit (0.5s). Resumable cache in `icon_map.json`. Downloads PNGs to `static/images/items/`. Usage: `python scripts/fetch_icons.py [--limit N] [--force]`. |
+
+### `scripts/structure_research/`
+Reverse-engineering corpus + diff scripts for the **placed-structure transplant feature** (started 04-07-2026). Established the binary layout of `SPWN`+`PROP` actor records by diffing three same-world snapshots.
+
+| File | Purpose |
+|------|---------|
+| `README.md` | Full notes on the chunked save format (`SAVE`/`INFO`/`CINF`/`GLOB`/`CNIX`/`PNIX`/`CDEF`/`CDVE`/`LVLS`/`SPWN`/`PROP`/`Pces`/`SATS`/`CORA` chunk tags), the SPWN record layout, the chest schema strings, and **the root cause of bug #001** (chests carry `OwnerCharacterGuid` baked in — converting world owner orphans them) |
+| `A.sav` | Empty test world (no player builds) — 201,105 B, 15 baseline SPWN records (system entities — NOT trees/rocks; world props are seed-generated, not serialized) |
+| `B.sav` | A + 1 Personal Chest in front of church — 202,805 B, 16 SPWN records |
+| `C.sav` | B + 1 more Personal Chest near tent — 203,588 B, 17 SPWN records |
+| `D_with_ash_chest.sav` | C + 1 Ash Chest — 205,088 B, 18 SPWN records (introduced the second known structure class) |
+| `diff.py` | Naive prefix/suffix diff (failed — too noisy because byte insertions reshuffle offset tables) |
+| `diff2.py` | String-counter diff that revealed the chest schema strings (BP_BaseBuilding_PersonalChest_C, BuildingPieceID, OwnerCharacterGuid, etc.) |
+| `diff3.py` | Chunk-tag locator that mapped the entire file format |
+| `diff4.py` | SPWN record extractor with bytewise novelty detection |
+| `diff5.py` | Float interpretation of diff between two SPWN records (false-positive — was diffing trees, not chests) |
+| `diff6.py` | SPWN class-ref signature analyzer (revealed chests are 589 bytes with `17 00 00 00` first4, NOT 590 bytes) |
+| `diff7.py` | Diff of the *actual* chest records — proved same chest in two saves of same world differs by only 2 tick/hash bytes |
+| `diff8.py` | Diff of D vs C to capture the Ash Chest's class-ref signature for `KNOWN_STRUCTURES` |
 
 ## `docs/`
 

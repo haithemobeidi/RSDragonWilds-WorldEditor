@@ -936,6 +936,124 @@ class WorldSave:
                     })
         return weather
 
+    # ===== Placed Structures (player-built actors in SPWN chunks) =====
+    #
+    # Reverse-engineered 04-07-2026 via diff of three same-world snapshots
+    # (see scripts/structure_research/). Player-built actors are stored as
+    # SPWN+PROP record pairs inside the LVLS chunk. The world's procedural
+    # content (trees, rocks, ore, enemies) is generated from the world seed
+    # at load time and is NOT serialized per-instance — only state deltas.
+    #
+    # Each save file has ~15 baseline SPWN records (some kind of system
+    # entities — starter tent, persistence anchors, etc.) that we ignore.
+    # Player-built structures are detected by matching their record version
+    # byte and class-reference signature.
+    #
+    # Record layout for Personal Chest (589 bytes):
+    #   0x00-0x03  record version  (0x00000017)
+    #   0x04-0x13  16-byte instance GUID (unique per placed actor)
+    #   0x14-0x43  6 doubles (actor transform — pos vec3 + rot/scale vec3)
+    #   0x44-0x67  class+component table refs (constant per class)
+    #   0x68-0xff  secondary transform region + reserved
+    #   0x100+     embedded PROPF property block
+
+    # Known structure class signatures.
+    # Each entry: (class_name, body_first4, class_ref_at_0x44, body_length)
+    # The class_ref is the bytes at offset 0x44 of the SPWN body that encode
+    # the class+component table indices. These are stable per class within a
+    # given world's CNIX layout.
+    KNOWN_STRUCTURES = {
+        "BP_BaseBuilding_PersonalChest_C": {
+            "body_first4": b"\x17\x00\x00\x00",
+            "class_ref": b"\x01\x0a\x02\x00\x00\xf9\x03\x00\x00\x03\x00\x00\x00\x18\x00\x00\x00\x19\x00\x00\x00\x1a\x00\x00\x00",
+            "body_length": 589,
+            "display_name": "Personal Chest",
+        },
+    }
+
+    # Offsets within an SPWN body for the actor transform doubles
+    SPWN_TRANSFORM_OFFSET = 0x14
+    SPWN_TRANSFORM_DOUBLE_COUNT = 6
+    SPWN_INSTANCE_GUID_OFFSET = 0x04
+
+    def get_placed_structures(self) -> list[dict]:
+        """
+        Walk all SPWN chunks in the binary and return player-built structures.
+        Returns one entry per detected structure with offset, class, position,
+        instance GUID, and the raw record bytes (for transplant operations).
+        """
+        structures = []
+        data = self.raw_data
+        pos = 0
+        while True:
+            spwn_off = data.find(b"SPWN", pos)
+            if spwn_off == -1:
+                break
+            pos = spwn_off + 1
+
+            # Length is the next 4 bytes (little-endian uint32)
+            if spwn_off + 8 > len(data):
+                continue
+            try:
+                body_len = struct.unpack_from("<I", data, spwn_off + 4)[0]
+            except struct.error:
+                continue
+            # Sanity check on length
+            if body_len < 100 or body_len > 10000:
+                continue
+            body_start = spwn_off + 8
+            body_end = body_start + body_len
+            if body_end > len(data):
+                continue
+
+            body = bytes(data[body_start:body_end])
+
+            # Try to match against each known structure class
+            matched = None
+            for class_name, sig in self.KNOWN_STRUCTURES.items():
+                if (body_len == sig["body_length"]
+                        and body[:4] == sig["body_first4"]
+                        and body[0x44:0x44 + len(sig["class_ref"])] == sig["class_ref"]):
+                    matched = (class_name, sig)
+                    break
+            if matched is None:
+                continue
+            class_name, sig = matched
+
+            # Extract the 16-byte instance GUID
+            instance_guid = body[
+                self.SPWN_INSTANCE_GUID_OFFSET
+                : self.SPWN_INSTANCE_GUID_OFFSET + 16
+            ]
+
+            # Extract the 6 transform doubles starting at 0x14
+            try:
+                doubles = struct.unpack_from(
+                    f"<{self.SPWN_TRANSFORM_DOUBLE_COUNT}d",
+                    body,
+                    self.SPWN_TRANSFORM_OFFSET,
+                )
+            except struct.error:
+                continue
+
+            structures.append({
+                "spwn_offset": spwn_off,
+                "body_length": body_len,
+                "class_name": class_name,
+                "display_name": sig["display_name"],
+                "instance_guid_hex": instance_guid.hex(),
+                # First 3 doubles are position (X, Y, Z) in UE coordinates
+                "position": {
+                    "x": doubles[0],
+                    "y": doubles[1],
+                    "z": doubles[2],
+                },
+                # Last 3 doubles are unverified — likely rotation or scale
+                "transform_extra": list(doubles[3:6]),
+                "raw_record_hex": body.hex(),
+            })
+        return structures
+
     # ----- Edit methods -----
 
     def update_container_item(self, section_index: int, slot: int, field: str, value):
