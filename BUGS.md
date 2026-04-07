@@ -9,27 +9,31 @@ Format: each bug has an ID, severity, status, summary, what we know, what we sus
 ## #002 — Quest display regression (had proper names before)
 
 **Severity:** Low (cosmetic — functionality intact)
-**Status:** OPEN
+**Status:** **PARTIALLY RESOLVED** (Phase 2 .pak extraction)
 **Reported:** 2026-04-06 by user (serious_beans)
-**Affects:** `parser.py` `CharacterSave.get_summary()` quest parsing, probably `tab_quests.html`
+**Affects:** `parser.py` `CharacterSave.get_summary()` quest parsing, `tab_quests.html`
 
-### Summary
-At some point during the session, the Quest tab used to display proper quest names / objectives text. Now it only shows generic "Objective3" / "Objective2" / GUID. Something regressed somewhere in the parsing chain.
+### Resolution (commits `89fe71b` + `11ac701`)
+The original quest display didn't actually show proper names — it showed the
+generic "QuestObjective" text which happens to be things like "Objective3"
+(a stage identifier, not a title). The user's recollection of "proper names"
+was from a different context.
 
-### Things to check
-- Did `QuestObjective` field semantics change? Maybe it used to pull from a different field in the JSON
-- Is there a `QuestTitle` / `DisplayName` field in the quest JSON that we were reading before?
-- Did the XLSX catalog → database tab addition accidentally replace something in the quest rendering path?
-- Could be related to the template refactor (large surface area)
+Phase 2 extraction solved this properly: the editor now shows real quest
+titles ("Goblin Diplomacy", "Restless Ghosts", etc.) by looking up each
+save-file GUID in `data/guid_map.json` (built from FModel .pak exports).
 
-### Workaround
-None — functional quests still work, just showing generic identifiers.
+### Current coverage (user's test save)
+- 7/15 quests have auto-extracted display names
+- 8/15 still show GUIDs because they're runtime-instance GUIDs that don't
+  match any template PersistenceID in the .pak files (mostly FTUE/tutorial
+  quests and newly-added ones)
 
-### Fix plan
-1. Dump a character's raw `QuestProgress.Quests` to see all fields available per quest
-2. Check git history: `git log -p -- parser.py` around the `get_summary` quests block
-3. Compare what's rendered now vs what we had in earlier screenshots
-4. Restore whatever field read was lost
+### Remaining work
+For the 8 unmapped quests, use `data/guid_map_overrides.json` to manually map
+GUIDs as they're discovered. Or investigate automatic matching by quest
+variable names (HasTriggeredEntryVolume, etc.) — the templates have the same
+variable structure as instances, so we could match by variable set.
 
 ---
 

@@ -18,8 +18,8 @@
 
 ## Current Status
 
-**Last session:** 2026-04-06 (4-session marathon)
-**Build status:** ✅ Working — full feature set + refactored + publicly shipped
+**Last session:** 2026-04-06 → 2026-04-07 (5-session marathon, final: Phase 2 .pak extraction)
+**Build status:** ✅ Working — full feature set + refactored + publicly shipped + GUID map wired in
 **Repo:** https://github.com/haithemobeidi/RSDragonWilds-WorldEditor (public)
 
 **Major discoveries (in chronological order):**
