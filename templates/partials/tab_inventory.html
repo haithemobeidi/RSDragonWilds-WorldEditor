@@ -38,6 +38,12 @@
 
     <div class="card">
         <div class="card-title">Inventory ({{ char.inventory|length }} items)</div>
+        <p style="color:var(--text-dim);font-size:13px;margin-bottom:12px">
+            Items are shown by their internal GUID (e.g. <code style="font-family:monospace;font-size:12px">AmuXOUitB08PYDCmdVA_Ug</code>).
+            Friendly names require extracting the game's DataTables from the <code>.pak</code> files —
+            tracked as Phase 2 in <a href="https://github.com/haithemobeidi/RSDragonWilds-WorldEditor" target="_blank" style="color:var(--rs-gold)">the repo</a>.
+            For now: use the Database tab to browse items by name.
+        </p>
         <div style="margin-bottom:12px;display:flex;gap:8px">
             <button class="btn" onclick="repairAllItems()">Repair All Items</button>
             <button class="btn" onclick="maxAllStacks()">Max All Stacks (999)</button>

@@ -1,25 +1,19 @@
-/* theme.css — RSDW game-style visual refresh
+/* theme.css — RSDW game-style visual refresh (flat variant)
  *
- * Layered ON TOP of base.css/components.css/tabs.css/database.css. This
- * file ONLY contains overrides for fonts, colors, and texture — nothing
- * that would conflict with layout or behavior.
- *
- * Goals:
- *   - Fantasy-serif headers (Cinzel) matching in-game stone/tablet style
- *   - Slightly warmer gold palette
- *   - Subtle vignette + paper-grain background
- *   - Beveled card borders (double border for depth)
+ * Layered ON TOP of base.css/components.css/tabs.css/database.css.
+ * Pure overrides for fonts, colors, and type scale — no glows, gradients,
+ * or bevels. Kept intentionally flat for readability.
  */
 
 :root {
-    /* Warmer, richer palette — closer to the in-game UI */
+    /* Warmer, richer palette — but flat (no gradients) */
     --rs-gold: #d4a24a;
     --rs-gold-bright: #f0c060;
     --rs-gold-dim: #8c6a2a;
     --rs-bronze: #7a4e2a;
     --rs-parchment: #d8c89a;
 
-    --bg-dark: #0d0b08;
+    --bg-dark: #0f0c08;
     --bg-card: #1a140e;
     --bg-input: #221a10;
     --bg-hover: #2c2214;
@@ -38,174 +32,205 @@
 }
 
 body {
-    font-family: 'EB Garamond', 'Cinzel', Georgia, serif;
-    /* Subtle vignette so edges feel like an old tome */
-    background:
-        radial-gradient(ellipse at top, #1a1208 0%, #0a0805 60%, #050402 100%) fixed,
-        var(--bg-dark);
+    font-family: 'EB Garamond', Georgia, serif;
+    background: var(--bg-dark);
     color: var(--text);
+    /* Bump base font size for readability (cascades through em-based children) */
+    font-size: 16px;
+    line-height: 1.5;
 }
 
-/* Fantasy-serif for all titles */
+/* Fantasy-serif for all titles (but without glow) */
 .header h1,
 .card-title,
-.char-card .name,
-.tab {
-    font-family: 'Cinzel', 'Trajan Pro', Georgia, serif;
-    letter-spacing: 0.6px;
+.char-card .name {
+    font-family: 'Cinzel', Georgia, serif;
+    letter-spacing: 0.5px;
+    text-shadow: none;
 }
 
 .header h1 {
     font-weight: 700;
-    text-shadow: 0 0 12px rgba(212, 162, 74, 0.35);
+    font-size: 24px;
+    color: var(--rs-gold-bright);
 }
 
 .header {
-    background:
-        linear-gradient(135deg, #1c1408 0%, #281a0c 50%, #1c1408 100%);
+    background: #15100a;
     border-bottom: 2px solid var(--rs-gold);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.6), inset 0 -1px 0 rgba(212,162,74,0.2);
+    box-shadow: none;
 }
 
-/* Cards — beveled double-border feel */
+.header .subtitle { font-size: 13px; }
+
+/* Cards — flat */
 .card {
-    background: linear-gradient(180deg, #1e1610 0%, #15100a 100%);
+    background: var(--bg-card);
     border: 1px solid var(--border);
-    box-shadow:
-        inset 0 1px 0 rgba(212, 162, 74, 0.1),
-        inset 0 0 0 1px rgba(0, 0, 0, 0.4),
-        0 2px 8px rgba(0, 0, 0, 0.5);
+    box-shadow: none;
 }
 
 .card-title {
     color: var(--rs-gold-bright);
-    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    text-shadow: none;
     border-bottom: 1px solid var(--rs-bronze);
     font-size: 18px;
     font-weight: 600;
+    margin-bottom: 14px;
 }
 
-/* Character cards */
+/* Character cards — flat */
 .char-card {
-    background: linear-gradient(180deg, #1e1610 0%, #120c08 100%);
+    background: var(--bg-card);
     border: 2px solid var(--border);
-    box-shadow: inset 0 1px 0 rgba(212,162,74,0.1);
+    box-shadow: none;
 }
 
 .char-card.active {
-    border-color: var(--rs-gold-bright);
-    box-shadow:
-        0 0 30px rgba(240, 192, 96, 0.2),
-        inset 0 0 20px rgba(212, 162, 74, 0.1);
+    border-color: var(--rs-gold);
+    box-shadow: none;
 }
 
 .char-card .name {
     color: var(--rs-gold-bright);
-    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    text-shadow: none;
+    font-size: 19px;
 }
 
-/* Tabs */
+.char-card .info {
+    font-size: 13px;
+}
+
+/* Tabs — flat */
 .tab {
     color: var(--text-dim);
     font-weight: 500;
-    text-transform: uppercase;
-    font-size: 12px;
-    letter-spacing: 1px;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 15px;
+    padding: 11px 22px;
+    font-family: 'Cinzel', Georgia, serif;
 }
 
 .tab:hover {
     color: var(--rs-parchment);
-    background: rgba(212, 162, 74, 0.05);
+    background: var(--bg-card);
 }
 
 .tab.active {
     color: var(--rs-gold-bright);
-    background: linear-gradient(180deg, #221810 0%, #1a1208 100%);
-    border-color: var(--rs-bronze);
+    background: var(--bg-card);
+    border-color: var(--border);
     border-bottom: 2px solid var(--bg-card);
 }
 
-/* Buttons */
+/* Buttons — flat */
 .btn {
-    background: linear-gradient(180deg, #2a1e14 0%, #1a1208 100%);
+    background: var(--bg-input);
     border: 1px solid var(--border-bright);
     color: var(--rs-parchment);
     font-family: inherit;
+    font-size: 14px;
     font-weight: 500;
-    text-shadow: 0 1px 1px rgba(0,0,0,0.8);
-    box-shadow: inset 0 1px 0 rgba(212,162,74,0.15);
+    text-shadow: none;
+    box-shadow: none;
+    padding: 9px 18px;
 }
 
 .btn:hover {
-    background: linear-gradient(180deg, #382614 0%, #241810 100%);
+    background: var(--bg-hover);
     border-color: var(--rs-gold);
     color: var(--rs-gold-bright);
 }
 
 .btn-primary {
-    background: linear-gradient(180deg, #d4a24a 0%, #b08032 100%);
+    background: var(--rs-gold);
     color: #1a1208;
-    border-color: var(--rs-gold-bright);
+    border-color: var(--rs-gold);
     font-weight: 700;
-    text-shadow: 0 1px 0 rgba(255,255,255,0.2);
+    text-shadow: none;
 }
 
 .btn-primary:hover {
-    background: linear-gradient(180deg, #f0c060 0%, #d4a24a 100%);
+    background: var(--rs-gold-bright);
     color: #0a0805;
 }
 
-/* Stat rows */
+.btn-danger {
+    background: var(--bg-input);
+    border-color: var(--accent-red);
+    color: var(--accent-red);
+}
+
+.btn-success {
+    background: var(--accent-green);
+    color: #0a0805;
+    border-color: var(--accent-green);
+}
+
+/* Stat rows — flat + bigger text */
 .stat-row {
-    background: linear-gradient(180deg, #1a1208 0%, #120c06 100%);
+    background: var(--bg-input);
     border: 1px solid var(--border);
-    box-shadow: inset 0 1px 0 rgba(212,162,74,0.05);
+    box-shadow: none;
+    padding: 11px 14px;
 }
 
 .stat-label {
     color: var(--text-dim);
     font-family: inherit;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .stat-value {
     color: var(--rs-parchment);
     font-family: inherit;
+    font-size: 15px;
 }
 
 .stat-value.gold { color: var(--rs-gold-bright); }
 
-/* Inputs */
+/* Inputs — flat */
 input[type="number"], input[type="text"], select {
-    background: #0c0806;
+    background: var(--bg-card);
     border: 1px solid var(--border);
     color: var(--rs-parchment);
     font-family: inherit;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+    font-size: 14px;
+    box-shadow: none;
 }
 
 input[type="number"]:focus, input[type="text"]:focus, select:focus {
     border-color: var(--rs-gold);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,162,74,0.3);
+    box-shadow: none;
 }
 
-/* Progress items */
+/* Progress items — bigger */
 .progress-num {
     color: var(--rs-gold-bright);
-    font-family: 'Cinzel', serif;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    font-family: 'Cinzel', Georgia, serif;
+    text-shadow: none;
+    font-size: 26px;
 }
 
-/* Skills */
-.skill-row {
-    background: linear-gradient(180deg, #1a1208 0%, #120c06 100%);
-    border: 1px solid var(--border);
+.progress-label {
+    font-size: 12px;
 }
+
+/* Skills — flat + bigger */
+.skill-row {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    padding: 12px 14px;
+}
+
+.skill-name { font-size: 15px; }
 
 .skill-level {
     color: var(--rs-gold-bright);
-    font-family: 'Cinzel', serif;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    font-family: 'Cinzel', Georgia, serif;
+    text-shadow: none;
+    font-size: 22px;
 }
 
 .xp-bar-container {
@@ -214,35 +239,108 @@ input[type="number"]:focus, input[type="text"]:focus, select:focus {
 }
 
 .xp-bar {
-    background: linear-gradient(90deg, #4a6a2a 0%, #6ba04a 100%);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+    background: #6ba04a;
+    box-shadow: none;
 }
 
-/* Database cards */
+.xp-bar-text { font-size: 12px; }
+
+/* Quests — bigger */
+.quest-row {
+    padding: 12px 14px;
+}
+
+.quest-id {
+    font-size: 12px;
+}
+
+.quest-row [style*="font-size:13px"] {
+    /* Objective text */
+    font-size: 14px !important;
+}
+
+/* Inventory — bigger text (this was the biggest readability complaint) */
+.inv-slot {
+    font-size: 13px;
+    padding: 12px;
+}
+
+.inv-slot-num {
+    font-size: 14px;
+}
+
+.inv-slot-id {
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.inv-stat {
+    font-size: 13px;
+    padding: 3px 0;
+}
+
+/* World + event rows */
+.event-row {
+    padding: 14px;
+}
+
+.event-name {
+    font-size: 15px;
+}
+
+.trigger-row {
+    font-size: 13px;
+    padding: 4px 10px;
+}
+
+/* Badge */
+.badge {
+    font-size: 12px;
+    padding: 4px 12px;
+}
+
+/* Dirty badge — flat */
+.dirty-badge {
+    background: var(--accent-red);
+    box-shadow: none;
+}
+
+/* Database cards — flat, bigger text */
 .db-card {
-    background: linear-gradient(180deg, #1a1208 0%, #120c06 100%);
+    background: var(--bg-input);
     border: 1px solid var(--border);
+    box-shadow: none;
+    padding: 14px;
 }
 
 .db-card:hover {
     border-color: var(--rs-gold);
-    box-shadow: 0 0 12px rgba(212,162,74,0.15);
+    box-shadow: none;
 }
 
 .db-card-name {
     color: var(--rs-gold-bright);
-    font-family: 'Cinzel', serif;
+    font-family: 'Cinzel', Georgia, serif;
     font-weight: 600;
-    text-shadow: 0 1px 1px rgba(0,0,0,0.8);
+    text-shadow: none;
+    font-size: 15px;
 }
 
-/* Dirty badge — ember glow */
-.dirty-badge {
-    background: var(--accent-red);
-    box-shadow: 0 0 8px rgba(184,74,60,0.5);
+.db-card-id {
+    font-size: 11px;
 }
 
-/* Scrollbar */
+.db-card-meta {
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.db-tag {
+    font-size: 11px;
+    padding: 2px 8px;
+}
+
+/* Scrollbar — flat */
 ::-webkit-scrollbar {
     width: 12px;
     height: 12px;
@@ -252,10 +350,10 @@ input[type="number"]:focus, input[type="text"]:focus, select:focus {
     border-left: 1px solid var(--border);
 }
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #3a2a18 0%, #1a1208 100%);
-    border: 1px solid var(--border-bright);
+    background: var(--border-bright);
+    border: 1px solid var(--border);
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #5a4022 0%, #2a1a0c 100%);
+    background: var(--rs-bronze);
 }
