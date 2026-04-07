@@ -958,16 +958,40 @@ class WorldSave:
     #   0x100+     embedded PROPF property block
 
     # Known structure class signatures.
-    # Each entry: (class_name, body_first4, class_ref_at_0x44, body_length)
-    # The class_ref is the bytes at offset 0x44 of the SPWN body that encode
-    # the class+component table indices. These are stable per class within a
-    # given world's CNIX layout.
+    #
+    # Cross-world detection strategy (validated 04-07-2026 against Gielinor):
+    # The first 4 bytes (`body_first4`) and the class-table indices in the
+    # class-ref region are WORLD-LOCAL — they reference each world's own
+    # CDEF/CNIX table indices and differ between worlds. Do NOT use them for
+    # cross-world matching.
+    #
+    # What IS portable across worlds:
+    #   1. Body length (a class-determined fixed size for an empty fresh actor)
+    #   2. The constant 9-byte property header at offset 0x44:
+    #          01 0a 02 00 00 f9 03 00 00
+    #      This is the same for every SPWN actor record we've seen.
+    #   3. The component count uint32 at offset 0x4d (immediately after the
+    #      header). This IS the per-class discriminator — Personal Chest has
+    #      3 components, Ash Chest has 5, the baseline tree/rock/system
+    #      records have 2.
+    #
+    # So a portable signature is: body_length + component_count + constant header.
+    # The class-table indices that follow the count (4 bytes each) are world-local
+    # and intentionally ignored.
+    PROPERTY_HEADER_PREFIX = b"\x01\x0a\x02\x00\x00\xf9\x03\x00\x00"
+    PROPERTY_HEADER_OFFSET = 0x44
+    COMPONENT_COUNT_OFFSET = 0x4d  # uint32, immediately after PROPERTY_HEADER_PREFIX
+
     KNOWN_STRUCTURES = {
         "BP_BaseBuilding_PersonalChest_C": {
-            "body_first4": b"\x17\x00\x00\x00",
-            "class_ref": b"\x01\x0a\x02\x00\x00\xf9\x03\x00\x00\x03\x00\x00\x00\x18\x00\x00\x00\x19\x00\x00\x00\x1a\x00\x00\x00",
             "body_length": 589,
+            "component_count": 3,
             "display_name": "Personal Chest",
+        },
+        "BP_BaseBuilding_AshChest_C": {
+            "body_length": 625,
+            "component_count": 5,
+            "display_name": "Ash Chest",
         },
     }
 
@@ -1008,12 +1032,21 @@ class WorldSave:
 
             body = bytes(data[body_start:body_end])
 
-            # Try to match against each known structure class
+            # Portable cross-world detection: match by body_length + component_count
+            # plus the constant property header at offset 0x44. Ignore the world-local
+            # class-table indices that follow.
+            if body_len < self.COMPONENT_COUNT_OFFSET + 4:
+                continue
+            if body[self.PROPERTY_HEADER_OFFSET : self.PROPERTY_HEADER_OFFSET + len(self.PROPERTY_HEADER_PREFIX)] != self.PROPERTY_HEADER_PREFIX:
+                continue
+            try:
+                comp_count = struct.unpack_from("<I", body, self.COMPONENT_COUNT_OFFSET)[0]
+            except struct.error:
+                continue
+
             matched = None
             for class_name, sig in self.KNOWN_STRUCTURES.items():
-                if (body_len == sig["body_length"]
-                        and body[:4] == sig["body_first4"]
-                        and body[0x44:0x44 + len(sig["class_ref"])] == sig["class_ref"]):
+                if body_len == sig["body_length"] and comp_count == sig["component_count"]:
                     matched = (class_name, sig)
                     break
             if matched is None:
