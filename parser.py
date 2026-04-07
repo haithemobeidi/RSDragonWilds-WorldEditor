@@ -19,14 +19,29 @@ from typing import Optional
 # GUID → name mapping extracted from game .pak files via scripts/build_guid_map.py
 # Module-level singleton — loaded once at import time. If the file is missing
 # the editor still works, just with raw GUIDs.
-_GUID_MAP_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "guid_map.json")
+#
+# Manual overrides in data/guid_map_overrides.json are applied ON TOP of the
+# extracted map at load time — used for runtime-instance GUIDs that don't match
+# any template (tutorial quests, etc.).
+_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 _GUID_MAP: dict = {"by_persistence_id": {}, "by_internal_name": {}}
 try:
-    if os.path.exists(_GUID_MAP_PATH):
-        with open(_GUID_MAP_PATH) as _f:
+    _main_path = os.path.join(_DATA_DIR, "guid_map.json")
+    if os.path.exists(_main_path):
+        with open(_main_path) as _f:
             _GUID_MAP = json.load(_f)
+
+    _override_path = os.path.join(_DATA_DIR, "guid_map_overrides.json")
+    if os.path.exists(_override_path):
+        with open(_override_path) as _f:
+            _overrides = json.load(_f)
+        _by_pid = _GUID_MAP.setdefault("by_persistence_id", {})
+        for guid, entry in _overrides.items():
+            if guid.startswith("_"):  # skip _comment / _meta keys
+                continue
+            _by_pid[guid] = entry  # overrides win
 except Exception as _e:
-    print(f"Warning: failed to load guid_map.json: {_e}")
+    print(f"Warning: failed to load GUID map: {_e}")
 
 
 def lookup_guid(guid: str) -> Optional[dict]:
@@ -177,12 +192,16 @@ class CharacterSave:
                 "xp_next": xp_next_level if level + 1 < len(XP_TABLE) else "MAX",
             })
 
-        quests = []
+        # Dedupe quests by QuestId — the game accumulates duplicate entries
+        # across play sessions; we keep the LAST entry per id (most recent state).
+        quests_by_id: dict[str, dict] = {}
         state_names = {0: "Not Started", 1: "In Progress", 2: "Completed"}
         for q in d.get("QuestProgress", {}).get("Quests", []):
             qid = q.get("QuestId", "")
+            if not qid:
+                continue
             catalog = lookup_guid(qid)
-            quests.append({
+            quests_by_id[qid] = {
                 "id": qid,
                 "state": q.get("QuestState", 0),
                 "state_name": state_names.get(q.get("QuestState", 0), "Unknown"),
@@ -193,7 +212,12 @@ class CharacterSave:
                 "display_name": catalog.get("name") if catalog else None,
                 "description": catalog.get("description") if catalog else None,
                 "internal_name": catalog.get("internal_name") if catalog else None,
-            })
+            }
+        # Sort: completed last, then in-progress, then not started (so active quests float to top)
+        quests = sorted(
+            quests_by_id.values(),
+            key=lambda q: (q["state"] == 2, q["state"] != 1, q.get("display_name") or q["id"])
+        )
 
         inventory_items = []
         inv = d.get("Inventory", {})

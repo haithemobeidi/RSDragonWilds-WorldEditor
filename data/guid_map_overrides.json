@@ -1,0 +1,10 @@
+{
+  "_comment": "Manual GUID → name overrides. Applied ON TOP of data/guid_map.json at app load. Use this to map runtime-instance GUIDs (tutorial quests, etc.) that don't have matching template PersistenceIDs in the .pak DataTables. Each entry is the same shape as guid_map.json entries.",
+
+  "AmuXOUitB08PYDCmdVA_Ug": {
+    "type": "quest",
+    "name": "First Steps",
+    "internal_name": "ftue_first_steps",
+    "source": "user_reported"
+  }
+}
