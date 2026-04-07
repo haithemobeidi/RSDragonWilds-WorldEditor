@@ -16,6 +16,26 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 
+# GUID → name mapping extracted from game .pak files via scripts/build_guid_map.py
+# Module-level singleton — loaded once at import time. If the file is missing
+# the editor still works, just with raw GUIDs.
+_GUID_MAP_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "guid_map.json")
+_GUID_MAP: dict = {"by_persistence_id": {}, "by_internal_name": {}}
+try:
+    if os.path.exists(_GUID_MAP_PATH):
+        with open(_GUID_MAP_PATH) as _f:
+            _GUID_MAP = json.load(_f)
+except Exception as _e:
+    print(f"Warning: failed to load guid_map.json: {_e}")
+
+
+def lookup_guid(guid: str) -> Optional[dict]:
+    """Return the catalog entry for a save-file GUID, or None if not mapped."""
+    if not guid:
+        return None
+    return _GUID_MAP.get("by_persistence_id", {}).get(guid)
+
+
 # Known skill IDs mapped to names
 SKILL_NAMES = {
     "Wf3i7Ha-B06DH719j1vtBw": "Mining",
@@ -160,13 +180,19 @@ class CharacterSave:
         quests = []
         state_names = {0: "Not Started", 1: "In Progress", 2: "Completed"}
         for q in d.get("QuestProgress", {}).get("Quests", []):
+            qid = q.get("QuestId", "")
+            catalog = lookup_guid(qid)
             quests.append({
-                "id": q.get("QuestId", ""),
+                "id": qid,
                 "state": q.get("QuestState", 0),
                 "state_name": state_names.get(q.get("QuestState", 0), "Unknown"),
                 "objective": q.get("QuestObjective", ""),
                 "bools": q.get("QuestBools", []),
                 "ints": q.get("QuestInts", []),
+                # Enriched from data/guid_map.json (Phase 2 pak extraction)
+                "display_name": catalog.get("name") if catalog else None,
+                "description": catalog.get("description") if catalog else None,
+                "internal_name": catalog.get("internal_name") if catalog else None,
             })
 
         inventory_items = []
@@ -176,14 +202,20 @@ class CharacterSave:
                 item = inv[key]
                 # Items are EITHER stackable (Count) OR durable (Durability)
                 is_stackable = "Count" in item
+                item_data = item.get("ItemData", "")
+                catalog = lookup_guid(item_data)
                 inventory_items.append({
                     "slot": int(key),
                     "guid": item.get("GUID", ""),
-                    "item_data": item.get("ItemData", ""),
+                    "item_data": item_data,
                     "durability": item.get("Durability"),  # None for stackables
                     "count": item.get("Count"),              # None for non-stackables
                     "vital_shield": item.get("VitalShield"),
                     "is_stackable": is_stackable,
+                    # Enriched from data/guid_map.json (Phase 2 pak extraction)
+                    "display_name": catalog.get("name") if catalog else None,
+                    "description": catalog.get("description") if catalog else None,
+                    "icon_key": catalog.get("icon") if catalog else None,
                 })
 
         loadout_items = []

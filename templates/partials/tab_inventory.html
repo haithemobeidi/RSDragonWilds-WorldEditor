@@ -57,7 +57,12 @@
                     <button class="btn btn-danger btn-mini-x"
                             onclick="deleteItem({{ item.slot }}, this)">X</button>
                 </div>
+                {% if item.display_name %}
+                <div class="text-gold" style="font-weight:600;margin-bottom:2px">{{ item.display_name }}</div>
+                <div class="inv-slot-id text-xs">{{ item.item_data }}</div>
+                {% else %}
                 <div class="inv-slot-id">{{ item.item_data }}</div>
+                {% endif %}
                 {% if item.is_stackable %}
                 <div class="inv-stat">
                     <span style="color:var(--text-dim)">Count</span>

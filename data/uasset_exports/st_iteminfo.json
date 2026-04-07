@@ -1,0 +1,47 @@
+[
+  {
+    "Type": "StringTable",
+    "Name": "ST_ItemInfo",
+    "Flags": "RF_Public | RF_Standalone | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'StringTable'",
+    "Package": "/Game/Gameplay/Items/ST_ItemInfo",
+    "StringTable": {
+      "TableNamespace": "ST_ItemInfo",
+      "KeysToEntries": {
+        "Resource": "Resource",
+        "RangedWeapon": "Ranged Weapon",
+        "MeleeWeapon": "Melee Weapon",
+        "MagicWeapon": "Magic Weapon",
+        "Tool": "Tool",
+        "MeleeArmour": "Melee Armour",
+        "RangedArmour": "Ranged Armour",
+        "MageArmour": "Mage Armour",
+        "Rune": "Rune",
+        "Arrow": "Arrow",
+        "Food": "Food",
+        "Potion": "Potion",
+        "Consumable": "Consumable",
+        "DefaultItemType": "Basic Item",
+        "UseVerbEat": "Eat",
+        "RedberryFlavourText": "Gathered from bushes, eat them to gain a small amount of sustenance.",
+        "UseVerbDrink": "Drink",
+        "DrinkNoun": "Drink",
+        "BasicItem": "Basic Item",
+        "Vestige": "Vestige",
+        "BasicMaterial": "Basic Material",
+        "ProcessedMaterial": "Processed Material",
+        "Component": "Component",
+        "Plan": "Plan",
+        "Pattern": "Pattern",
+        "SpecialMaterial": "Special Material",
+        "Container": "Container",
+        "Seed": "Seed",
+        "SpecialEffect": "Special Effect",
+        "Trinket": "Trinket",
+        "RawIngredient": "Raw Ingredient",
+        "Tome": "Tome"
+      },
+      "KeysToMetaData": {}
+    }
+  }
+]

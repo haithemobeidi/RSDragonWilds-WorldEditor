@@ -1,0 +1,197 @@
+[
+  {
+    "Type": "DataTable",
+    "Name": "DT_DrinkHydration",
+    "Flags": "RF_Public | RF_Standalone | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'DataTable'",
+    "Package": "/Game/Gameplay/Items/Consumables/Food/DT_DrinkHydration",
+    "Properties": {
+      "RowStruct": {
+        "ObjectName": "Class'DrinkHydration'",
+        "ObjectPath": "/Script/Dominion"
+      }
+    },
+    "Rows": {
+      "T1_Minimal": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "DBAFDF874002BB6FAE9CC1A7CE29FE17",
+          "SourceString": "Minimal",
+          "LocalizedString": "Minimal"
+        },
+        "Hydration": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "T2_Low": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "144589284F3C5EFEDC7197AC4A3ED519",
+          "SourceString": "Low",
+          "LocalizedString": "Low"
+        },
+        "Hydration": 20.0,
+        "DecayBuffer": 2.0
+      },
+      "T3_Moderate": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "3381EFC147E469C591F3F497795CF57C",
+          "SourceString": "Moderate",
+          "LocalizedString": "Moderate"
+        },
+        "Hydration": 30.0,
+        "DecayBuffer": 4.0
+      },
+      "T4_Refreshing": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "3BD3384D4571E07D97AB01A3945970B6",
+          "SourceString": "Refreshing",
+          "LocalizedString": "Refreshing"
+        },
+        "Hydration": 40.0,
+        "DecayBuffer": 4.0
+      },
+      "v3_Water_Dirty": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "C337825249CF17D99D3F83A6CDE334AA",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Hydration": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Water_Clean": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "EC9B93B040F9C9E585D7C48A79315000",
+          "SourceString": "+25",
+          "LocalizedString": "+25"
+        },
+        "Hydration": 25.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Water_Wither": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "591493794592BE607612BFBBCC62AD69",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Hydration": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Tea_Redberry": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "70AA79424321445B61402085520A5A93",
+          "SourceString": "+40",
+          "LocalizedString": "+40"
+        },
+        "Hydration": 40.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Tea_FleetFooted": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "F23CF280473B38EE2DCDA0B293429F5E",
+          "SourceString": "+40",
+          "LocalizedString": "+40"
+        },
+        "Hydration": 40.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Tea_Evasive": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "FDA1C5A3478D0200E72686B08FBB4B3E",
+          "SourceString": "+40",
+          "LocalizedString": "+40"
+        },
+        "Hydration": 40.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Tea_Ferocious": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "C556B6C4416F19BD7D0B7AB3DB23EEDC",
+          "SourceString": "+40",
+          "LocalizedString": "+40"
+        },
+        "Hydration": 40.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Tea_Arcane": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "F1B8BCFE438490918CA7899C9AE44B6C",
+          "SourceString": "+40",
+          "LocalizedString": "+40"
+        },
+        "Hydration": 40.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Tea_Relentless": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "CE1580E442587287DB1C40BDD8B4BE48",
+          "SourceString": "+40",
+          "LocalizedString": "+40"
+        },
+        "Hydration": 40.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Water_Purified": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "C337825249CF17D99D3F83A6CDE334AA",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Hydration": 50.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Tea_Dwellberry": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "70AA79424321445B61402085520A5A93",
+          "SourceString": "+40",
+          "LocalizedString": "+40"
+        },
+        "Hydration": 40.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Tea_Cadavaberry": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "70AA79424321445B61402085520A5A93",
+          "SourceString": "+40",
+          "LocalizedString": "+40"
+        },
+        "Hydration": 40.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Tea_Pumpkin": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "A21FC48F434A9C99D1768C90FBEB1320",
+          "SourceString": "+80",
+          "LocalizedString": "+80"
+        },
+        "Hydration": 80.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Tea_Maple": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "A21FC48F434A9C99D1768C90FBEB1320",
+          "SourceString": "+80",
+          "LocalizedString": "+80"
+        },
+        "Hydration": 80.0,
+        "DecayBuffer": 0.0
+      }
+    }
+  }
+]

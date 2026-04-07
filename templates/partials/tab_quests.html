@@ -16,8 +16,13 @@
             <div class="quest-row" data-quest-id="{{ quest.id }}" style="display:block">
                 <div style="display:grid;grid-template-columns:1fr 120px 100px;gap:12px;align-items:center">
                     <div>
+                        {% if quest.display_name %}
+                        <div class="text-gold" style="font-weight:600">{{ quest.display_name }}</div>
+                        <div class="quest-id">{{ quest.id }} · {{ quest.objective }}</div>
+                        {% else %}
                         <div class="quest-id">{{ quest.id }}</div>
                         <div class="text-sm" style="margin-top:2px">{{ quest.objective }}</div>
+                        {% endif %}
                     </div>
                     <div>
                         <span class="badge {% if quest.state == 2 %}badge-completed{% elif quest.state == 1 %}badge-progress{% else %}badge-notstarted{% endif %}">

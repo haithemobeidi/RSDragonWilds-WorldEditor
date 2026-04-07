@@ -1,0 +1,1097 @@
+[
+  {
+    "Type": "DataTable",
+    "Name": "DT_FoodSustenance",
+    "Flags": "RF_Public | RF_Standalone | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'DataTable'",
+    "Package": "/Game/Gameplay/Items/Consumables/Food/DT_FoodSustenance",
+    "Properties": {
+      "RowStruct": {
+        "ObjectName": "Class'FoodSustenance'",
+        "ObjectPath": "/Script/Dominion"
+      }
+    },
+    "Rows": {
+      "T1_Minimal": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "E44CA12C4652699808DC61BB2AF5BBB2",
+          "SourceString": "Minimal",
+          "LocalizedString": "Minimal"
+        },
+        "Sustenance": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "T2_Low": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "053AFBC64FC9D3E519119EB69AFA9FD1",
+          "SourceString": "Low",
+          "LocalizedString": "Low"
+        },
+        "Sustenance": 20.0,
+        "DecayBuffer": 2.0
+      },
+      "T3_Moderate": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "5C5C7C6446BB1E9C75A84F99F08DC9BE",
+          "SourceString": "Moderate",
+          "LocalizedString": "Moderate"
+        },
+        "Sustenance": 30.0,
+        "DecayBuffer": 4.0
+      },
+      "T4_Satiating": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "AC4FB76C47D170C34829D2B40EBDE8A6",
+          "SourceString": "Satiating",
+          "LocalizedString": "Satiating"
+        },
+        "Sustenance": 40.0,
+        "DecayBuffer": 4.0
+      },
+      "v3_Redberry": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "7B83F88E4ACC9A22A803B980A993F00B",
+          "SourceString": "+5",
+          "LocalizedString": "+5"
+        },
+        "Sustenance": 5.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Redberry_Dried": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "0384FFD64701C4E4E883BDAEA4C51E25",
+          "SourceString": "+15",
+          "LocalizedString": "+15"
+        },
+        "Sustenance": 15.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Redberry_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "29F08D514ADA082F1ABF3C9CF3BEEFA2",
+          "SourceString": "+5",
+          "LocalizedString": "+5"
+        },
+        "Sustenance": 5.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Dwellberry": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "BFF11EF947493A6289E3229CDFB34140",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Sustenance": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Dwellberry_Dried": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "1BD853B849CC633D2ECE118A04655898",
+          "SourceString": "+20",
+          "LocalizedString": "+20"
+        },
+        "Sustenance": 20.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Dwellberry_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "2F1150634CCA3E76006A9C8D6014BEDF",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Sustenance": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Peach": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "1D3A938D46E82A37E49677996A2DBA63",
+          "SourceString": "+15",
+          "LocalizedString": "+15"
+        },
+        "Sustenance": 15.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Peach_Dried": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "366F628A48E55D78E7FAA6BCE54D0D36",
+          "SourceString": "+25",
+          "LocalizedString": "+25"
+        },
+        "Sustenance": 25.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Peach_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "4C511CF8476BB56A1554C7959CF5F69D",
+          "SourceString": "+15",
+          "LocalizedString": "+15"
+        },
+        "Sustenance": 15.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Cadavaberry": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "66DB894A48C389ED99C2E59421EA86ED",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Sustenance": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Cadavaberry_Dried": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "E94234394089605ED39626A7797F5754",
+          "SourceString": "+20",
+          "LocalizedString": "+20"
+        },
+        "Sustenance": 20.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Cadavaberry_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "C9C833EB4042EC8CC3394199F2A26BBE",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Sustenance": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Potato_Baked": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "C711CFC042C664FABEC717AE960A5393",
+          "SourceString": "+20",
+          "LocalizedString": "+20"
+        },
+        "Sustenance": 20.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Potato_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "7EACF9584032073F6CF87C930E32D287",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Sustenance": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Cabbage_Fried": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "E3F17E94430D8915DBC4B3985B0E7620",
+          "SourceString": "+20",
+          "LocalizedString": "+20"
+        },
+        "Sustenance": 20.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Cabbage_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "7476220643274E4DA8CEF887959369C2",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Sustenance": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Mushroom_Grilled": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "4A9984D94E63701AD7422A8CA7CF8ECD",
+          "SourceString": "+20",
+          "LocalizedString": "+20"
+        },
+        "Sustenance": 20.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Mushroom_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "123F80A54B1379A1AF3E04870D7D3382",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Sustenance": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Onion_Fried": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "BD9A7CF349A841C34B3374BABB480C81",
+          "SourceString": "+20",
+          "LocalizedString": "+20"
+        },
+        "Sustenance": 20.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Onion_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "C32939BC4AC863C8FADC11B15B4D297F",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Sustenance": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Fillet": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "36FFACAF486B37CE280EF1B9DAFCC809",
+          "SourceString": "+20",
+          "LocalizedString": "+20"
+        },
+        "Sustenance": 20.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Fillet_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "273862D64621C7764CE1C5A3307C6922",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Sustenance": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Haunch": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "CE68B18844833B569E56ABBE43000CB9",
+          "SourceString": "+20",
+          "LocalizedString": "+20"
+        },
+        "Sustenance": 20.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Haunch_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "A2F961654932F565397C40B771A01961",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Sustenance": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_RatRoast": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "D8BAB48D4A1FF1D8B2F4EAAA5076745D",
+          "SourceString": "+20",
+          "LocalizedString": "+20"
+        },
+        "Sustenance": 20.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_RatRoast_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "DF69B67140A8E59D384469825BA17C6C",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Sustenance": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Flank": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "F202A1FA48FD83B4A87262A8B3CADC71",
+          "SourceString": "+25",
+          "LocalizedString": "+25"
+        },
+        "Sustenance": 25.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Flank_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "5521D5064C4ACE28028C2891D73C4AA8",
+          "SourceString": "+15",
+          "LocalizedString": "+15"
+        },
+        "Sustenance": 15.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Egg_Fried": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "1FA6B8F74A717D8761C374970E4393DB",
+          "SourceString": "+20",
+          "LocalizedString": "+20"
+        },
+        "Sustenance": 20.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Egg_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "F160FEA6421296DAE7A343BC4B9C92A7",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Sustenance": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Soup_Vegetable": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "E4E72670428680ADF0578ABBAB4B005D",
+          "SourceString": "+50",
+          "LocalizedString": "+50"
+        },
+        "Sustenance": 50.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_RedberryRoastRat": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "BD3430444850886626E3B894C3376630",
+          "SourceString": "+45",
+          "LocalizedString": "+45"
+        },
+        "Sustenance": 45.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Stew_Meat": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "28D98E284304A4C4794A5AB7D93F50F8",
+          "SourceString": "+50",
+          "LocalizedString": "+50"
+        },
+        "Sustenance": 50.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_SteakAndEggs": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "02E67A1345E011A4E50167B24ABAAA57",
+          "SourceString": "+50",
+          "LocalizedString": "+50"
+        },
+        "Sustenance": 50.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_VegBall_Sweet": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "2317ABF945954F29F568D5AD856B7A9A",
+          "SourceString": "+65",
+          "LocalizedString": "+65"
+        },
+        "Sustenance": 65.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_MixedGrill": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "342E764E4B3E1CC63C6747BCE2813DE4",
+          "SourceString": "+70",
+          "LocalizedString": "+70"
+        },
+        "Sustenance": 70.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_CheekyFryup": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "5DAB0E3142F612A85D0418A937B53A34",
+          "SourceString": "+70",
+          "LocalizedString": "+70"
+        },
+        "Sustenance": 70.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_RoastDinner": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "CC5805A64394DA84CEB9AEA23E7DBBA5",
+          "SourceString": "+80",
+          "LocalizedString": "+80"
+        },
+        "Sustenance": 80.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_SqueakingSausage": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "589C107449B1BBF89C2625A409418227",
+          "SourceString": "+80",
+          "LocalizedString": "+80"
+        },
+        "Sustenance": 80.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_PungentOmelette": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "24C7558D453C219E4AAE0991210E0011",
+          "SourceString": "+70",
+          "LocalizedString": "+70"
+        },
+        "Sustenance": 70.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Pie_Wild": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "FC6241514838793DF5831F9A8D6138DB",
+          "SourceString": "+110",
+          "LocalizedString": "+110"
+        },
+        "Sustenance": 100.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Pizza_Meat": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "A3C778A74B9EBB7F19BC799BC50901FF",
+          "SourceString": "+110",
+          "LocalizedString": "+110"
+        },
+        "Sustenance": 100.0,
+        "DecayBuffer": 5.0
+      },
+      "v3_Kebab_Mushroom": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "0577DD8041E4B29D5C3EBF863FEE02C6",
+          "SourceString": "+110",
+          "LocalizedString": "+110"
+        },
+        "Sustenance": 100.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Steak": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "620598CB4089E59389246CA35BB7C170",
+          "SourceString": "+20",
+          "LocalizedString": "+20"
+        },
+        "Sustenance": 20.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Steak_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "83ED8B5A43AD8699458817BB9551F3B1",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Sustenance": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Crunchies_Redberry": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "CA8E2E4642DA28B5D3E75BA0303E1C35",
+          "SourceString": "+35",
+          "LocalizedString": "+35"
+        },
+        "Sustenance": 35.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Crunchies_Dwellberry": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "CDA90B1C47C95D3FB1840E9447F1927F",
+          "SourceString": "+40",
+          "LocalizedString": "+40"
+        },
+        "Sustenance": 40.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Bread": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "5694783A4D57CEB5421C5EB7C6F1ABFB",
+          "SourceString": "+30",
+          "LocalizedString": "+30"
+        },
+        "Sustenance": 30.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Bread_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "EAED5ABB467F6DC9CA7119BE89DA574B",
+          "SourceString": "+20",
+          "LocalizedString": "+20"
+        },
+        "Sustenance": 20.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Pumpkin_Roast": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "0F260BE84BC177A6DF5003A725DE8520",
+          "SourceString": "+25",
+          "LocalizedString": "+25"
+        },
+        "Sustenance": 25.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Pumpkin_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "6F97737547FD3ACC004582A429E0ADBB",
+          "SourceString": "+15",
+          "LocalizedString": "+15"
+        },
+        "Sustenance": 15.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Tomato_Grilled": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "863976FB4B7C1C5FCD02D281D367817D",
+          "SourceString": "+20",
+          "LocalizedString": "+20"
+        },
+        "Sustenance": 20.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Tomato_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "C99F48AC4094E36B30B77386DD9AA834",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Sustenance": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Watermelon": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "E50F8274433E9A884C028B96958DE33D",
+          "SourceString": "+15",
+          "LocalizedString": "+15"
+        },
+        "Sustenance": 15.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Watermelon_Jerky": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "5DA0051749E49A6F7012E7BF3E2CD319",
+          "SourceString": "+25",
+          "LocalizedString": "+25"
+        },
+        "Sustenance": 25.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Watermelon_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "FE6873C744E78A9AB200C799666F5736",
+          "SourceString": "+15",
+          "LocalizedString": "+15"
+        },
+        "Sustenance": 15.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Steak_Undead": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "D39D14314A6A5AAEE02F6BAFBDEA7EB5",
+          "SourceString": "+25",
+          "LocalizedString": "+25"
+        },
+        "Sustenance": 25.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Steak_Undead_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "37BF807D4A8D5D2E16DDC1B1351AA92C",
+          "SourceString": "+15",
+          "LocalizedString": "+15"
+        },
+        "Sustenance": 15.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Pie_Fruit": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "9DE8AB9741F94319EF936C8B01E36D64",
+          "SourceString": "+85",
+          "LocalizedString": "+85"
+        },
+        "Sustenance": 85.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Pie_Meat_Dubious": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "E28592AA46000104A8902A8A8E9F04D2",
+          "SourceString": "+100",
+          "LocalizedString": "+100"
+        },
+        "Sustenance": 100.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Soup_Pumpkin": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "7CBD14354076FF9BC2DD17B9055F0A62",
+          "SourceString": "+75",
+          "LocalizedString": "+75"
+        },
+        "Sustenance": 75.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Stew_BeefTomato": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "DB7950944702C7A221C460A090FED63B",
+          "SourceString": "+65",
+          "LocalizedString": "+65"
+        },
+        "Sustenance": 65.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Fryup_Vegan": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "7CE6166A4BD4A5336754BC9A71F2CBC5",
+          "SourceString": "+70",
+          "LocalizedString": "+70"
+        },
+        "Sustenance": 70.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Syrup_Maple": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "7E99B15043356861ABB746B35CEEFAEC",
+          "SourceString": "+25",
+          "LocalizedString": "+25"
+        },
+        "Sustenance": 25.0,
+        "DecayBuffer": 0.0
+      },
+      "v3_Syrup_Maple_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "5AF3EBCF47AF3D8950B0EEA82A9237A9",
+          "SourceString": "+15",
+          "LocalizedString": "+15"
+        },
+        "Sustenance": 15.0,
+        "DecayBuffer": 0.0
+      },
+      "Shrimp": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "7A8DFC0D496A4A8774433888BE059FF9",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Sustenance": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "Shrimp_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "BD00B8634F0A33EFD6FB04AAC9FE94FA",
+          "SourceString": "+5",
+          "LocalizedString": "+5"
+        },
+        "Sustenance": 5.0,
+        "DecayBuffer": 0.0
+      },
+      "Sardine": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "7EDB58A04D83AFE96AE93F833074054C",
+          "SourceString": "+15",
+          "LocalizedString": "+15"
+        },
+        "Sustenance": 15.0,
+        "DecayBuffer": 0.0
+      },
+      "Sardine_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "A76A4CE44ED224967BCF8DB47B539214",
+          "SourceString": "+5",
+          "LocalizedString": "+5"
+        },
+        "Sustenance": 5.0,
+        "DecayBuffer": 0.0
+      },
+      "Trout": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "CC17B6844ACDD9C7BDBD2CB7275ADC9F",
+          "SourceString": "+15",
+          "LocalizedString": "+15"
+        },
+        "Sustenance": 15.0,
+        "DecayBuffer": 0.0
+      },
+      "Trout_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "4EFA20ED44B83E27E1143283C4062C02",
+          "SourceString": "+5",
+          "LocalizedString": "+5"
+        },
+        "Sustenance": 5.0,
+        "DecayBuffer": 0.0
+      },
+      "Anchovies": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "1A344AA8409707ADF2D36C8BD46298A5",
+          "SourceString": "+15",
+          "LocalizedString": "+15"
+        },
+        "Sustenance": 15.0,
+        "DecayBuffer": 0.0
+      },
+      "Anchovies_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "4E590B2243DF71016A9800972F2C807B",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Sustenance": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "Herring": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "1E4A75FB4A08A24C2FFB3F87AE286B09",
+          "SourceString": "+20",
+          "LocalizedString": "+20"
+        },
+        "Sustenance": 20.0,
+        "DecayBuffer": 0.0
+      },
+      "Herring_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "E556240A4895AF74D308689DB8F84B8B",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Sustenance": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "Salmon": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "297BBA784A3B0E40894B9FAA3D6BCA94",
+          "SourceString": "+20",
+          "LocalizedString": "+20"
+        },
+        "Sustenance": 20.0,
+        "DecayBuffer": 0.0
+      },
+      "Salmon_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "CAA2898A43EBD908E54C859B00EE6A17",
+          "SourceString": "+10",
+          "LocalizedString": "+10"
+        },
+        "Sustenance": 10.0,
+        "DecayBuffer": 0.0
+      },
+      "Lobster": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "E5525EBA45242AFCFBD90A91A1AA9B0C",
+          "SourceString": "+20",
+          "LocalizedString": "+20"
+        },
+        "Sustenance": 20.0,
+        "DecayBuffer": 0.0
+      },
+      "Lobster_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "E5EDF7634BEB3F3D9C3CCF91AE74FA6A",
+          "SourceString": "+15",
+          "LocalizedString": "+15"
+        },
+        "Sustenance": 15.0,
+        "DecayBuffer": 0.0
+      },
+      "Undead_Eel": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "F236904948C606690C6AB78547C5F713",
+          "SourceString": "+25",
+          "LocalizedString": "+25"
+        },
+        "Sustenance": 25.0,
+        "DecayBuffer": 0.0
+      },
+      "Undead_Eel_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "4C600AAC4E44286898090582052F4A54",
+          "SourceString": "+15",
+          "LocalizedString": "+15"
+        },
+        "Sustenance": 15.0,
+        "DecayBuffer": 0.0
+      },
+      "Undead_Bass": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "4E9161A44115C36272A923BB15781F70",
+          "SourceString": "+25",
+          "LocalizedString": "+25"
+        },
+        "Sustenance": 25.0,
+        "DecayBuffer": 0.0
+      },
+      "Undead_Bass_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "3D4DA68F431734F4A3F8F88C564A5E2F",
+          "SourceString": "+15",
+          "LocalizedString": "+15"
+        },
+        "Sustenance": 15.0,
+        "DecayBuffer": 0.0
+      },
+      "GiantKrill": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "A3C596B74812DFD52373B694C6BAA3B0",
+          "SourceString": "+25",
+          "LocalizedString": "+25"
+        },
+        "Sustenance": 25.0,
+        "DecayBuffer": 0.0
+      },
+      "GiantKrill_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "BCCC08B44D6EF583012894814528E199",
+          "SourceString": "+20",
+          "LocalizedString": "+20"
+        },
+        "Sustenance": 20.0,
+        "DecayBuffer": 0.0
+      },
+      "ArmouredCatfish": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "1FC5E45840E5E0FB1C96EB99455C7D91",
+          "SourceString": "+30",
+          "LocalizedString": "+30"
+        },
+        "Sustenance": 30.0,
+        "DecayBuffer": 0.0
+      },
+      "ArmouredCatfish_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "6B7B00C6449A647C2A8EDBBE82BB96B0",
+          "SourceString": "+20",
+          "LocalizedString": "+20"
+        },
+        "Sustenance": 20.0,
+        "DecayBuffer": 0.0
+      },
+      "Infernal_Eel": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "688FF6D84E1CED53EE304F82D9D99D38",
+          "SourceString": "+30",
+          "LocalizedString": "+30"
+        },
+        "Sustenance": 30.0,
+        "DecayBuffer": 0.0
+      },
+      "Infernal_Eel_Burnt": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "68DBE1744439D8D2F84438BB4AB976A8",
+          "SourceString": "+20",
+          "LocalizedString": "+20"
+        },
+        "Sustenance": 20.0,
+        "DecayBuffer": 0.0
+      },
+      "Sandwhich_Veggie": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "9C415496496A6470347865893643FB71",
+          "SourceString": "+80",
+          "LocalizedString": "+80"
+        },
+        "Sustenance": 80.0,
+        "DecayBuffer": 0.0
+      },
+      "Sandwhich_Meat": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "DFD3A79949712E95D1AABA828A326D29",
+          "SourceString": "+85",
+          "LocalizedString": "+85"
+        },
+        "Sustenance": 85.0,
+        "DecayBuffer": 0.0
+      },
+      "Toastie_Maple": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "29602F354C5A34315E3607823B08F605",
+          "SourceString": "+80",
+          "LocalizedString": "+80"
+        },
+        "Sustenance": 80.0,
+        "DecayBuffer": 0.0
+      },
+      "Sandwhich_Meat_Double": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "74CF81154CCEAAC1E33C3F9802D7D7E1",
+          "SourceString": "+80",
+          "LocalizedString": "+80"
+        },
+        "Sustenance": 80.0,
+        "DecayBuffer": 0.0
+      },
+      "Sandwhich_Steak": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "74CF81154CCEAAC1E33C3F9802D7D7E1",
+          "SourceString": "+80",
+          "LocalizedString": "+80"
+        },
+        "Sustenance": 80.0,
+        "DecayBuffer": 0.0
+      },
+      "Sandwhich_Glazed_Pumpkin_Roast": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "798C67E74210D5681E78C89957929304",
+          "SourceString": "+100",
+          "LocalizedString": "+100"
+        },
+        "Sustenance": 100.0,
+        "DecayBuffer": 0.0
+      },
+      "FishMeal_BerryDrizzlePanSeared": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "5687712049A433F368861B93EBB2602F",
+          "SourceString": "+65",
+          "LocalizedString": "+65"
+        },
+        "Sustenance": 65.0,
+        "DecayBuffer": 0.0
+      },
+      "FishMeal_EggsRoyale": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "A680ACFB4A2F910F9E784490B94D59B4",
+          "SourceString": "+45",
+          "LocalizedString": "+45"
+        },
+        "Sustenance": 45.0,
+        "DecayBuffer": 0.0
+      },
+      "FishMeal_FishFry": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "F9A8D6C446D9CC54F065B8AA2E09B57F",
+          "SourceString": "+55",
+          "LocalizedString": "+55"
+        },
+        "Sustenance": 55.0,
+        "DecayBuffer": 0.0
+      },
+      "FishMeal_HerbBakedTrout": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "AE7D684B47DDE5BB209E999FF4F72EF1",
+          "SourceString": "+30",
+          "LocalizedString": "+30"
+        },
+        "Sustenance": 30.0,
+        "DecayBuffer": 0.0
+      },
+      "FishMeal_OmeletteShrimp": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "ACCFF5AC47D5D2DCEA0E5C82210D7956",
+          "SourceString": "+15",
+          "LocalizedString": "+15"
+        },
+        "Sustenance": 15.0,
+        "DecayBuffer": 0.0
+      },
+      "FishMeal_SauteedSardines": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "C4AAE8EC4E3DF67A55BB32A9EC746DEE",
+          "SourceString": "+25",
+          "LocalizedString": "+25"
+        },
+        "Sustenance": 25.0,
+        "DecayBuffer": 0.0
+      },
+      "FishMeal_StirFry": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "FACD9EAF48D502156B64DFB04193EB04",
+          "SourceString": "+75",
+          "LocalizedString": "+75"
+        },
+        "Sustenance": 75.0,
+        "DecayBuffer": 0.0
+      },
+      "FishMeal_StuffedCatfish": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "F969113145DE0E026F8CB3AEB9603D85",
+          "SourceString": "+80",
+          "LocalizedString": "+80"
+        },
+        "Sustenance": 80.0,
+        "DecayBuffer": 0.0
+      },
+      "FishMeal_UndeadDelight": {
+        "StatText": {
+          "Namespace": "",
+          "Key": "02E67A1345E011A4E50167B24ABAAA57",
+          "SourceString": "+50",
+          "LocalizedString": "+50"
+        },
+        "Sustenance": 50.0,
+        "DecayBuffer": 0.0
+      }
+    }
+  }
+]

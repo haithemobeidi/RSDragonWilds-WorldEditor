@@ -1,0 +1,47 @@
+[
+  {
+    "Type": "DataTable",
+    "Name": "DT_Consumable_Montages",
+    "Flags": "RF_Public | RF_Standalone | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'DataTable'",
+    "Package": "/Game/Gameplay/Items/Consumables/DT_Consumable_Montages",
+    "Properties": {
+      "RowStruct": {
+        "ObjectName": "Class'SimpleMontageTableRow'",
+        "ObjectPath": "/Script/Dominion"
+      }
+    },
+    "Rows": {
+      "Drink": {
+        "Montage": {
+          "ObjectName": "AnimMontage'AM_PlayerM_Interact_Drink'",
+          "ObjectPath": "/Game/Art/Animation/PlayerM/Interact/AM_PlayerM_Interact_Drink.0"
+        },
+        "CrouchedMontage": {
+          "ObjectName": "AnimMontage'AM_PlayerM_Interact_Drink_Crouch'",
+          "ObjectPath": "/Game/Art/Animation/PlayerM/Interact/AM_PlayerM_Interact_Drink_Crouch.0"
+        }
+      },
+      "Eat": {
+        "Montage": {
+          "ObjectName": "AnimMontage'AM_PlayerM_Interact_Eat'",
+          "ObjectPath": "/Game/Art/Animation/PlayerM/Interact/AM_PlayerM_Interact_Eat.0"
+        },
+        "CrouchedMontage": {
+          "ObjectName": "AnimMontage'AM_PlayerM_Interact_Eat_Crouch'",
+          "ObjectPath": "/Game/Art/Animation/PlayerM/Interact/AM_PlayerM_Interact_Eat_Crouch.0"
+        }
+      },
+      "Wardstone": {
+        "Montage": {
+          "ObjectName": "AnimMontage'AM_PlayerM_Interact_Wardstone'",
+          "ObjectPath": "/Game/Art/Animation/PlayerM/Interact/AM_PlayerM_Interact_Wardstone.0"
+        },
+        "CrouchedMontage": {
+          "ObjectName": "AnimMontage'AM_PlayerM_Interact_Wardstone_Crouch'",
+          "ObjectPath": "/Game/Art/Animation/PlayerM/Interact/AM_PlayerM_Interact_Wardstone_Crouch.0"
+        }
+      }
+    }
+  }
+]
