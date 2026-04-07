@@ -3,7 +3,7 @@
     {% set char = active_char %}
     <div class="card">
         <div class="card-title">Skills Editor</div>
-        <div class="skill-row" style="background:transparent;border:none;font-weight:600;color:var(--text-dim);font-size:12px">
+        <div class="skill-row skill-row-header">
             <span>SKILL</span>
             <span style="text-align:center">LEVEL</span>
             <span>PROGRESS</span>
@@ -21,7 +21,7 @@
                 </div>
                 <input type="number" data-field="xp" value="{{ skill.xp }}" min="0" max="200000000"
                        onchange="queueSkillUpdate('{{ skill.id }}', this.value, this)">
-                <button class="btn" style="padding:4px 8px;font-size:11px" onclick="maxSkill('{{ skill.id }}', this)">MAX</button>
+                <button class="btn btn-mini" onclick="maxSkill('{{ skill.id }}', this)">MAX</button>
             </div>
         {% endfor %}
         </div>

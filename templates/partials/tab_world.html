@@ -1,6 +1,6 @@
 <div class="tab-content" id="tab-world">
-    <div class="card" style="background:#2a1f0a;border-color:#5a3f1a">
-        <div style="font-size:13px;color:#f5a623">
+    <div class="card warn-card-gold">
+        <div class="warn-box-gold">
             <strong>⚠ World Save Editing</strong> — Edits to world files modify a binary container.
             Changes that grow the JSON beyond original size will be skipped to preserve file integrity.
             Always close the game first!
@@ -10,11 +10,11 @@
     {% for winfo in worlds %}
     <div class="card">
         <div class="char-header-row">
-            <h2 style="color:var(--rs-gold);font-size:18px">
+            <h2 class="world-card-title">
                 {{ winfo.world_name or winfo.filename }}
             </h2>
             <div style="display:flex;gap:8px;align-items:center">
-                <span style="color:var(--text-dim);font-size:12px">{{ winfo.filesize_mb }} MB &middot; {{ winfo.json_sections }} sections</span>
+                <span class="text-sm text-dim">{{ winfo.filesize_mb }} MB &middot; {{ winfo.json_sections }} sections</span>
                 <button class="btn" onclick="loadWorldDetails('{{ winfo.filename }}', this)">Load Editable Data</button>
                 <button class="btn btn-primary" id="worldSaveBtn-{{ loop.index }}"
                         onclick="saveWorld('{{ winfo.filename }}', {{ loop.index }})" style="display:none">
@@ -25,45 +25,45 @@
         <div class="grid grid-3" style="gap:8px">
             <div class="stat-row">
                 <span class="stat-label">File</span>
-                <span class="stat-value" style="font-size:11px">{{ winfo.filename }}</span>
+                <span class="stat-value text-xs">{{ winfo.filename }}</span>
             </div>
             <div class="stat-row">
                 <span class="stat-label">Last Saved</span>
-                <span class="stat-value" style="font-size:11px">{{ winfo.save_timestamp or 'Unknown' }}</span>
+                <span class="stat-value text-xs">{{ winfo.save_timestamp or 'Unknown' }}</span>
             </div>
             <div class="stat-row">
                 <span class="stat-label">World Mode</span>
                 <span class="stat-value">
                     {% if winfo.world_mode == 'custom' %}
-                        <span style="color:#7fdf7f;font-weight:bold">Custom</span>
+                        <span class="world-mode-custom">Custom</span>
                     {% elif winfo.world_mode == 'standard' %}
-                        <span style="color:#dfdf7f">Standard</span>
+                        <span class="world-mode-standard">Standard</span>
                     {% else %}
-                        <span style="color:#df7f7f">{{ winfo.world_mode }}</span>
+                        <span class="world-mode-mixed">{{ winfo.world_mode }}</span>
                     {% endif %}
                 </span>
             </div>
         </div>
-        <div style="margin-top:8px;padding:10px;background:#1a1a1a;border-radius:6px">
-            <strong style="color:var(--rs-gold);font-size:13px">World Mode Conversion</strong>
-            <p style="font-size:12px;color:var(--text-dim);margin:6px 0 8px">
+        <div class="world-conversion-box">
+            <strong class="world-conversion-title">World Mode Conversion</strong>
+            <p class="text-sm text-dim" style="margin:6px 0 8px">
                 Convert this world's classification. Custom worlds expose all 5 difficulty
                 categories in-game and require <code>char_type=3</code> characters to join.
                 <strong>Discovered 04-06-2026</strong> — flips two bytes (L_World+9 enum +
                 PROP CustomDifficultySettings byte). Persists across game saves.
             </p>
-            <p style="font-size:11px;color:#df7f7f;margin:6px 0 8px;padding:6px;background:rgba(223,127,127,0.08);border-left:3px solid #df7f7f;border-radius:3px">
+            <p class="warn-box">
                 <strong>⚠ Known issue:</strong> conversion may break <strong>locked chests</strong>,
                 <strong>protection totems</strong>, and <strong>privacy settings</strong> on the world.
                 Unlock chests and remove totems <em>before</em> converting. Tracked in <code>BUGS.md</code>.
             </p>
             {% if winfo.world_mode == 'standard' %}
-                <button class="btn" style="background:#5a8a4a"
+                <button class="btn btn-world-convert"
                         onclick="convertWorldMode('{{ winfo.filename }}', 'custom', {{ loop.index }})">
                     Convert to Custom World
                 </button>
             {% elif winfo.world_mode == 'custom' %}
-                <button class="btn" style="background:#8a5a4a"
+                <button class="btn btn-world-revert"
                         onclick="convertWorldMode('{{ winfo.filename }}', 'standard', {{ loop.index }})">
                     Revert to Standard World
                 </button>

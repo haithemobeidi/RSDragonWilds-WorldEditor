@@ -46,9 +46,17 @@
     margin-bottom: 6px;
 }
 
-.skill-name { font-weight: 600; font-size: 14px; }
+.skill-name { font-weight: 600; font-size: 15px; }
+
+.skill-row-header {
+    background: transparent;
+    border: none;
+    font-weight: 600;
+    color: var(--text-dim);
+    font-size: 13px;
+}
 .skill-level {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     color: var(--rs-gold);
     text-align: center;
@@ -74,7 +82,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 11px;
+    font-size: 12px;
     color: #fff;
     text-shadow: 0 1px 2px rgba(0,0,0,0.8);
     white-space: nowrap;
@@ -95,6 +103,26 @@
 
 .quest-id { font-size: 12px; color: var(--text-dim); font-family: monospace; }
 
+.quest-vars-panel {
+    margin-top: 8px;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.quest-vars-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 6px;
+}
+
+.quest-var-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+}
+
 /* Inventory tab */
 .inv-grid {
     display: grid;
@@ -106,8 +134,8 @@
     background: var(--bg-input);
     border: 1px solid var(--border);
     border-radius: 6px;
-    padding: 10px;
-    font-size: 12px;
+    padding: 12px;
+    font-size: 13px;
 }
 
 .inv-slot-header {
@@ -119,20 +147,22 @@
 .inv-slot-num {
     font-weight: 700;
     color: var(--rs-gold);
+    font-size: 14px;
 }
 
 .inv-slot-id {
     font-family: monospace;
     color: var(--text-dim);
-    font-size: 10px;
+    font-size: 12px;
     word-break: break-all;
+    line-height: 1.4;
 }
 
 .inv-stat {
     display: flex;
     justify-content: space-between;
-    padding: 2px 0;
-    font-size: 12px;
+    padding: 3px 0;
+    font-size: 13px;
 }
 
 /* World tab — events */
@@ -140,13 +170,14 @@
     background: var(--bg-input);
     border: 1px solid var(--border);
     border-radius: 6px;
-    padding: 12px;
+    padding: 14px;
     margin-bottom: 8px;
+    font-size: 14px;
 }
 
 .event-name {
     font-weight: 600;
-    font-size: 14px;
+    font-size: 16px;
     margin-bottom: 8px;
     color: var(--rs-cyan);
 }
@@ -154,13 +185,85 @@
 .trigger-row {
     display: flex;
     justify-content: space-between;
-    font-size: 12px;
-    padding: 3px 8px;
+    font-size: 13px;
+    padding: 4px 10px;
     color: var(--text-dim);
 }
 
 .trigger-active { color: var(--accent-green); }
 .trigger-inactive { color: var(--accent-red); }
+
+/* World tab — mode labels + conversion box */
+.world-card-title {
+    color: var(--rs-gold);
+    font-size: 18px;
+}
+
+.world-mode-custom {
+    color: #7fdf7f;
+    font-weight: bold;
+}
+
+.world-mode-standard {
+    color: #dfdf7f;
+}
+
+.world-mode-mixed {
+    color: #df7f7f;
+}
+
+.world-conversion-box {
+    margin-top: 8px;
+    padding: 10px;
+    background: #1a1a1a;
+    border-radius: 6px;
+}
+
+.world-conversion-title {
+    color: var(--rs-gold);
+    font-size: 14px;
+}
+
+.btn-world-convert { background: #5a8a4a; }
+.btn-world-revert  { background: #8a5a4a; }
+
+/* Warning card (top of World tab) */
+.warn-card-gold {
+    background: #2a1f0a;
+    border-color: #5a3f1a;
+}
+
+/* Section helpers used by JS-rendered World tab content */
+.card-title-flush { margin-top: 0; }
+
+.section-desc { margin-bottom: 8px; }
+
+.section-divider {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 16px 0;
+}
+
+.missing-tags-panel { margin-top: 8px; }
+
+.missing-tags-panel summary { cursor: pointer; }
+
+.missing-tags-grid {
+    margin-top: 8px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+}
+
+.containers-scroll {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.container-header {
+    display: flex;
+    justify-content: space-between;
+}
 
 /* Progress section */
 .progress-grid {

@@ -59,16 +59,16 @@ function renderDifficultySection(filename, data) {
     const fname = escapeHtml(filename);
     const cur = data.difficulty.current;
     const missing = data.difficulty.missing || [];
-    let html = `<div class="card-title" style="margin-top:0">
+    let html = `<div class="card-title card-title-flush">
         Custom Difficulty Settings (${cur.length} active / ${data.difficulty.total_known} total)
     </div>`;
-    html += `<p style="color:var(--text-dim);font-size:12px;margin-bottom:8px">
+    html += `<p class="text-sm text-dim section-desc">
         Edit existing settings below (length-preserving, safe). Adding new settings to a world that
         doesn't have them requires Phase 2 binary injection — not yet implemented.
     </p>`;
 
     if (cur.length === 0) {
-        html += '<p style="color:var(--accent-red);font-size:12px">No active settings in this save.</p>';
+        html += '<p class="text-sm" style="color:var(--accent-red)">No active settings in this save.</p>';
     } else {
         html += '<div class="grid grid-2">';
         for (const s of cur) {
@@ -77,11 +77,11 @@ function renderDifficultySection(filename, data) {
             const hint = escapeHtml(s.hint);
             html += `<div class="event-row">
                 <div class="event-name">${name}</div>
-                <div style="font-size:10px;color:var(--text-dim);font-family:monospace;margin-bottom:6px">${tag}</div>
+                <div class="text-xs text-dim font-mono" style="margin-bottom:6px">${tag}</div>
                 <div class="trigger-row" style="align-items:center">
-                    <span style="font-size:11px">${hint}</span>
+                    <span class="text-sm">${hint}</span>
                     <input type="number" value="${s.value}" step="0.1" min="0" max="100"
-                        style="width:90px;font-size:12px"
+                        class="input-sm"
                         onchange="updateDifficulty('${fname}', '${tag}', parseFloat(this.value))">
                 </div>
             </div>`;
@@ -90,24 +90,24 @@ function renderDifficultySection(filename, data) {
     }
 
     if (missing.length > 0) {
-        html += `<details style="margin-top:8px">
-            <summary style="cursor:pointer;color:var(--text-dim);font-size:12px">
+        html += `<details class="missing-tags-panel">
+            <summary class="text-sm text-dim">
                 Show ${missing.length} unset tags (Phase 2 will allow injection)
             </summary>
-            <div style="margin-top:8px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px">`;
+            <div class="missing-tags-grid">`;
         for (const m of missing) {
-            html += `<div style="font-size:10px;color:var(--text-dim);font-family:monospace;padding:4px">${escapeHtml(m.name)}: ${escapeHtml(m.tag)}</div>`;
+            html += `<div class="text-xs text-dim font-mono" style="padding:4px">${escapeHtml(m.name)}: ${escapeHtml(m.tag)}</div>`;
         }
         html += '</div></details>';
     }
 
-    html += '<hr style="border:0;border-top:1px solid var(--border);margin:16px 0">';
+    html += '<hr class="section-divider">';
     return html;
 }
 
 function renderWeatherSection(filename, data) {
     if (!data.weather || data.weather.length === 0) return '';
-    let html = '<div class="card-title" style="margin-top:0">Weather (' + data.weather.length + ' regions)</div>';
+    let html = '<div class="card-title card-title-flush">Weather (' + data.weather.length + ' regions)</div>';
     html += '<div class="grid grid-2">';
     for (const w of data.weather) {
         const fname = escapeHtml(filename);
@@ -117,7 +117,7 @@ function renderWeatherSection(filename, data) {
             <div class="event-name">${wname}</div>
             <div class="trigger-row">
                 <span>Type</span>
-                <select onchange="updateWeather('${fname}', '${wname}', this.value, null)" style="width:130px;font-size:12px">
+                <select onchange="updateWeather('${fname}', '${wname}', this.value, null)" class="input-md">
                     ${['Sunny','Cloudy','Rain','Storm','Snow','Fog','Hail','Wind'].map(t =>
                         `<option value="${t}" ${t===currentType?'selected':''}>${t}</option>`
                     ).join('')}
@@ -130,7 +130,7 @@ function renderWeatherSection(filename, data) {
             <div class="trigger-row">
                 <span>Time Remaining</span>
                 <input type="number" value="${w.remaining_time.toFixed(0)}" min="0"
-                       style="width:100px;font-size:12px"
+                       class="input-sm"
                        onchange="updateWeather('${fname}', '${wname}', null, parseFloat(this.value))">
             </div>
         </div>`;
@@ -156,8 +156,8 @@ function renderEventsSection(filename, data) {
             html += `<div class="trigger-row" style="align-items:center">
                 <span>${tname}</span>
                 <div style="display:flex;gap:6px;align-items:center">
-                    <span class="${cls}" style="font-size:11px">${t.time}</span>
-                    <button class="btn" style="padding:2px 8px;font-size:10px"
+                    <span class="${cls} text-xs">${t.time}</span>
+                    <button class="btn btn-mini"
                         onclick="toggleEventTrigger('${fname}', '${evname}', '${tname}', ${!t.active})">
                         ${t.active ? 'Disable' : 'Enable'}
                     </button>
@@ -172,44 +172,44 @@ function renderEventsSection(filename, data) {
 function renderContainersSection(filename, data) {
     if (!data.containers || data.containers.length === 0) return '';
     const fname = escapeHtml(filename);
-    let html = `<div class="card-title" style="margin-top:16px">World Storage (${data.containers.length} containers with items)</div>`;
-    html += `<p style="color:var(--text-dim);font-size:12px;margin-bottom:8px">
+    let html = `<div class="card-title">World Storage (${data.containers.length} containers with items)</div>`;
+    html += `<p class="text-sm text-dim section-desc">
         These are crafting station I/O, chests, and storage containers in the world.
         Edit Count for stackable items, Durability for gear.
     </p>`;
-    html += '<div style="max-height:600px;overflow-y:auto">';
+    html += '<div class="containers-scroll">';
     data.containers.forEach((c, idx) => {
         html += `<div class="event-row">
-            <div class="event-name" style="display:flex;justify-content:space-between">
+            <div class="event-name container-header">
                 <span>Container ${idx + 1}</span>
-                <span style="color:var(--text-dim);font-size:11px;font-family:monospace">${c.offset} &middot; ${c.item_count} items</span>
+                <span class="text-xs text-dim font-mono">${c.offset} &middot; ${c.item_count} items</span>
             </div>`;
         for (const item of c.items) {
             const itemId = escapeHtml(item.item_data || '?');
             if (item.is_stackable) {
                 html += `<div class="trigger-row" style="align-items:center">
-                    <span style="font-family:monospace;font-size:11px">[${item.slot}] ${itemId}</span>
+                    <span class="text-xs font-mono">[${item.slot}] ${itemId}</span>
                     <div style="display:flex;gap:6px;align-items:center">
-                        <span style="color:var(--rs-cyan);font-size:10px">x</span>
+                        <span class="text-xs text-cyan">x</span>
                         <input type="number" value="${item.count}" min="0" max="99999"
-                            style="width:70px;font-size:11px"
+                            class="input-narrow"
                             onchange="updateContainerItem('${fname}', ${c.section_index}, ${item.slot}, 'Count', parseInt(this.value))">
                     </div>
                 </div>`;
             } else if (item.durability !== null) {
                 html += `<div class="trigger-row" style="align-items:center">
-                    <span style="font-family:monospace;font-size:11px">[${item.slot}] ${itemId}</span>
+                    <span class="text-xs font-mono">[${item.slot}] ${itemId}</span>
                     <div style="display:flex;gap:6px;align-items:center">
-                        <span style="color:var(--rs-gold);font-size:10px">dur</span>
+                        <span class="text-xs text-gold">dur</span>
                         <input type="number" value="${item.durability}" min="0" max="99999"
-                            style="width:70px;font-size:11px"
+                            class="input-narrow"
                             onchange="updateContainerItem('${fname}', ${c.section_index}, ${item.slot}, 'Durability', parseInt(this.value))">
                     </div>
                 </div>`;
             } else {
                 html += `<div class="trigger-row">
-                    <span style="font-family:monospace;font-size:11px">[${item.slot}] ${itemId}</span>
-                    <span style="color:var(--text-dim);font-size:11px">no editable fields</span>
+                    <span class="text-xs font-mono">[${item.slot}] ${itemId}</span>
+                    <span class="text-xs text-dim">no editable fields</span>
                 </div>`;
             }
         }
@@ -221,11 +221,11 @@ function renderContainersSection(filename, data) {
 
 function renderStationsSection(data) {
     if (!data.stations || data.stations.length === 0) return '';
-    let html = '<div class="card-title" style="margin-top:16px">Crafting Stations (' + data.stations.length + ')</div>';
+    let html = '<div class="card-title">Crafting Stations (' + data.stations.length + ')</div>';
     for (const s of data.stations) {
         html += `<div class="stat-row" style="margin-bottom:4px">
-            <span class="stat-label" style="font-family:monospace;font-size:11px">${s.offset}</span>
-            <span style="font-size:12px">Fuel: ${s.fuel_time.toFixed(1)}s | Recipe: ${s.recipe_time.toFixed(1)}s${s.running ? ' | <strong style="color:var(--accent-green)">RUNNING</strong>' : ''}</span>
+            <span class="stat-label text-xs font-mono">${s.offset}</span>
+            <span class="text-sm">Fuel: ${s.fuel_time.toFixed(1)}s | Recipe: ${s.recipe_time.toFixed(1)}s${s.running ? ' | <strong class="text-success">RUNNING</strong>' : ''}</span>
         </div>`;
     }
     return html;

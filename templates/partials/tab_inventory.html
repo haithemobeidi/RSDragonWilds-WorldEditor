@@ -8,10 +8,10 @@
             <div class="inv-slot">
                 <div class="inv-slot-header">
                     <span class="inv-slot-num">{{ item.slot_name }}</span>
-                    <span style="color:var(--text-dim);font-size:11px">Slot {{ item.slot }}</span>
+                    <span class="text-xs text-dim">Slot {{ item.slot }}</span>
                 </div>
                 {% if item.inv_ref is not none %}
-                <div style="font-size:11px;color:var(--text-dim);font-style:italic">
+                <div class="text-xs text-dim text-italic">
                     References inventory slot {{ item.inv_ref }}
                 </div>
                 {% else %}
@@ -20,7 +20,7 @@
                 <div class="inv-stat">
                     <span style="color:var(--text-dim)">Durability</span>
                     <input type="number" value="{{ item.durability }}" min="0" max="99999"
-                           style="width:80px;font-size:12px"
+                           class="input-sm"
                            onchange="queueDurabilityUpdate({{ item.slot }}, this.value, 'Loadout')">
                 </div>
                 {% endif %}
@@ -49,12 +49,12 @@
                     <span class="inv-slot-num">
                         Slot {{ item.slot }}
                         {% if item.is_stackable %}
-                        <span style="color:var(--rs-cyan);font-size:10px">[STACK]</span>
+                        <span class="text-xs text-cyan">[STACK]</span>
                         {% else %}
-                        <span style="color:var(--rs-gold);font-size:10px">[GEAR]</span>
+                        <span class="text-xs text-gold">[GEAR]</span>
                         {% endif %}
                     </span>
-                    <button class="btn btn-danger" style="padding:2px 6px;font-size:10px"
+                    <button class="btn btn-danger btn-mini-x"
                             onclick="deleteItem({{ item.slot }}, this)">X</button>
                 </div>
                 <div class="inv-slot-id">{{ item.item_data }}</div>
@@ -62,7 +62,7 @@
                 <div class="inv-stat">
                     <span style="color:var(--text-dim)">Count</span>
                     <input type="number" value="{{ item.count }}" min="1" max="99999"
-                           style="width:80px;font-size:12px"
+                           class="input-sm"
                            onchange="queueCountUpdate({{ item.slot }}, this.value)">
                 </div>
                 {% else %}
@@ -70,7 +70,7 @@
                 <div class="inv-stat">
                     <span style="color:var(--text-dim)">Durability</span>
                     <input type="number" value="{{ item.durability }}" min="0" max="99999"
-                           style="width:80px;font-size:12px"
+                           class="input-sm"
                            onchange="queueDurabilityUpdate({{ item.slot }}, this.value, 'Inventory')">
                 </div>
                 {% endif %}

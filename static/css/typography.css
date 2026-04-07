@@ -1,0 +1,89 @@
+/* typography.css — Semantic type scale + text modifiers
+ *
+ * Replaces ad-hoc inline style="font-size:Npx; color:..." strings that
+ * were scattered across templates and JS-generated HTML. Use these classes
+ * instead of inline styles for all text-related properties.
+ *
+ * Type scale — kept conservative for readability (no tinier than 12px):
+ *   .text-xs   12px   captions, metadata, IDs, helper notes
+ *   .text-sm   13px   small labels, trigger rows, sub-info
+ *   .text-md   14px   default small body (inherits from body base)
+ *   (body)    17px   base — everything inherits this unless overridden
+ *
+ * Modifiers:
+ *   .text-dim        muted secondary color
+ *   .text-gold       rs-gold-bright
+ *   .text-cyan       rs-cyan (callout/stackable indicator)
+ *   .text-warn       yellow warning
+ *   .text-danger     red alert
+ *   .font-mono       monospace font
+ *   .text-italic     italic
+ */
+
+/* Size scale */
+.text-xs { font-size: 12px; }
+.text-sm { font-size: 13px; }
+.text-md { font-size: 14px; }
+
+/* Color modifiers */
+.text-dim     { color: var(--text-dim); }
+.text-gold    { color: var(--rs-gold); }
+.text-cyan    { color: var(--rs-cyan); }
+.text-warn    { color: #f5a623; }
+.text-danger  { color: #df7f7f; }
+.text-success { color: var(--accent-green); }
+
+/* Font family modifiers */
+.font-mono { font-family: 'Consolas', 'Monaco', 'Courier New', monospace; }
+
+/* Utility */
+.text-italic { font-style: italic; }
+.text-break-all { word-break: break-all; }
+
+/* Contextual warning box (used for bug warnings, danger notices) */
+.warn-box {
+    font-size: 13px;
+    padding: 8px 10px;
+    border-radius: 4px;
+    background: rgba(223, 127, 127, 0.08);
+    border-left: 3px solid #df7f7f;
+    color: #df7f7f;
+    margin: 6px 0 8px;
+}
+
+.warn-box-gold {
+    font-size: 13px;
+    color: #f5a623;
+}
+
+/* Small inline form elements inside dense layouts (triggers, weather, etc) */
+.input-sm {
+    width: 90px;
+    font-size: 13px;
+}
+
+.input-md {
+    width: 130px;
+    font-size: 13px;
+}
+
+.input-narrow {
+    width: 70px;
+    font-size: 13px;
+}
+
+.input-wide {
+    width: 280px;
+    font-size: 13px;
+}
+
+/* Mini-button (used for "X" delete, "Disable/Enable" in event rows) */
+.btn-mini {
+    padding: 3px 10px;
+    font-size: 12px;
+}
+
+.btn-mini-x {
+    padding: 3px 8px;
+    font-size: 12px;
+}

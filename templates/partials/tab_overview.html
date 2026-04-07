@@ -6,7 +6,7 @@
         <div style="display:flex;gap:8px;align-items:center">
             <button class="btn btn-success" onclick="fullRestore()">Full Restore</button>
             <button class="btn" onclick="clearAllDebuffs()">Clear Debuffs</button>
-            <span style="color:var(--text-dim);font-size:12px">Version {{ char.meta.version }}</span>
+            <span class="text-sm text-dim">Version {{ char.meta.version }}</span>
         </div>
     </div>
 
@@ -59,7 +59,7 @@
                     </select>
                 </div>
             </div>
-            <p style="font-size:11px;color:var(--text-dim);margin-top:8px">
+            <p class="text-xs text-dim" style="margin-top:8px">
                 <strong>World Compat</strong>: <code>0</code> = standard worlds (Gielinor default), <code>3</code> = custom worlds.
                 Mutually exclusive — there's no "both" value. To play your main char on a custom-difficulty world, set this to <code>3</code> AND convert the world to Custom in the World Data tab.
             </p>
@@ -82,7 +82,7 @@
                 </div>
                 <div class="stat-row">
                     <span class="stat-label">GUID</span>
-                    <span class="stat-value" style="font-size:10px;font-family:monospace">{{ char.meta.char_guid[:16] }}...</span>
+                    <span class="stat-value text-xs font-mono">{{ char.meta.char_guid[:16] }}...</span>
                 </div>
             </div>
 
@@ -131,9 +131,9 @@
                         {{ effect.name }}
                     </span>
                     <div style="display:flex;align-items:center;gap:8px">
-                        <span class="stat-value" style="font-size:12px">{{ "%.1f"|format(effect.value) }}</span>
+                        <span class="stat-value text-sm">{{ "%.1f"|format(effect.value) }}</span>
                         {% if effect.active %}
-                        <button class="btn btn-danger" style="padding:2px 8px;font-size:11px"
+                        <button class="btn btn-danger btn-mini"
                                 onclick="clearEffect('{{ effect.name }}', this)">Clear</button>
                         {% endif %}
                     </div>
@@ -145,7 +145,7 @@
         <div class="card">
             <div class="card-title">Position / Teleport</div>
             {% if not char.character.position.is_set %}
-            <p style="color:var(--text-dim);font-size:12px;margin-bottom:12px">
+            <p class="text-sm text-dim" style="margin-bottom:12px">
                 No position recorded yet. The game stores this when you respawn or fast-travel.
                 You can still set one manually.
             </p>
@@ -167,7 +167,7 @@
                            style="width:130px" onchange="queuePosition()">
                 </div>
             </div>
-            <div style="margin-top:8px;font-size:11px;color:var(--text-dim);font-family:monospace">
+            <div class="text-xs text-dim font-mono" style="margin-top:8px">
                 {{ char.character.position.raw }}
             </div>
         </div>
@@ -181,7 +181,7 @@
                 <span class="stat-label">{{ skill.name }}</span>
                 <div style="display:flex;align-items:center;gap:12px">
                     <span class="stat-value gold">Lvl {{ skill.level }}</span>
-                    <span class="stat-value" style="font-size:12px;color:var(--text-dim)">{{ skill.xp }} XP</span>
+                    <span class="stat-value text-sm text-dim">{{ skill.xp }} XP</span>
                 </div>
             </div>
             {% endfor %}
