@@ -9,11 +9,12 @@ A file-by-file map of the RS Dragonwilds Save Editor project. Read this with the
 | `CLAUDE.md` | Project overview, tech stack, file locations, dev guidelines, current status |
 | `README.md` | End-user-facing setup guide and feature list (one-click run.bat instructions) |
 | `QUICK_REFERENCE.md` | Cheat sheet for save flags (char_type, world mode bytes, conversion recipes) |
+| `BUGS.md` | Known bugs tracker — format: ID, severity, status, root cause hypothesis, fix plan |
 | `SESSION_PROTOCOLS.md` | Mandatory start/work/end session protocols |
 | `SAVE_FORMAT.md` | Reverse-engineered save file format reference (character JSON + world binary) |
 | `DIFFICULTY_SETTINGS.md` | Reverse-engineered notes on the custom difficulty system, all 35 known tags, binary layout, secondary copy structure |
 | `CODEBASE_INDEX.md` | This file |
-| `requirements.txt` | Python deps: just `flask>=3.0` |
+| `requirements.txt` | Python deps: `flask>=3.0`, `openpyxl` (for XLSX import) |
 | `run.sh` / `run.bat` | Launch helpers (creates venv if missing, starts Flask server) |
 | `.gitignore` | Excludes `venv/`, `__pycache__/`, `editor_backups/`, `research_backups/` |
 
@@ -73,33 +74,46 @@ Flask web app. Thin layer over `parser.py`.
 - `POST /api/world/<filename>/update` — batch world edit actions (`container_item`, `weather`, `event_trigger`, `disable_all_raids`, `difficulty_value`)
 - `POST /api/world/<filename>/save` — call `ws.save()`
 
-## Templates
+## Templates (refactored 2026-04-06 — was a 1743-line monolith)
 
-### `templates/index.html` (~1600 lines, MONOLITHIC — pending refactor)
-Single-page UI. Embedded CSS at the top, Jinja2 templating in the body, JS at the bottom.
+### `templates/index.html` (62 lines — shell only)
+Entry point. Contains: `<head>` with CSS/font `<link>`s, header bar, char selector include, tabs row, tab partial includes, toast element, JS `<script>` tags. Server-rendered globals (`currentFile`, `XP_TABLE`) set inline before JS loads.
 
-**Structure (in this order in the file):**
-1. `<head>` with all CSS (RS-themed dark mode palette)
-2. Header bar with title, save dir, Reload Files button, Save to Disk button
-3. Character selector cards (one per loaded character)
-4. Tabs row: Overview / Skills / Inventory / Quests / Spells / More / World Data
-5. Tab contents:
-   - **Overview:** Vitals (Health, Stamina, Sustenance, etc.), Status Effects panel, Position editor, Character info, Progress, Skills overview, Full Restore button
-   - **Skills:** 10 skills with editable XP, MAX button, live XP bar
-   - **Inventory:** Loadout (equipment slots) + Inventory grid with stackable/durable distinction, Repair All / Max All Stacks buttons
-   - **Quests:** All quests with state dropdown + per-quest expandable variable editor (QuestBools / QuestInts)
-   - **Spells:** 48-slot spell loadout with dropdowns from unlocked spells + Fill All / Clear All
-   - **More:** Mount manager (equip/remove/add by ID), Map / Fog of War (Reveal Full Map button), Customization read-only display
-   - **World Data:** Per-world card with "Load Editable Data" button. Loads weather, events, world chests/containers, crafting stations, AND custom difficulty settings (Phase 1 editor)
-6. Toast notification element
-7. `<script>` block with all JS:
-   - State: `currentFile`, `pendingUpdates`, `isDirty`, `worldDirty`, `XP_TABLE`
-   - Helpers: `switchTab`, `selectCharacter`, `showToast`, `markDirty`, `escapeHtml`, `xpToLevel`
-   - Character edit queueing: `queueUpdate`, `queueStatUpdate`, `queueSkillUpdate`, `maxSkill`, `queueQuestUpdate`, `queueQuestBool`, `queueQuestInt`, `queueDurabilityUpdate`, `queueCountUpdate`, `queueHardcoreUpdate`, `queuePosition`, `clearEffect`, `clearAllDebuffs`, `fullRestore`, `maxAllStacks`, `queueSpellSlot`, `fillAllSpells`, `clearAllSpells`, `addMount`, `removeMount`, `equipMount`, `revealMap`, `hideMap`, `deleteItem`, `repairAllItems`, `completeAllQuests`
-   - World edit functions: `loadWorldDetails` (huge — renders weather/events/containers/difficulty UI), `postWorldUpdate`, `updateContainerItem`, `updateDifficulty`, `updateWeather`, `toggleEventTrigger`, `disableAllRaids`, `saveWorld`
-   - `applyUpdates` (POSTs the queue), `saveChanges`, `reloadSaves`
+### `templates/partials/*.html` (8 files, 17-196 lines each)
+| Partial | Purpose |
+|---------|---------|
+| `_char_selector.html` | Character card grid at the top |
+| `tab_overview.html` | Vitals, char info, status effects, position, progress, skills overview, Full Restore |
+| `tab_skills.html` | Editable skills table with XP bars and MAX buttons |
+| `tab_inventory.html` | Loadout + inventory grid (stackable/gear split) |
+| `tab_quests.html` | Quest list with state dropdowns and per-quest variable editors |
+| `tab_spells.html` | 48-slot spell loadout with Fill All / Clear All |
+| `tab_more.html` | Mounts, Map/Fog, Customization read-only |
+| `tab_world.html` | Per-world cards with load/save buttons + World Mode Conversion controls |
+| `tab_database.html` | Reference catalog browser (items + quests from the XLSX) |
 
-**Refactor target:** Split into separate template partials per tab, extract CSS to `static/style.css`, extract JS to `static/app.js`. Tracked as task #17.
+## Static assets
+
+### `static/css/` (5 files)
+| File | Purpose |
+|------|---------|
+| `base.css` | CSS variables, body, layout containers, grid |
+| `components.css` | Buttons, cards, inputs, stat rows, badges, toast, char selector |
+| `tabs.css` | Tab layout + per-tab specific styles (skill rows, quest rows, inv slots, events) |
+| `database.css` | Database tab styles (grid, cards with icons, search controls, type tags) |
+| `theme.css` | **RSDW game-style override layer.** Fantasy-serif fonts (Cinzel + EB Garamond), warmer dark-amber palette, aggressive `!important` font-size overrides for readability. Layered LAST so it overrides the base CSS. |
+
+### `static/js/` (5 files)
+| File | Purpose |
+|------|---------|
+| `api.js` | DRY HTTP helpers: `apiPost(url, body)`, `apiGet(url)` — one place for fetch boilerplate + error handling |
+| `core.js` | Global state, UI primitives (`switchTab`, `showToast`, `markDirty`, `escapeHtml`, `xpToLevel`), `applyUpdates`, `saveChanges`, `reloadSaves` |
+| `character.js` | All character editing queue functions (skills, vitals, inventory, quests, spells, mounts, map, char_type) |
+| `world.js` | World data loading, per-section render helpers (`renderDifficultySection`, `renderWeatherSection`, etc), world edit actions, mode conversion |
+| `database.js` | Reference database tab — load catalog, render item/quest cards with icons, live search filter |
+
+### `static/images/items/` — 159 PNG files
+Wiki-sourced item icons (256×256). Downloaded by `scripts/fetch_icons.py`. Referenced by `data/icon_map.json` which is merged into `data/items.json` at app startup.
 
 ## Documentation
 
@@ -147,13 +161,15 @@ Slash commands for the project:
 
 ## `data/`
 
-Reference catalogs imported from external sources. Generated by scripts in `scripts/`.
+Reference catalogs imported from external sources. Generated by scripts in `scripts/`. All files checked into git — small enough and give a working out-of-the-box experience.
 
 | File | Purpose |
 |------|---------|
 | `quests.json` | All known quests (22). Imported from Ashenfall's Completionist Log. Has title, type, region, sub-region, start NPC, reward info. |
 | `items.json` | All known items (197). Imported from same source. Has display name, vestige name, type, sub-type, region, source (chest/drop/etc), soul fragment cost (where applicable). |
 | `catalog_meta.json` | Versioning info — source, import date, counts, notes |
+| `icon_map.json` | Per-item icon fetch results — each entry has status, queried name, resolved wiki title, image URL, local path. Used by `app.load_catalog()` to merge icon paths into items. |
+| `icon_manual_overrides.json` | Map of `item_id → wiki_title` for fixing XLSX typos (e.g. L003 "Leggins" → "Leggings Of Lightness"). Consumed by `scripts/fetch_icons.py`. |
 
 **Important:** these catalogs use community IDs (MQ01, L001) NOT the game's internal GUIDs. The Database tab in the editor uses them as a browse-only reference. Auto-linking save data to catalog entries is **Phase 2** — would require extracting `.pak` files for the GUID→name mapping.
 
@@ -163,18 +179,20 @@ Standalone utilities not part of the Flask app.
 
 | File | Purpose |
 |------|---------|
-| `flip_gielinor_custom.py` | One-shot CLI to convert Gielinor.sav between Standard and Custom mode. Has `--revert` flag. Auto-detects file location. |
+| `flip_gielinor_custom.py` | One-shot CLI to convert Gielinor.sav between Standard and Custom mode. Has `--revert` flag. Auto-detects file location. Built-in backups per standing rule. |
 | `import_catalog.py` | Reads the Ashenfall Completionist Log XLSX and writes `data/quests.json` + `data/items.json` + `data/catalog_meta.json`. Re-run when the source XLSX is updated. |
+| `fetch_icons.py` | Scrapes item icons from the RS Dragonwilds wiki via MediaWiki API. Direct `pageimages` lookup → search fallback → manual override support. Polite rate limit (0.5s). Resumable cache in `icon_map.json`. Downloads PNGs to `static/images/items/`. Usage: `python scripts/fetch_icons.py [--limit N] [--force]`. |
 
 ## `docs/`
 
 | Path | Purpose |
 |------|---------|
-| `docs/handoffs/` | Per-session handoff documents |
+| `docs/handoffs/` | Per-session handoff documents (one per session, timestamped filename) |
 | `docs/MASTER_HANDOFF_INDEX.md` | Catalog of all handoffs (one-line summaries, newest first) |
 
 ## Runtime / generated (gitignored)
 
-- `venv/` — Python venv with Flask
+- `venv/` — Python venv with Flask + openpyxl
 - `__pycache__/` — Python bytecode cache
 - `editor_backups/` — auto-created backups when the editor saves a file (separate from the game's own `.backup` and `.verbackup` files)
+- `research_backups/` — pristine save files + original pre-refactor code (load-bearing safety net for experimentation — don't delete)

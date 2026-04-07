@@ -18,8 +18,9 @@
 
 ## Current Status
 
-**Last session:** 2026-04-06 (full marathon)
-**Build status:** ✅ Working — including new World Mode Conversion feature in the GUI
+**Last session:** 2026-04-06 (4-session marathon)
+**Build status:** ✅ Working — full feature set + refactored + publicly shipped
+**Repo:** https://github.com/haithemobeidi/RSDragonWilds-WorldEditor (public)
 
 **Major discoveries (in chronological order):**
 
