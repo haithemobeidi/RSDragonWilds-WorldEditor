@@ -6,6 +6,33 @@ Format: each bug has an ID, severity, status, summary, what we know, what we sus
 
 ---
 
+## #002 — Quest display regression (had proper names before)
+
+**Severity:** Low (cosmetic — functionality intact)
+**Status:** OPEN
+**Reported:** 2026-04-06 by user (serious_beans)
+**Affects:** `parser.py` `CharacterSave.get_summary()` quest parsing, probably `tab_quests.html`
+
+### Summary
+At some point during the session, the Quest tab used to display proper quest names / objectives text. Now it only shows generic "Objective3" / "Objective2" / GUID. Something regressed somewhere in the parsing chain.
+
+### Things to check
+- Did `QuestObjective` field semantics change? Maybe it used to pull from a different field in the JSON
+- Is there a `QuestTitle` / `DisplayName` field in the quest JSON that we were reading before?
+- Did the XLSX catalog → database tab addition accidentally replace something in the quest rendering path?
+- Could be related to the template refactor (large surface area)
+
+### Workaround
+None — functional quests still work, just showing generic identifiers.
+
+### Fix plan
+1. Dump a character's raw `QuestProgress.Quests` to see all fields available per quest
+2. Check git history: `git log -p -- parser.py` around the `get_summary` quests block
+3. Compare what's rendered now vs what we had in earlier screenshots
+4. Restore whatever field read was lost
+
+---
+
 ## #001 — World Mode Conversion breaks ownership-bound features
 
 **Severity:** Medium (data is not lost, but features stop working)
