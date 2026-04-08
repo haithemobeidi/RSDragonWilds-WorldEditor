@@ -208,6 +208,13 @@ Reverse-engineering corpus + diff scripts for the **placed-structure transplant 
 | `diff9.py` | Diff of D vs E Pces chunks — revealed the per-record FString layout and constant class GUIDs |
 | `diff10.py` | First Pces record parser attempt — succeeded for chests and first 14 cabin records, failed at gap-indexed records (abandoned; see diff12 for the working approach) |
 | `diff11.py` | FString-23 scanner — lists every length-prefixed 23-byte string in the Pces body and what precedes it |
+| `diff13.py` | First (broken) NOBJ name scanner — naive byte walk, picked up false positives |
+| `diff14.py` | **Working recursive LEVL/LATS/NOBJ parser** — contains `walk_chunk_body`, `read_fstring`, `walk_lats`, `find_all_levls`. Empirical quirks: skip 8-byte version header after LEVL name; NOBJ ClassID at start not end. |
+| `surgical_transplant.py` | First (failed) surgical transplant attempt — single wall into Middle Eearth's Pces |
+| `surgical_transplant_v2.py` | Parameterized version — source/target CLI args — before the counter fix |
+| `surgical_transplant_v3.py` | **WORKING surgical cross-world transplant.** Updates GBM PROP[2] counter. Verified end-to-end with DiffTest → TransplantTest cabin transplant. |
+| `dupe_piece.py` | Piece duplication test — proves Pces injection mechanics are correct, isolates data-validity issues from format-mechanics issues |
+| `rename_world.py` | In-place world rename with strict-whitelist chunk length fixup (avoids phantom chunks from byte-walking non-container chunk bodies) |
 | `diff12.py` | **Position-validated record extractor** — the working approach. Scans for FString-23 followed by a plausible (in-range) position vec3 + plausible ref_count, which uniquely identifies "main piece records" vs "ref GUIDs". Detected all 45 pieces in E. The logic from this is what got promoted into `parser.py`'s `get_placed_pieces()`. |
 | `transplant_test.py` | **First (failed) surgical transplant attempt** — injected one cabin wall's 143 bytes into Middle Eearth's Pces with chunk-length fixups. Game loaded the file but the wall didn't instantiate because the piece's sibling NOBJ/PROP/CORA records weren't also injected. Useful as a reference for the eventual surgical transplant implementation. |
 
