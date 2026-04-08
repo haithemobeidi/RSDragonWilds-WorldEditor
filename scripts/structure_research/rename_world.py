@@ -7,12 +7,18 @@ chunk length headers that contain the renamed FString.
 Specifically for: "Middle Eearth" (13 chars) → "Middle Earth" (12 chars)
 Each occurrence shrinks by 1 byte. Total shrink depends on occurrence count.
 """
+import sys
 import struct
 import shutil
 from pathlib import Path
 
-SAVES_DIR = Path("~/AppData/Local/RSDragonwilds/Saved/SaveGames")
-SPUD_CACHE = Path("~/AppData/Local/RSDragonwilds/Saved/SpudCache/L_World.lvl")
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+from _paths import find_saves_dir, find_cache_dir
+# Override paths via RSDW_SAVES_DIR / RSDW_CACHE_DIR env vars if needed
+
+SAVES_DIR = find_saves_dir()
+SPUD_CACHE = find_cache_dir() / "L_World.lvl"
 
 OLD_NAME = "Middle Eearth"
 NEW_NAME = "Middle Earth"

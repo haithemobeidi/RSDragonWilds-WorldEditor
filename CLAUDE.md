@@ -109,7 +109,7 @@ Flask routes:
 
 ```bash
 # Start server
-cd "~/Documents/Vibe Projects/RSDragonwildsSaveEditor"
+cd path/to/RSDragonwildsSaveEditor
 source venv/bin/activate
 python app.py
 # Open http://localhost:5000

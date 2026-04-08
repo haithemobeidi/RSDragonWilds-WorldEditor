@@ -30,12 +30,25 @@ except ImportError:
     print("ERROR: openpyxl not installed. Run: pip install openpyxl")
     sys.exit(1)
 
-DEFAULT_XLSX = os.path.expanduser(
+# Default location for the Ashenfall's Completionist Log XLSX.
+# Override by passing a path as the first CLI argument or setting RSDW_CATALOG_XLSX.
+DEFAULT_XLSX = os.environ.get("RSDW_CATALOG_XLSX") or os.path.expanduser(
     "~/Downloads/Copy of Ashenfall's Completionist Log.xlsx"
 )
-# WSL fallback
+# WSL fallback — try common Windows Downloads locations
 if not os.path.exists(DEFAULT_XLSX):
-    DEFAULT_XLSX = "~/Downloads/Copy of Ashenfall's Completionist Log.xlsx"
+    user = os.environ.get("USER", "")
+    wsl_candidates = [
+        f"/mnt/c/Users/{user}/Downloads/Copy of Ashenfall's Completionist Log.xlsx",
+    ]
+    # Also walk /mnt/c/Users for any user that has the file
+    if os.path.isdir("/mnt/c/Users"):
+        for d in os.listdir("/mnt/c/Users"):
+            wsl_candidates.append(f"/mnt/c/Users/{d}/Downloads/Copy of Ashenfall's Completionist Log.xlsx")
+    for c in wsl_candidates:
+        if os.path.exists(c):
+            DEFAULT_XLSX = c
+            break
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(PROJECT_ROOT, "data")

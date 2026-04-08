@@ -29,7 +29,12 @@ Writes to data/guid_map.json:
 Usage:
     python scripts/build_guid_map.py [path/to/exports/Gameplay]
 
-Default path: ~\\OneDrive\\Desktop\\Output\\Exports\\RSDragonwilds\\Content\\Gameplay
+The path should point to the FModel JSON exports of Dragonwilds's Gameplay folder.
+You can override the default by passing the path as a CLI argument or by setting
+the RSDW_FMODEL_EXPORTS environment variable.
+
+Default path is the typical location on Windows after installing FModel and using
+the default export directory: ~/OneDrive/Desktop/Output/Exports/RSDragonwilds/Content/Gameplay
 """
 import json
 import os
@@ -37,7 +42,25 @@ import sys
 from pathlib import Path
 from collections import Counter
 
-DEFAULT_EXPORTS = "~/OneDrive/Desktop/Output/Exports/RSDragonwilds/Content/Gameplay"
+# Default export directory. Override via CLI arg or RSDW_FMODEL_EXPORTS env var.
+def _default_exports() -> str:
+    env = os.environ.get("RSDW_FMODEL_EXPORTS")
+    if env:
+        return env
+    # Try $HOME first, then WSL fallback
+    home_path = Path.home() / "OneDrive/Desktop/Output/Exports/RSDragonwilds/Content/Gameplay"
+    if home_path.exists():
+        return str(home_path)
+    # WSL fallback — walk /mnt/c/Users for any user that has the export
+    if os.path.isdir("/mnt/c/Users"):
+        for user_dir in Path("/mnt/c/Users").iterdir():
+            candidate = user_dir / "OneDrive/Desktop/Output/Exports/RSDragonwilds/Content/Gameplay"
+            if candidate.exists():
+                return str(candidate)
+    # Return the home pattern as fallback even if it doesn't exist
+    return str(home_path)
+
+DEFAULT_EXPORTS = _default_exports()
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 OUTPUT_PATH = PROJECT_ROOT / "data" / "guid_map.json"
 

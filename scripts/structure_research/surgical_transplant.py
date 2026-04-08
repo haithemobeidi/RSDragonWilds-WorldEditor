@@ -24,6 +24,8 @@ Operation:
   7. Write target with backup
   8. Clear SpudCache
 """
+import os
+import sys
 import struct
 import shutil
 import datetime
@@ -32,9 +34,13 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 PROJECT = HERE.parent.parent
 
+sys.path.insert(0, str(HERE))
+from _paths import find_saves_dir, find_cache_dir
+
+SAVES_DIR = find_saves_dir()
 SOURCE_SAV = HERE / "E_with_cabin.sav"
-TARGET_SAV = Path("~/AppData/Local/RSDragonwilds/Saved/SaveGames/Middle Eearth.sav")
-SPUD_CACHE = Path("~/AppData/Local/RSDragonwilds/Saved/SpudCache/L_World.lvl")
+TARGET_SAV = SAVES_DIR / "Middle Eearth.sav"
+SPUD_CACHE = find_cache_dir() / "L_World.lvl"
 
 
 # ---------- low-level helpers ----------

@@ -147,7 +147,9 @@ def main():
     transplant(args.source, args.target, output)
 
     if args.clear_cache:
-        cache = Path("~/AppData/Local/RSDragonwilds/Saved/SpudCache/L_World.lvl")
+        sys.path.insert(0, str(HERE))
+        from _paths import find_cache_dir
+        cache = find_cache_dir() / "L_World.lvl"
         if cache.exists():
             cache.unlink()
             print(f"\nCleared SpudCache: {cache}")

@@ -17,9 +17,12 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from surgical_transplant import find_gbm_nobj
+from _paths import find_saves_dir, find_cache_dir
+# Override paths via RSDW_SAVES_DIR and RSDW_CACHE_DIR env vars if needed
 
-TARGET = Path("~/AppData/Local/RSDragonwilds/Saved/SaveGames/TransplantTest.sav")
-SPUD_CACHE = Path("~/AppData/Local/RSDragonwilds/Saved/SpudCache/L_World.lvl")
+SAVES_DIR = find_saves_dir()
+TARGET = SAVES_DIR / "TransplantTest.sav"
+SPUD_CACHE = find_cache_dir() / "L_World.lvl"
 OUTPUT = TARGET.parent / f"{TARGET.name}.dupe_test"
 
 POSITION_OFFSET_X = 200.0  # cm — 2 meters east
