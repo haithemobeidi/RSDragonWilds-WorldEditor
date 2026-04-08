@@ -1111,6 +1111,297 @@ class WorldSave:
             i = tail_off + 36 + 4
         return pieces
 
+    # ===== Surgical Cross-World Transplant =====
+    # See scripts/structure_research/surgical_transplant_v3.py for the
+    # development history. Verified working in-game (cabin transplant
+    # DiffTest → TransplantTest, 04-08-2026).
+    #
+    # IMPORTANT LIMITATIONS:
+    # - Only Category 1 (passive building pieces — walls, floors, roofs) work
+    # - Category 2 (chests, interactive actors) need additional SPWN copying
+    #   that this method does NOT perform; their Pces records will be added
+    #   but the actors won't instantiate
+    # - Pre-existing target structures spatially overlapping the transplant
+    #   may be silently destroyed by the game's collision system
+
+    def _find_gbm_nobj_layout(self) -> Optional[dict]:
+        """
+        Locate the GlobalBuildingManager NOBJ in this world's L_World LEVL.
+        Returns a dict with all the chunk header offsets needed for surgical
+        modification, or None if not found.
+        """
+        data = self.raw_data
+
+        # Walk SAVE → LVLS → L_World LEVL → LATS → GBM NOBJ → CUST → Pces
+        if data[:4] != b"SAVE":
+            return None
+
+        save_len = struct.unpack_from("<I", data, 4)[0]
+        save_end = 8 + save_len
+
+        # Find LVLS in SAVE body
+        lvls_off = data.find(b"LVLS", 8, save_end)
+        if lvls_off == -1:
+            return None
+        lvls_len = struct.unpack_from("<I", data, lvls_off + 4)[0]
+        lvls_body_start = lvls_off + 8
+        lvls_body_end = lvls_body_start + lvls_len
+
+        # Find L_World LEVL inside LVLS
+        # LVLS body is just sequential LEVL chunks
+        levl_off = lvls_body_start
+        l_world_levl = None
+        while levl_off < lvls_body_end - 8:
+            if data[levl_off:levl_off+4] != b"LEVL":
+                levl_off += 1
+                continue
+            levl_len = struct.unpack_from("<I", data, levl_off + 4)[0]
+            levl_body_start = levl_off + 8
+            # Check if this LEVL's name is "L_World"
+            try:
+                name_len = struct.unpack_from("<i", data, levl_body_start)[0]
+                if 0 < name_len < 100:
+                    name = bytes(data[levl_body_start + 4 : levl_body_start + 4 + name_len - 1]).decode("ascii", errors="replace")
+                    if name == "L_World":
+                        l_world_levl = (levl_off, levl_len, levl_body_start)
+                        break
+            except (struct.error, UnicodeDecodeError):
+                pass
+            levl_off = levl_body_start + levl_len
+
+        if l_world_levl is None:
+            return None
+        levl_off, levl_len, levl_body_start = l_world_levl
+        levl_body_end = levl_body_start + levl_len
+
+        # Skip past name FString + 8-byte version header
+        name_len = struct.unpack_from("<i", data, levl_body_start)[0]
+        pos = levl_body_start + 4 + name_len + 8
+
+        # Find LATS sub-chunk inside L_World LEVL
+        lats_off = None
+        while pos < levl_body_end - 8:
+            tag = bytes(data[pos:pos+4])
+            length = struct.unpack_from("<I", data, pos + 4)[0]
+            if tag == b"LATS":
+                lats_off = pos
+                lats_body_start = pos + 8
+                lats_body_end = lats_body_start + length
+                break
+            pos += 8 + length
+        if lats_off is None:
+            return None
+        lats_len = length
+
+        # Walk LATS body to find GlobalBuildingManager NOBJ
+        gbm_nobj_off = None
+        nobj_pos = lats_body_start
+        while nobj_pos < lats_body_end - 8:
+            if data[nobj_pos:nobj_pos+4] != b"NOBJ":
+                nobj_pos += 1
+                continue
+            nobj_len = struct.unpack_from("<I", data, nobj_pos + 4)[0]
+            nobj_body_start = nobj_pos + 8
+            # NOBJ body: ClassID(4) + FString Name + ...
+            try:
+                name_field_len = struct.unpack_from("<i", data, nobj_body_start + 4)[0]
+                if 0 < name_field_len < 200:
+                    name_str = bytes(data[nobj_body_start + 8 : nobj_body_start + 8 + name_field_len - 1]).decode("ascii", errors="replace")
+                    if "GlobalBuildingManager" in name_str:
+                        gbm_nobj_off = nobj_pos
+                        gbm_nobj_len = nobj_len
+                        gbm_nobj_body_start = nobj_body_start
+                        gbm_nobj_body_end = nobj_body_start + nobj_len
+                        gbm_class_id = struct.unpack_from("<I", data, nobj_body_start)[0]
+                        gbm_name = name_str
+                        # Position right after the name FString + 12B metadata + 8B version header
+                        pos_after = nobj_body_start + 4 + 4 + name_field_len + 12 + 8
+                        break
+            except (struct.error, UnicodeDecodeError):
+                pass
+            nobj_pos = nobj_body_start + nobj_len
+        if gbm_nobj_off is None:
+            return None
+
+        # Walk NOBJ body to find PROP and CUST sub-chunks
+        prop_off = None
+        cust_off = None
+        sub_pos = pos_after
+        while sub_pos < gbm_nobj_body_end - 8:
+            stag = bytes(data[sub_pos:sub_pos+4])
+            slen = struct.unpack_from("<I", data, sub_pos + 4)[0]
+            if stag == b"PROP":
+                prop_off = sub_pos
+                prop_len = slen
+                prop_body_start = sub_pos + 8
+            elif stag == b"CUST":
+                cust_off = sub_pos
+                cust_len = slen
+                cust_body_start = sub_pos + 8
+                cust_body_end = cust_body_start + slen
+                break
+            sub_pos += 8 + slen
+        if cust_off is None:
+            return None
+
+        # CUST body: int32 TArray count + bytes
+        tarray_count_off = cust_body_start
+        tarray_count = struct.unpack_from("<i", data, tarray_count_off)[0]
+        tarray_data_start = cust_body_start + 4
+
+        # Find Pces chunk inside CUST data
+        pces_off = data.find(b"Pces", tarray_data_start, cust_body_end)
+        if pces_off == -1:
+            return None
+        pces_len = struct.unpack_from("<I", data, pces_off + 4)[0]
+        pces_body_start = pces_off + 8
+        pces_body_end = pces_body_start + pces_len
+
+        # Locate PROP[2] counter offset (the per-world piece counter)
+        # PROP body: int32 offsets_count + offsets + int32 data_count + data
+        prop2_off = None
+        if prop_off is not None:
+            try:
+                p = prop_body_start
+                offsets_count = struct.unpack_from("<i", data, p)[0]
+                p += 4
+                offsets = list(struct.unpack_from(f"<{offsets_count}I", data, p))
+                p += offsets_count * 4
+                data_count_field = struct.unpack_from("<i", data, p)[0]
+                p += 4
+                data_blob_start = p
+                if len(offsets) >= 3:
+                    prop2_off = data_blob_start + offsets[2]
+            except struct.error:
+                pass
+
+        return {
+            "save_off": 0,
+            "lvls_off": lvls_off,
+            "levl_off": levl_off,
+            "lats_off": lats_off,
+            "nobj_off": gbm_nobj_off,
+            "cust_off": cust_off,
+            "tarray_count_off": tarray_count_off,
+            "tarray_count": tarray_count,
+            "pces_off": pces_off,
+            "pces_body_start": pces_body_start,
+            "pces_body_end": pces_body_end,
+            "pces_len": pces_len,
+            "prop2_off": prop2_off,
+            "gbm_name": gbm_name,
+        }
+
+    def get_pces_body(self) -> Optional[bytes]:
+        """Return the raw bytes of the GlobalBuildingManager Pces chunk body, or None."""
+        layout = self._find_gbm_nobj_layout()
+        if layout is None:
+            return None
+        return bytes(self.raw_data[layout["pces_body_start"] : layout["pces_body_end"]])
+
+    def get_pces_counter(self) -> Optional[int]:
+        """Return the GBM PROP[2] counter value (next persistent_id / piece count), or None."""
+        layout = self._find_gbm_nobj_layout()
+        if layout is None or layout["prop2_off"] is None:
+            return None
+        return struct.unpack_from("<I", self.raw_data, layout["prop2_off"])[0]
+
+    def transplant_structures_from(self, source: "WorldSave", auto_save: bool = True) -> dict:
+        """
+        Copy all building piece records from `source` world's GlobalBuildingManager
+        Pces chunk into this world's GBM Pces chunk, preserving this world's
+        existing pieces and other state. Updates the GBM PROP[2] counter to at
+        least the source's value so the game accepts the new pieces.
+
+        ⚠️ LIMITATIONS:
+          - Only Category 1 pieces (walls, floors, roofs) actually render in-game
+          - Category 2 pieces (chests, stations) need additional SPWN copying
+            that this method does NOT do; their Pces records will be added but
+            the actors won't instantiate
+          - Spatially overlapping pre-existing target structures may be lost
+
+        Returns a dict with operation summary:
+            {
+                "added_bytes": int,
+                "source_pces_size": int,
+                "target_pces_before": int,
+                "target_pces_after": int,
+                "old_counter": int,
+                "new_counter": int,
+            }
+        """
+        src_layout = source._find_gbm_nobj_layout()
+        if src_layout is None:
+            raise ValueError(f"Source world has no GlobalBuildingManager NOBJ")
+        tgt_layout = self._find_gbm_nobj_layout()
+        if tgt_layout is None:
+            raise ValueError(f"Target world has no GlobalBuildingManager NOBJ")
+
+        src_pces_body = bytes(source.raw_data[src_layout["pces_body_start"] : src_layout["pces_body_end"]])
+        delta = len(src_pces_body)
+
+        # Insert at end of target's Pces body
+        insert_point = tgt_layout["pces_body_end"]
+        new_data = bytearray(self.raw_data[:insert_point])
+        new_data.extend(src_pces_body)
+        new_data.extend(self.raw_data[insert_point:])
+
+        # Update chunk lengths up the tree (Pces, CUST, NOBJ, LATS, LEVL, LVLS, SAVE)
+        # All these chunk headers come BEFORE the insert point so their offsets
+        # in `new_data` are unchanged.
+        for chunk_off in ["pces_off", "cust_off", "nobj_off", "lats_off", "levl_off", "lvls_off", "save_off"]:
+            hdr = tgt_layout[chunk_off]
+            old_len = struct.unpack_from("<I", new_data, hdr + 4)[0]
+            struct.pack_into("<I", new_data, hdr + 4, old_len + delta)
+
+        # Update CUST TArray count (signed int32, also before insert point)
+        ct_off = tgt_layout["tarray_count_off"]
+        old_ct = struct.unpack_from("<i", new_data, ct_off)[0]
+        struct.pack_into("<i", new_data, ct_off, old_ct + delta)
+
+        # Update GBM PROP[2] counter to max(target, source)
+        old_counter = 0
+        new_counter = 0
+        if tgt_layout["prop2_off"] is not None:
+            old_counter = struct.unpack_from("<I", new_data, tgt_layout["prop2_off"])[0]
+            src_counter = source.get_pces_counter() or 0
+            new_counter = max(old_counter, src_counter)
+            if new_counter > old_counter:
+                struct.pack_into("<I", new_data, tgt_layout["prop2_off"], new_counter)
+
+        # Replace raw data
+        self.raw_data = new_data
+        # JSON section offsets are now stale — re-scan
+        self._find_json_sections()
+        self._categorize_sections()
+
+        result = {
+            "added_bytes": delta,
+            "source_pces_size": delta,
+            "target_pces_before": tgt_layout["pces_len"],
+            "target_pces_after": tgt_layout["pces_len"] + delta,
+            "old_counter": old_counter,
+            "new_counter": new_counter,
+        }
+
+        if auto_save:
+            self._raw_save()
+
+        return result
+
+    def _raw_save(self):
+        """Write raw_data directly to filepath. Used by binary-modifying operations
+        that don't want the JSON-section-rewriting save() path."""
+        # Auto-backup
+        if os.path.exists(self.filepath):
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            backup_dir = os.path.join(os.path.dirname(self.filepath), "editor_backups")
+            os.makedirs(backup_dir, exist_ok=True)
+            backup_path = os.path.join(backup_dir, f"{self.filename}.{timestamp}.bak")
+            shutil.copy2(self.filepath, backup_path)
+        with open(self.filepath, "wb") as f:
+            f.write(bytes(self.raw_data))
+
     def get_placed_structures(self) -> list[dict]:
         """
         Walk all SPWN chunks in the binary and return player-built structures.

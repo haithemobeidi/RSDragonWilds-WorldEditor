@@ -62,6 +62,30 @@ The data layer. All save file reading and writing logic lives here.
 
 **`discover_saves()`** — Module-level function that finds all character JSONs and world `.sav` files in the default game save directory.
 
+### `world_editor.py` (~370 lines)
+**Standalone, focused Flask app for world `.sav` editing only.** Runs on port 5001 (separate from main app on 5000). Single-page UI dedicated to the binary world format work.
+
+**Features:**
+- World list with friendly piece-name display (via `KNOWN_PIECE_NAMES` dict for cabin walls/chests/roof variants)
+- Per-world details: header info, stat grid, piece breakdown
+- **Transplant action** — copy buildings from a donor world INTO the selected world. Auto-clears SpudCache. Calls `WorldSave.transplant_structures_from()`.
+- **Clone action** — duplicate world with new filename + new WorldSaveGuid + rewritten WorldName/WorldSlotName FStrings (handles length-prefix delta with chunk-length fixup via `_update_chunk_lengths_for_string_change`)
+- **World mode toggle** — Standard ↔ Custom via `WorldSave.convert_to_custom()` / `revert_to_standard()`
+- All destructive actions auto-create timestamped backups in `editor_backups/`
+
+**Routes:**
+- `GET /` — render `templates/world_editor.html`
+- `GET /api/worlds` — list all worlds with summaries (filters out `EnhancedInputUserSettings.sav`)
+- `GET /api/world/<filename>` — full details for one world
+- `POST /api/world/<filename>/transplant` — surgical structure transplant
+- `POST /api/world/<filename>/clone` — clone world with new identity
+- `POST /api/world/<filename>/mode` — set world mode (Standard/Custom)
+
+**Run:** `python world_editor.py` then open `http://localhost:5001` (binds to `0.0.0.0` so it's reachable from a Windows browser when running under WSL2).
+
+### `templates/world_editor.html`
+Single-page UI for the world editor. Inline CSS (no framework deps), inline vanilla JS. Sidebar with worlds list, main panel with details and action cards. FROM/INTO labeling on the transplant action makes the direction explicit. Confirm dialogs on destructive operations.
+
 ### `app.py` (~270 lines)
 Flask web app. Thin layer over `parser.py`.
 

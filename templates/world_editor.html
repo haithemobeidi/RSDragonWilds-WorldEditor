@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dragonwilds World Editor</title>
+<style>
+  /* Minimal, focused, readable. No frameworks. */
+  :root {
+    --bg: #1e2024;
+    --bg-card: #2a2d33;
+    --bg-hover: #34373e;
+    --border: #3e424b;
+    --text: #e8e6e0;
+    --text-dim: #9a9a9a;
+    --accent: #c9a25f;
+    --accent-bright: #e6b870;
+    --danger: #c54;
+    --success: #5a9;
+    --warn: #ca6;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  h1, h2, h3 { font-weight: 600; margin: 0; }
+  h1 { font-size: 18px; color: var(--accent-bright); }
+  h2 { font-size: 16px; color: var(--accent); margin: 16px 0 8px 0; }
+  h3 { font-size: 14px; color: var(--text); }
+  a { color: var(--accent-bright); }
+  code { background: #1a1c20; padding: 1px 6px; border-radius: 3px; font-size: 12px; }
+
+  /* Layout */
+  .header {
+    background: #15171b;
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-warn {
+    color: var(--warn);
+    font-size: 12px;
+  }
+  .container {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    height: calc(100vh - 47px);
+    gap: 0;
+  }
+  .sidebar {
+    background: #1a1c20;
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 16px;
+  }
+  .main {
+    overflow-y: auto;
+    padding: 24px;
+    max-width: 900px;
+  }
+
+  /* Sidebar world list */
+  .world-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background 0.1s, border-color 0.1s;
+  }
+  .world-item:hover { background: var(--bg-hover); }
+  .world-item.selected {
+    border-color: var(--accent);
+    background: var(--bg-hover);
+  }
+  .world-item .name {
+    font-weight: 600;
+    color: var(--accent-bright);
+    margin-bottom: 2px;
+  }
+  .world-item .meta {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+  .world-item .pieces {
+    font-size: 12px;
+    color: var(--text);
+    margin-top: 4px;
+  }
+
+  /* Main panel */
+  .empty-state {
+    color: var(--text-dim);
+    text-align: center;
+    margin-top: 80px;
+    font-size: 16px;
+  }
+  .world-detail {
+    display: none;
+  }
+  .world-detail.active { display: block; }
+  .world-detail .title {
+    font-size: 22px;
+    color: var(--accent-bright);
+    margin-bottom: 4px;
+  }
+  .world-detail .subtitle {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .stat {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 12px;
+  }
+  .stat .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .stat .value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* Action cards */
+  .action-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .action-card .action-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .action-card .action-desc {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+  .action-card .action-warn {
+    font-size: 11px;
+    color: var(--warn);
+    background: rgba(202, 166, 102, 0.08);
+    border-left: 3px solid var(--warn);
+    padding: 6px 10px;
+    margin-bottom: 12px;
+    border-radius: 0 3px 3px 0;
+  }
+  .action-card .action-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .action-card label {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-right: 4px;
+  }
+  select, input[type="text"] {
+    background: #15171b;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-family: inherit;
+    flex: 1;
+    min-width: 0;
+  }
+  select:focus, input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  button {
+    background: var(--accent);
+    color: #1a1c20;
+    border: none;
+    border-radius: 3px;
+    padding: 7px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  button:hover { background: var(--accent-bright); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  button.danger { background: var(--danger); color: var(--text); }
+  button.danger:hover { background: #d76; }
+
+  /* Pieces table */
+  .piece-list {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin-top: 8px;
+    max-height: 280px;
+    overflow-y: auto;
+  }
+  .piece-list .row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 12px;
+    border-bottom: 1px solid #2a2d33;
+  }
+  .piece-list .row:last-child { border-bottom: none; }
+  .piece-list .row .guid {
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+  .piece-list .row .count {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--success);
+    padding: 12px 16px;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    max-width: 380px;
+    display: none;
+    z-index: 1000;
+    font-size: 13px;
+  }
+  #toast.error { border-left-color: var(--danger); }
+  #toast.warn { border-left-color: var(--warn); }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Dragonwilds World Editor</h1>
+  <div class="header-warn">⚠️ Close the game before editing. Backups are auto-created in editor_backups/.</div>
+</div>
+
+<div class="container">
+  <div class="sidebar">
+    <h2 style="margin-top:0">Worlds</h2>
+    <div id="world-list">Loading...</div>
+    <button onclick="loadWorlds()" style="margin-top:8px;width:100%">↻ Refresh</button>
+  </div>
+
+  <div class="main">
+    <div id="empty-state" class="empty-state">
+      Select a world from the sidebar to view its details.
+    </div>
+
+    <div id="world-detail" class="world-detail">
+      <div class="title" id="detail-title"></div>
+      <div class="subtitle" id="detail-subtitle"></div>
+
+      <div class="stat-grid">
+        <div class="stat"><div class="label">World Mode</div><div class="value" id="stat-mode">—</div></div>
+        <div class="stat"><div class="label">File Size</div><div class="value" id="stat-size">—</div></div>
+        <div class="stat"><div class="label">Placed Pieces</div><div class="value" id="stat-pieces">—</div></div>
+        <div class="stat"><div class="label">Distinct Types</div><div class="value" id="stat-types">—</div></div>
+        <div class="stat"><div class="label">PROP[2] Counter</div><div class="value" id="stat-counter">—</div></div>
+      </div>
+
+      <h2>Actions</h2>
+
+      <!-- Transplant -->
+      <div class="action-card">
+        <div class="action-name">Copy Buildings INTO This World</div>
+        <div class="action-desc">
+          Pick a <strong>donor world</strong> to copy buildings from. All of the
+          donor's walls, floors, and roofs will be added to <strong id="transplant-target-name">this world</strong>,
+          preserving its existing state. Pieces appear at their original
+          coordinates (worlds share the same map seed).
+        </div>
+        <div class="action-warn">
+          ⚠️ Only passive building pieces (walls/floors/roofs) actually render.
+          Chests and crafting stations will be added to the file but won't appear
+          in-game (Category 2 limitation). Pre-existing pieces in this world that
+          spatially overlap the donor's pieces may be lost.
+        </div>
+        <div class="action-form" style="flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:8px;width:100%">
+            <label style="white-space:nowrap">Copy buildings <strong>FROM</strong>:</label>
+            <select id="transplant-source"></select>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;width:100%;margin-top:6px">
+            <label style="white-space:nowrap"><strong>INTO</strong> (this world):</label>
+            <span id="transplant-target-display" style="flex:1;color:var(--accent-bright);font-weight:600"></span>
+            <button onclick="doTransplant()">Copy →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clone -->
+      <div class="action-card">
+        <div class="action-name">Clone World</div>
+        <div class="action-desc">
+          Create a complete duplicate of this world with a new name and identity.
+          The copy is a separate save with its own WorldSaveGuid — both worlds
+          can coexist. Useful for branching saves or backups.
+        </div>
+        <div class="action-form">
+          <label>New name:</label>
+          <input type="text" id="clone-name" placeholder="MyClonedWorld" maxlength="40">
+          <button onclick="doClone()">Clone</button>
+        </div>
+      </div>
+
+      <!-- World mode -->
+      <div class="action-card">
+        <div class="action-name">Set World Mode</div>
+        <div class="action-desc">
+          Toggle between Standard (default difficulty) and Custom (with custom
+          difficulty settings). Custom mode unlocks editing of game balance values
+          like resource costs, drop rates, and progression scaling.
+        </div>
+        <div class="action-warn">
+          ⚠️ Converting Standard → Custom may break locked chests/totems
+          (Bug #001). The chests still exist but their owner reference becomes
+          stale. Affected items can be re-locked manually in-game.
+        </div>
+        <div class="action-form">
+          <button onclick="setMode('standard')">Set Standard</button>
+          <button onclick="setMode('custom')">Set Custom</button>
+        </div>
+      </div>
+
+      <!-- Pieces detail -->
+      <h2>Piece Breakdown</h2>
+      <div class="piece-list" id="piece-breakdown"></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+let worlds = [];
+let selectedFilename = null;
+
+async function loadWorlds() {
+  const list = document.getElementById("world-list");
+  list.innerHTML = "Loading...";
+  try {
+    const r = await fetch("/api/worlds");
+    worlds = await r.json();
+    renderWorldList();
+    if (selectedFilename) selectWorld(selectedFilename);
+  } catch (e) {
+    list.innerHTML = `<div style="color:#c54">Failed to load: ${e}</div>`;
+  }
+}
+
+function renderWorldList() {
+  const list = document.getElementById("world-list");
+  if (worlds.length === 0) {
+    list.innerHTML = "<div style='color:#9a9a9a'>No worlds found.</div>";
+    return;
+  }
+  list.innerHTML = worlds.map(w => {
+    if (w.error) {
+      return `<div class="world-item" style="border-color:#c54">
+        <div class="name">${escapeHtml(w.filename)}</div>
+        <div class="meta" style="color:#c54">Error: ${escapeHtml(w.error)}</div>
+      </div>`;
+    }
+    return `<div class="world-item ${w.filename === selectedFilename ? 'selected' : ''}"
+      onclick="selectWorld('${escapeAttr(w.filename)}')">
+      <div class="name">${escapeHtml(w.filename)}</div>
+      <div class="meta">
+        ${w.world_mode || 'unknown'} · ${w.filesize_kb} KB · ${w.world_name || '?'}
+      </div>
+      <div class="pieces">${w.piece_count} pieces, ${w.distinct_classes} types</div>
+    </div>`;
+  }).join("");
+
+  // Update transplant source dropdown
+  const sel = document.getElementById("transplant-source");
+  if (sel) {
+    sel.innerHTML = '<option value="">— select source —</option>' +
+      worlds
+        .filter(w => !w.error && w.filename !== selectedFilename)
+        .map(w => `<option value="${escapeAttr(w.filename)}">${escapeHtml(w.filename)} (${w.piece_count} pieces)</option>`)
+        .join("");
+  }
+}
+
+async function selectWorld(filename) {
+  selectedFilename = filename;
+  renderWorldList(); // re-render to update selection highlight
+
+  document.getElementById("empty-state").style.display = "none";
+  const detail = document.getElementById("world-detail");
+  detail.classList.add("active");
+
+  try {
+    const r = await fetch(`/api/world/${encodeURIComponent(filename)}`);
+    const data = await r.json();
+    if (data.error) throw new Error(data.error);
+
+    document.getElementById("detail-title").textContent = data.filename;
+    document.getElementById("detail-subtitle").textContent =
+      `${data.header.world_name} · saved ${data.header.save_timestamp || 'unknown'}`;
+
+    // Update transplant action with the current target name (for clarity)
+    document.getElementById("transplant-target-name").textContent = data.filename;
+    document.getElementById("transplant-target-display").textContent = data.filename;
+
+    document.getElementById("stat-mode").textContent = data.header.world_mode || "?";
+    document.getElementById("stat-size").textContent = `${data.header.filesize_mb} MB`;
+    document.getElementById("stat-pieces").textContent = data.piece_count;
+    document.getElementById("stat-types").textContent = data.distinct_classes;
+    document.getElementById("stat-counter").textContent = data.pces_counter ?? "—";
+
+    // Piece breakdown
+    const list = document.getElementById("piece-breakdown");
+    if (data.piece_breakdown.length === 0) {
+      list.innerHTML = '<div style="color:#9a9a9a">No placed pieces in this world.</div>';
+    } else {
+      list.innerHTML = data.piece_breakdown.map(p => {
+        const isKnown = p.name !== p.guid;
+        return `<div class="row">
+          <span class="guid">
+            ${isKnown ? `<span style="color:#e8e6e0;font-weight:600">${escapeHtml(p.name)}</span><br><span style="color:#666;font-size:10px">${escapeHtml(p.guid)}</span>` : escapeHtml(p.guid)}
+          </span>
+          <span class="count">${p.count}×</span>
+        </div>`;
+      }).join("");
+    }
+  } catch (e) {
+    toast(`Load failed: ${e.message}`, "error");
+  }
+}
+
+async function doTransplant() {
+  const sourceFilename = document.getElementById("transplant-source").value;
+  if (!sourceFilename) {
+    toast("Pick a donor world (the FROM world) first.", "warn");
+    return;
+  }
+  if (!confirm(
+    `Copy buildings:\n\n` +
+    `   FROM:  ${sourceFilename}  (donor)\n` +
+    `   INTO:  ${selectedFilename}  (this world will be modified)\n\n` +
+    `A backup will be auto-created in editor_backups/.\n\n` +
+    `Make sure the game is closed.`
+  )) return;
+
+  toast("Transplanting...", "info");
+  try {
+    const r = await fetch(`/api/world/${encodeURIComponent(selectedFilename)}/transplant`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({source_filename: sourceFilename}),
+    });
+    const data = await r.json();
+    if (!data.success) throw new Error(data.error || "Unknown error");
+    toast(
+      `Transplanted ${data.added_bytes} bytes. ` +
+      `Pces ${data.target_pces_before}B → ${data.target_pces_after}B. ` +
+      `Counter ${data.old_counter} → ${data.new_counter}.`,
+      "success"
+    );
+    setTimeout(loadWorlds, 600);
+  } catch (e) {
+    toast(`Transplant failed: ${e.message}`, "error");
+  }
+}
+
+async function doClone() {
+  const newName = document.getElementById("clone-name").value.trim();
+  if (!newName) {
+    toast("Enter a name for the clone.", "warn");
+    return;
+  }
+  if (!confirm(
+    `Clone "${selectedFilename}" to "${newName}.sav"?\n\n` +
+    `A new save file will be created with a fresh WorldSaveGuid. The original is unchanged.`
+  )) return;
+
+  toast("Cloning...", "info");
+  try {
+    const r = await fetch(`/api/world/${encodeURIComponent(selectedFilename)}/clone`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({new_name: newName}),
+    });
+    const data = await r.json();
+    if (!data.success) throw new Error(data.error || "Unknown error");
+    toast(`Cloned to ${data.target} (${(data.size_bytes / 1024).toFixed(0)} KB)`, "success");
+    document.getElementById("clone-name").value = "";
+    setTimeout(loadWorlds, 600);
+  } catch (e) {
+    toast(`Clone failed: ${e.message}`, "error");
+  }
+}
+
+async function setMode(mode) {
+  if (!confirm(
+    `Set "${selectedFilename}" to ${mode.toUpperCase()} mode?\n\n` +
+    `This modifies the world save. Make sure the game is closed.`
+  )) return;
+
+  try {
+    const r = await fetch(`/api/world/${encodeURIComponent(selectedFilename)}/mode`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({mode}),
+    });
+    const data = await r.json();
+    if (!data.success) throw new Error(data.error || "Unknown error");
+    toast(`Mode: ${data.old_mode} → ${data.new_mode}`, "success");
+    setTimeout(loadWorlds, 400);
+  } catch (e) {
+    toast(`Mode change failed: ${e.message}`, "error");
+  }
+}
+
+function toast(msg, type) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = type || "";
+  t.style.display = "block";
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => { t.style.display = "none"; }, 5000);
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+  }[c]));
+}
+function escapeAttr(s) {
+  return escapeHtml(s).replace(/'/g, "\\'");
+}
+
+// Initial load
+loadWorlds();
+</script>
+</body>
+</html>
