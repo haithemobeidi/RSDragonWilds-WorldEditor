@@ -1000,6 +1000,117 @@ class WorldSave:
     SPWN_TRANSFORM_DOUBLE_COUNT = 6
     SPWN_INSTANCE_GUID_OFFSET = 0x04
 
+    # ===== Placed Building Pieces (player-built walls/floors/roofs in Pces chunk) =====
+    #
+    # Reverse-engineered 04-07-2026 (continuation of structure research).
+    # Building pieces (walls, floors, roofs, doors, foundations) are stored in
+    # the `Pces` chunk inside the world save, NOT in `SPWN` records. The Pces
+    # chunk is a length-prefixed chunk containing a flat array of piece records.
+    #
+    # Each piece record contains:
+    #   uint32   persistent_id   (globally-unique ID; gaps appear when pieces
+    #                             are deleted/replaced during construction)
+    #   FString  guid            (length-prefixed, always 23 bytes = 22-char
+    #                             base64 GUID + null terminator. The GUID
+    #                             identifies the piece CLASS — walls share a
+    #                             GUID, tiles share a different GUID, etc.)
+    #   double   pos_x, pos_y, pos_z    (UE world coordinates in cm)
+    #   float    extra_a, extra_b, extra_c
+    #            extra_a is rotation degrees (0-360)
+    #            extra_b is variable per piece type — possibly piece length
+    #                    in cm (965 = 9.65m, 1565 = 15.65m for taller pieces)
+    #            extra_c is usually 1.0 (uniform scale?)
+    #   uint32   ref_count       (1-4 typically — number of connection anchors)
+    #   FString  refs[ref_count] (anchor GUIDs — usually share class with the
+    #                             main piece's parent foundation)
+    #   ...trailing slot/connection data (variable length, format varies per class)
+    #
+    # The trailing format is messy and varies per class — we don't parse it
+    # for the purposes of detection. We just identify records by scanning for
+    # the (FString-23 + 3 doubles + 3 floats + small uint32 ref_count) pattern.
+
+    def get_placed_pieces(self) -> list[dict]:
+        """
+        Walk the Pces chunk and return all detected placed building pieces
+        (walls, floors, roofs, doors, etc.). Returns one entry per piece with
+        persistent_id, guid (class identifier), position, extras (rotation
+        and per-class fields), and ref_count.
+        """
+        data = self.raw_data
+
+        # Find the Pces chunk
+        pces_off = data.find(b"Pces")
+        if pces_off == -1:
+            return []
+        try:
+            pces_len = struct.unpack_from("<I", data, pces_off + 4)[0]
+        except struct.error:
+            return []
+        if pces_len <= 0 or pces_off + 8 + pces_len > len(data):
+            return []
+        body = bytes(data[pces_off + 8 : pces_off + 8 + pces_len])
+
+        pieces = []
+        # Scan for FString-23 occurrences and check what follows
+        i = 0
+        while i < len(body) - 27 - 36 - 4:
+            # FString length prefix == 23?
+            if body[i:i+4] != b"\x17\x00\x00\x00":
+                i += 1
+                continue
+            gchunk = body[i+4:i+27]
+            # Must be printable ASCII ending in null
+            if gchunk[-1] != 0:
+                i += 1
+                continue
+            if not all(0x20 <= b <= 0x7e or b == 0 for b in gchunk):
+                i += 1
+                continue
+            try:
+                guid = gchunk[:-1].decode("ascii")
+            except UnicodeDecodeError:
+                i += 1
+                continue
+
+            # Try to interpret the bytes after the GUID as a piece record:
+            #   3 doubles (24 B) + 3 floats (12 B) + uint32 ref_count (4 B)
+            tail_off = i + 27
+            try:
+                px, py, pz = struct.unpack_from("<3d", body, tail_off)
+                e1, e2, e3 = struct.unpack_from("<3f", body, tail_off + 24)
+                ref_count = struct.unpack_from("<I", body, tail_off + 36)[0]
+            except struct.error:
+                i += 1
+                continue
+
+            # Plausibility checks: position must be in a sane range, ref_count small
+            if not all(-1e7 < c < 1e7 for c in (px, py, pz)):
+                i += 1
+                continue
+            if ref_count > 30:
+                i += 1
+                continue
+
+            # Read the persistent ID from the 4 bytes BEFORE this FString
+            persistent_id = 0
+            if i >= 4:
+                persistent_id = struct.unpack_from("<I", body, i - 4)[0]
+
+            pieces.append({
+                "pces_offset": i,
+                "persistent_id": persistent_id,
+                "guid": guid,
+                "position": {"x": px, "y": py, "z": pz},
+                "rotation_deg": e1,
+                "extra_b": e2,
+                "extra_c": e3,
+                "ref_count": ref_count,
+            })
+
+            # Skip past this record's known prefix to avoid re-matching the GUID
+            i = tail_off + 36 + 4
+        return pieces
+
     def get_placed_structures(self) -> list[dict]:
         """
         Walk all SPWN chunks in the binary and return player-built structures.
